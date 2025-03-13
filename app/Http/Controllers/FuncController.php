@@ -38,7 +38,6 @@ class FuncController extends Controller
     {
         if (isset($_COOKIE['travesia_token']) && !empty($_COOKIE['travesia_token'])) {
             $token = PersonalAccessToken::findToken($_COOKIE['travesia_token']);
-
             return $token->tokenable;
         } else {
             return '';
