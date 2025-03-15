@@ -14,6 +14,10 @@ use App\Http\Controllers\FuncController;
 |
 */
 
+Route::get('/dashboard', function () {
+    return view('dashboard');
+});
+
 Route::get('/auth/login', function () {
     $redirectResponse = FuncController::check_user();
 
