@@ -13,11 +13,13 @@ class FuncController extends Controller
     {
         if (isset($_COOKIE['travesia_token']) && !empty($_COOKIE['travesia_token'])) {
             $token = PersonalAccessToken::findToken($_COOKIE['travesia_token']);
-            $user = $token->tokenable;
-            if ($user->role == 'seller') {
-                return redirect()->route('seller.main');
-            } else {
-                return redirect()->route('home');
+            if ($token) {
+                $user = $token->tokenable;
+                if ($user->role == 'seller') {
+                    return redirect()->route('seller.main');
+                } else {
+                    return redirect()->route('home');
+                }
             }
         }
         return null;
@@ -38,27 +40,29 @@ class FuncController extends Controller
     {
         if (isset($_COOKIE['travesia_token']) && !empty($_COOKIE['travesia_token'])) {
             $token = PersonalAccessToken::findToken($_COOKIE['travesia_token']);
-
-            return $token->tokenable;
-        } else {
-            return '';
+            if ($token) {
+                return $token->tokenable;
+            }
         }
+        return '';
     }
 
     public static function set_access_role($role)
     {
         if (isset($_COOKIE['travesia_token']) && !empty($_COOKIE['travesia_token'])) {
             $token = PersonalAccessToken::findToken($_COOKIE['travesia_token']);
+            if ($token) {
+                $user = $token->tokenable;
 
-            $user = $token->tokenable;
-
-            if ($user->role != $role) {
-                abort(Response::HTTP_UNAUTHORIZED);
+                if ($user->role != $role) {
+                    abort(Response::HTTP_UNAUTHORIZED);
+                }
+            } else {
+                return redirect()->route('login');
             }
         } else {
             return redirect()->route('login');
         }
-
         return null;
     }
 }
