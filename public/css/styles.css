@@ -1,0 +1,61 @@
+body {
+    font-family: "Poppins", sans-serif;
+}
+
+/* button */
+.custom-btn {
+    background-color: #3c8ee1;
+    color: white;
+    border: none;
+    border-radius: 8px;
+}
+
+.custom-btn:hover {
+    background-color: #3377cc;
+}
+
+.custom-btn-outline {
+    background-color: transparent;
+    color: #3c8ee1;
+    border: 1px solid #3c8ee1;
+    border-radius: 8px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.custom-btn-outline:hover {
+    background-color: #3c8ee1;
+    color: white;
+}
+/* akhir button */
+/* input */
+.custom-input {
+    background-color: #f2f5f7;
+    color: #a3a3a3;
+    border: none;
+    border-radius: 8px;
+}
+
+.custom-input::placeholder {
+    color: #a3a3a3;
+}
+/* akhir input */
+
+/* navbar */
+.navbar-nav {
+    margin: auto;
+    display: flex;
+    justify-content: center;
+}
+.container-fluid {
+    display: flex;
+    justify-content: center;
+}
+
+/* akhir navbar */
+
+/* text custom */
+.custom-txt {
+    color: #7a7a7a;
+}
+/* akhir text custom */
