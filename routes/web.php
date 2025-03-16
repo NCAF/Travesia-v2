@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\FuncController;
+use App\Http\Controllers\Api\AuthController;
 
 /*
 |--------------------------------------------------------------------------
@@ -18,25 +19,34 @@ Route::get('/dashboard', function () {
     return view('dashboard');
 });
 
-Route::get('/auth/login', function () {
-    $redirectResponse = FuncController::check_user();
+// Authentication Routes
+Route::get('/register', [AuthController::class, 'register'])->name('register');
+Route::post('/register', [AuthController::class, 'registerPost'])->name('register');
 
-    if ($redirectResponse !== null) {
-        return $redirectResponse;
-    }
+Route::get('/login', [AuthController::class, 'login'])->name('login');
+Route::post('/login', [AuthController::class, 'loginPost'])->name('login');
+Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
 
-    return view('auth.login');
-})->name('login');
+// Route::post('/auth/login', function () {
+//     $redirectResponse = FuncController::check_user();
 
-Route::get('/auth/register', function () {
-    $redirectResponse = FuncController::check_user();
+//     if ($redirectResponse !== null) {
+//         return $redirectResponse;
+//     }
 
-    if ($redirectResponse !== null) {
-        return $redirectResponse;
-    }
+//     return view('auth.login');
+// })->name('login');   
 
-    return view('auth.register');
-})->name('register');
+// Route::post('/auth/register', function () {
+//     $redirectResponse = FuncController::check_user();
+
+//     if ($redirectResponse !== null) {
+//         return $redirectResponse;
+//     }
+
+//     return view('auth.register');
+// })->name('register');
 
 Route::get('/', function () {
     $user = FuncController::get_profile_without_abort();
@@ -98,3 +108,4 @@ Route::middleware('set_role:seller')->prefix('seller')->group(function () {
         return view('seller.chat')->with('user', $user);
     })->name('seller.chat');
 });
+
