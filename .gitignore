@@ -24,3 +24,6 @@ Homestead.json
 
 # Ignore scannernetwork
 .scannerwork
+
+# Ignore dump.php
+dump.php
