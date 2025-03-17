@@ -28,25 +28,6 @@ Route::post('/login', [AuthController::class, 'loginPost'])->name('login');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
 
-// Route::post('/auth/login', function () {
-//     $redirectResponse = FuncController::check_user();
-
-//     if ($redirectResponse !== null) {
-//         return $redirectResponse;
-//     }
-
-//     return view('auth.login');
-// })->name('login');   
-
-// Route::post('/auth/register', function () {
-//     $redirectResponse = FuncController::check_user();
-
-//     if ($redirectResponse !== null) {
-//         return $redirectResponse;
-//     }
-
-//     return view('auth.register');
-// })->name('register');
 
 Route::get('/', function () {
     $user = FuncController::get_profile_without_abort();
@@ -108,4 +89,3 @@ Route::middleware('set_role:seller')->prefix('seller')->group(function () {
         return view('seller.chat')->with('user', $user);
     })->name('seller.chat');
 });
-
