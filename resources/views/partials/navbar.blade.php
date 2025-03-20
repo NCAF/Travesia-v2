@@ -21,19 +21,48 @@
                         <a class="nav-link" href="#">My Ticket</a>
                     </li>
                 </ul>
+                {{-- ini untuk guest --}}
                 <!-- Tombol di Desktop -->
-                <button class="custom-btn-outline btn fw-bold mx-2 d-none d-lg-inline">Sign In</button>
-                <button class="custom-btn btn fw-bold mx-2 d-none d-lg-inline">Sign Up</button>
+                {{-- <button class="custom-btn-outline btn fw-bold mx-2 d-none d-lg-inline">Sign In</button>
+                <button class="custom-btn btn fw-bold mx-2 d-none d-lg-inline">Sign Up</button> --}}
 
                 <!-- Teks di Mobile & Tablet -->
-                <ul class="navbar-nav d-lg-none">
+                {{-- <ul class="navbar-nav d-lg-none">
                     <li class="nav-item">
                         <a class="nav-link" href="#">Sign In</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="#">Sign Up</a>
                     </li>
+                </ul> --}}
+
+                {{-- ini untuk user/driver --}}
+                <!-- User Profile Desktop -->
+                <div class="d-none d-lg-flex align-items-center dropdown">
+                    <div class="text-end me-2">
+                        <span class="fw-bold d-block">Muhammad Adib F.</span>
+                        <span class="text-muted small">User</span>
+                    </div>
+
+                    <!-- Dropdown Toggle -->
+                    <img src="{{ asset('icons/icon-img.svg') }}" alt="Profile Image"
+                        class="rounded-circle dropdown-toggle" width="32" height="32" id="profileDropdown"
+                        data-bs-toggle="dropdown" aria-expanded="false">
+
+                    <!-- Dropdown Menu -->
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
+                        <li><a class="dropdown-item" href="#">Logout</a></li>
+                    </ul>
+                </div>
+
+
+                <!-- Teks di Mobile & Tablet -->
+                <ul class="navbar-nav d-lg-none">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Logout</a>
+                    </li>
                 </ul>
+
             </div>
         </div>
     </nav>
