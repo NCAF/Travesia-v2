@@ -13,133 +13,59 @@ use Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller
 {
-    public function register(Request $request)
-    {
+    public function register(){
+        return view('auth.register');
+    }
+
+    public function registerPost(Request $request){
         $validator = Validator::make($request->all(), [
-            'role' => 'required',
-            'nama' => 'required',
-            'email' => 'required|email',
-            'telp' => 'required',
-            'gender' => 'required',
-            'alamat' => 'required',
-            'password' => 'required|min:8|regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/|confirmed',
-            'password_confirmation' => 'required',
-            'foto' => 'required',
-        ], [
-            'required' => ':attribute harus diisi.',
-            'email' => ':attribute harus berupa email yang valid.',
-            'min' => 'panjang :attribute minimal :min karakter.',
-            'regex' => ':attribute harus mengandung minimal satu huruf kecil, satu huruf besar, dan satu angka.',
-            'confirmed' => 'Password dan konfirmasi password tidak sama.',
+            'nama' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users',
+            'password' => 'required|string|min:8|confirmed',
         ]);
-
+    
         if ($validator->fails()) {
-            return response()->json([
-                'error' => true,
-                'message' => Str::ucfirst($validator->errors()->first()),
-                'data' => null
-            ]);
+            return redirect()->route('register')->withErrors($validator)->withInput();
         }
-
-        $base64Data = $request->input('foto');
-
-        $cek_email = User::where('email', $request->email)->get()->count();
-        if ($cek_email > 0) {
-            return response()->json([
-                'error' => true,
-                'message' => "Email telah terpakai. Silahkan hubungi CS untuk konfirmasi jika merasa tidak mendaftar.",
-                'data' => null
-            ]);
-        }
-
-        $file_type = explode(';base64,', $base64Data);
-        $file_type = explode('data:', $file_type[0]);
-        $file_type = explode('/', $file_type[1]);
-        $data_type = $file_type[0];
-        $app_type = $file_type[1];
-        $file_convert = str_replace("data:$data_type/" . $app_type . ';base64,', '', $base64Data);
-        $file_convert = str_replace(' ', '+', $file_convert);
-
-        $fotoData = base64_decode($file_convert);
-
-        // Simpan file sementara
-        $uploadPath = public_path('uploads/users');
-        File::makeDirectory($uploadPath, 0755, true, true);
-        $filename = $this->generateRandomString(33).time() . ".".$app_type;
-        $filePath = $uploadPath . '/' . $filename;
-        file_put_contents($filePath, $fotoData);
 
         $user = User::create([
-            'role' => $request->role,
+            'role' => 'user',
             'nama' => $request->nama,
             'email' => $request->email,
-            'telp' => $request->telp,
-            'gender' => $request->gender,
-            'alamat' => $request->alamat,
             'password' => Hash::make($request->password),
-            'foto' => '/uploads/users/'.$filename,
         ]);
-
-        return response()->json([
-            'error' => false,
-            'message' => 'Berhasil melakukan registrasi. Silahkan Login.',
-            'data' => null
-        ]);
+        return redirect()->route('login')->with('success', 'Berhasil melakukan registrasi. Silahkan Login.');
     }
 
-    public function login(Request $request)
-    {
+    public function login(){
+        return view('auth.login');
+    }
+
+    public function loginPost(Request $request){
         $validator = Validator::make($request->all(), [
-            'email' => 'required|email',
-            'password' => 'required',
-        ], [
-            'required' => ':attribute harus diisi.',
-            'email' => 'alamat email pada kolom :attribute tidak valid.',
+            'email' => 'required|string|email',
+            'password' => 'required|string',
         ]);
 
         if ($validator->fails()) {
-            return response()->json([
-                'error' => true,
-                'message' => Str::ucfirst($validator->errors()->first()),
-                'data' => null
-            ]);
+            return redirect()->route('login')->withErrors($validator)->withInput();
         }
 
-        $user = User::select('*')->where('email', $request->email)->first();
-        if ($user && Hash::check($request->password, $user->password)) {
-            $token = $user->createToken("auth-token")->plainTextToken;
-            Auth::login($user);
-        } else {
-            return response()->json([
-                'error' => true,
-                'message' => 'Pastikan email dan password anda benar.',
-                'data' => null
-            ]);
+        $credentials = $request->only('email', 'password');
+
+        if(Auth::attempt($credentials)){
+            $request->session()->regenerate();
+            return redirect()->route('dashboard');
         }
 
-        return response()->json([
-            'error' => false,
-            'message' => 'Berhasil login.',
-            'data' => [
-                'token' => $token,
-                'user' => $user
-            ]
-        ]);
+        return redirect()->route('login')->with('error', 'Email atau password salah.');
     }
 
-    public function logout(Request $request)
-    {
-        if(method_exists(auth()->user()->currentAccessToken(), 'delete')) {
-            auth()->user()->currentAccessToken()->delete();
-        }
-    }
-
-    function generateRandomString($length = 10) {
-        $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-        $randomString = '';
-        for ($i = 0; $i < $length; $i++) {
-            $randomString .= $characters[rand(0, strlen($characters) - 1)];
-        }
-        return $randomString;
+    public function logout(Request $request){
+        Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+        
+        return redirect()->route('login');
     }
 }

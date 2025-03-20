@@ -21,3 +21,9 @@ Homestead.yaml
 Homestead.json
 /.vagrant
 .phpunit.result.cache
+
+# Ignore scannernetwork
+.scannerwork
+
+# Ignore dump.php
+dump.php
