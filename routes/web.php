@@ -18,6 +18,21 @@ use App\Http\Controllers\Api\AuthController;
 Route::get('/dashboard', function () {
     return view('dashboard');
 });
+Route::get('/user/dashboard', function () {
+    return view('app.user.dashboard');
+});
+Route::get('/user/destination-list', function () {
+    return view('app.user.destination-list');
+});
+Route::get('/user/detail-destination', function () {
+    return view('app.user.detail-destination');
+});
+Route::get('/driver/register-driver', function () {
+    return view('auth.register-driver');
+});
+Route::get('/driver/destination-list', function () {
+    return view('app.driver.destination-list');
+});
 
 // Authentication Routes
 Route::get('/register', [AuthController::class, 'register'])->name('register');

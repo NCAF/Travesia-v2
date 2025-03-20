@@ -1,186 +1,244 @@
-<!doctype html>
-<html lang="en">
+@extends('layouts.main')
+@section('title', 'Dashboard Page')
+@push('styles')
+    <style>
+        .search-container {
+            position: absolute;
+            bottom: 5%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 255, 255, 0.8);
+            padding: 16px;
+            border-radius: 24px;
+            width: 90%;
+            backdrop-filter: blur(10px);
+        }
 
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Travesia Seller - @yield('title')</title>
-  <link rel="shortcut icon" href="{{ url('assets/images/icon.png') }}">
-  <meta name="author" content="you-ink">
-  <meta name="description" content="Travesia. Menemani perjalaan anda dengan penuh kenyamanan." />
-  <meta name="keywords" content="travel, indonesia, keliling, perjalanan, marketplace" />
-  <meta name="csrf-token" content="{{ csrf_token() }}">
-  <link rel="stylesheet" href="{{url('assets/admin-template/css/styles.min.css')}}" />
-  <link rel="stylesheet" href="{{url('assets/admin-template/css/custom.css')}}" />
-  <link rel="stylesheet" href="{{url('assets/css/dataTables.bootstrap5.min.css')}}" />
-</head>
-<body>
-    <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full" data-sidebar-position="fixed" data-header-position="fixed">
+        /* Untuk Tablet (Lebar Maks 1024px) */
+        @media (max-width: 1024px) {
+            .search-container {
+                position: static;
+                width: 100%;
+                transform: none;
+                margin-top: 16px;
+            }
+        }
 
-        <!-- Sidebar Start -->
-        <aside class="left-sidebar">
-            <!-- Sidebar scroll-->
-            <div>
-                <div class="brand-logo d-flex align-items-center justify-content-between">
-                    <a href="" class="text-nowrap logo-img">
-                        <img src="{{ url('assets/images/travesia.png') }}" width="180" alt="" />
-                    </a>
-                    <div class="close-btn d-xl-none d-block sidebartoggler cursor-pointer" id="sidebarCollapse">
-                        <i class="ti ti-x fs-8"></i>
+        /* Untuk Mobile (Lebar Maks 768px) */
+        @media (max-width: 768px) {
+            .search-container {
+                position: static;
+                width: 100%;
+                transform: none;
+                margin-top: 16px;
+            }
+        }
+
+
+        .custom-card {
+            background-color: #F2F5F7;
+            border-radius: 24px;
+        }
+    </style>
+@endpush
+@section('content')
+    <div class="container mt-2 position-relative">
+        <div class="position-relative">
+            <img src="{{ asset('img/hero-section.png') }}" alt="hero section" class="img-fluid w-100 rounded">
+            <div class="search-container bg-white shadow-lg">
+                <form action="#" method="GET" class="row g-3 align-items-center">
+                    <div class="col-md-3 col-12">
+                        <label class="form-label">
+                            <img src="{{ asset('icons/icon-location.svg') }}" alt="Icon Location"> Origin
+                        </label>
+                        <input type="text" class="form-control custom-input" name="origin" placeholder="Select city">
                     </div>
-                </div>
-                <!-- Sidebar navigation-->
-                <nav class="sidebar-nav scroll-sidebar" data-simplebar="">
-                    <ul id="sidebarnav">
-                        <li class="nav-small-cap">
-                            <i class="ti ti-dots nav-small-cap-icon fs-4"></i>
-                            <span class="hide-menu">Home</span>
-                        </li>
-                        <li class="sidebar-item">
-                            <a class="sidebar-link {{ (request()->segment(2) == '' || request()->segment(2) == 'index') ? 'active' : '' }}" href="{{ route('seller.main') }}" aria-expanded="false">
-                            <span>
-                                <i class="ti ti-layout-dashboard"></i>
-                            </span>
-                            <span class="hide-menu">Dashboard</span>
-                            </a>
-                        </li>
-                        <li class="nav-small-cap">
-                            <i class="ti ti-dots nav-small-cap-icon fs-4"></i>
-                            <span class="hide-menu">DATA</span>
-                        </li>
-                        <li class="sidebar-item">
-                            <a class="sidebar-link {{ request()->segment(2) == 'destinasi' ? 'active' : '' }}" href="{{ route('seller.destinasi') }}" aria-expanded="false">
-                            <span>
-                                <i class="ti ti-location"></i>
-                            </span>
-                            <span class="hide-menu">Destinasi</span>
-                            </a>
-                        </li>
-                        <li class="sidebar-item">
-                            <a class="sidebar-link {{ request()->segment(2) == 'pesanan' ? 'active' : '' }}" href="{{ route('seller.pesanan') }}" aria-expanded="false">
-                            <span>
-                                <i class="ti ti-clipboard-list"></i>
-                            </span>
-                            <span class="hide-menu">Pesanan</span>
-                            </a>
-                        </li>
-                        <li class="sidebar-item">
-                            <a class="sidebar-link {{ request()->segment(2) == 'chat' ? 'active' : '' }}" href="{{ route('seller.chat') }}" aria-expanded="false">
-                            <span>
-                                <i class="ti ti-messages"></i>
-                            </span>
-                            <span class="hide-menu">Chat</span>
-                            </a>
-                        </li>
-                    </ul>
-                </nav>
-                <!-- End Sidebar navigation -->
+                    <div class="col-md-3 col-12">
+                        <label class="form-label">
+                            <img src="{{ asset('icons/icon-destination.svg') }}" alt="Icon Destination"> Destination
+                        </label>
+                        <input type="text" class="form-control custom-input" name="destination"
+                            placeholder="Select destination">
+                    </div>
+                    <div class="col-md-3 col-12">
+                        <label class="form-label">
+                            <img src="{{ asset('icons/icon-date.svg') }}" alt="Icon Date"> Date
+                        </label>
+                        <input type="date" class="form-control custom-input" name="date">
+                    </div>
+                    <div class="col-md-3 col-12 mt-5">
+                        <button type="submit" class="custom-btn btn w-100 fw-bold">Search</button>
+                    </div>
+                </form>
             </div>
-            <!-- End Sidebar scroll-->
-        </aside>
-        <!--  Sidebar End -->
+        </div>
 
-        <div class="body-wrapper">
-            <!--  Header Start -->
-            <header class="app-header">
-                <nav class="navbar navbar-expand-lg navbar-light">
-                <ul class="navbar-nav">
-                    <li class="nav-item d-block d-xl-none">
-                    <a class="nav-link sidebartoggler nav-icon-hover" id="headerCollapse" href="javascript:void(0)">
-                        <i class="ti ti-menu-2"></i>
-                    </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link nav-icon-hover" href="{{route('seller.chat')}}">
-                            <i class="ti ti-messages"></i>
-                            <div class="notification bg-primary rounded-circle"></div>
-                        </a>
-                    </li>
-                </ul>
-                <div class="navbar-collapse justify-content-end px-0" id="navbarNav">
-                    <ul class="navbar-nav flex-row ms-auto align-items-center justify-content-end">
-                        <li class="nav-item dropdown">
-                            <a class="nav-link nav-icon-hover" href="javascript:void(0)" id="drop2" data-bs-toggle="dropdown"
-                            aria-expanded="false">
-                                <img src="{{ url($user->foto) }}" alt="" width="35" height="35" class="rounded-circle">
-                            </a>
-                            <div class="dropdown-menu dropdown-menu-end dropdown-menu-animate-up" aria-labelledby="drop2">
-                            <div class="message-body">
-                                <a href="javascript:void(0)" class="d-flex align-items-center gap-2 dropdown-item">
-                                    Halo, {{ $user->nama }}
-                                </a>
-                                <hr>
-                                <a href="javascript:void(0)" class="d-flex align-items-center gap-2 dropdown-item">
-                                    <i class="ti ti-user fs-6"></i>
-                                    <p class="mb-0 fs-3">My Profile</p>
-                                </a>
-                                <a href="javascript:void(0);" class="btn btn-outline-primary mx-3 mt-2 d-block btn-logout">Logout</a>
-                            </div>
-                            </div>
-                        </li>
-                    </ul>
+
+        <div class="row mt-3">
+            <div class="col-md-4">
+                <p class="fs-1 fw-bold">1,590+</p>
+                <p class="custom-txt">Trusted by thousands of travelers for unforgettable journeys.</p>
+            </div>
+            <div class="col-md-4">
+                <p class="fs-1 fw-bold">100+</p>
+                <p class="custom-txt">Explore over 100 amazing destinations around the world.</p>
+            </div>
+            <div class="col-md-4">
+                <p class="fs-1 fw-bold">523+</p>
+                <p class="custom-txt">Thousands of precious moments have been created with us. </p>
+            </div>
+        </div>
+        <div class="row mt-5">
+            <div class="col-md-10">
+                <h1>Top Destination</h1>
+            </div>
+            <div class="col-auto mt-3">
+                <button class="btn custom-btn-outline rounded-circle" style="background-color: white;">
+                    <img src="{{ asset('icons/icon-arrow-left.svg') }}" alt="arrow left" class="img-fluid">
+                </button>
+            </div>
+            <div class="col-auto mt-3">
+                <button class="btn custom-btn rounded-circle">
+                    <img src="{{ asset('icons/icon-arrow-right.svg') }}" alt="arrow right" class="img-fluid">
+                </button>
+            </div>
+        </div>
+        <img src="{{ asset('img/top-destination.png') }}" alt="Top Destination" class="img-fluid mt-3">
+        <div class="row mt-5">
+            <div class="col-md">
+                <h1>Our Service</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-3 col-12 mb-2">
+                <div class="custom-card p-4">
+                    <img src="{{ asset('icons/icon-ticket-booking.svg') }}" alt="icon ticket booking">
+                    <h5 class="fw-normal mt-2">Ticket Booking</h5>
+                    <p class="custom-txt mt-2 pb-4">Easily book your desired trip with just a few clicks.</p>
                 </div>
-                </nav>
-            </header>
-            <!--  Header End -->
-            <div class="container-fluid">
-
-                @yield('content')
-
-                <div class="py-6 px-6 text-center">
-                    <p class="mb-0 fs-4">&copy; Copyright {{ date('Y') }}. All right reserved.</p>
+            </div>
+            <div class="col-md-3 col-12 mb-2">
+                <div class="custom-card p-4">
+                    <img src="{{ asset('icons/icon-messaging.svg') }}" alt="icon messaging">
+                    <h5 class="fw-normal mt-2">Messaging</h5>
+                    <p class="custom-txt mt-2">Stay connected with agents and fellow travelers in real-time.</p>
+                </div>
+            </div>
+            <div class="col-md-3 col-12 mb-2">
+                <div class="custom-card p-4">
+                    <img src="{{ asset('icons/icon-searching.svg') }}" alt="icon searching">
+                    <h5 class="fw-normal mt-2">Searching</h5>
+                    <p class="custom-txt mt-2">Find your ideal destination quickly with our smart search feature.</p>
+                </div>
+            </div>
+            <div class="col-md-3 col-12">
+                <div class="custom-card p-4">
+                    <img src="{{ asset('icons/icon-payment.svg') }}" alt="icon payment">
+                    <h5 class="fw-normal mt-2">Payment</h5>
+                    <p class="custom-txt mt-2 pb-4">Secure and hassle-free transactions.</p>
                 </div>
             </div>
         </div>
+        <div class="row mt-5">
+            <div class="col-md">
+                <h1>Behind Every Journey</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4 col-12 my-2">
+                <div class="custom-card p-4">
+                    <div class="row">
+                        <div class="col-md-2">
+                            <img src="{{ asset('icons/icon-img.svg') }}" alt="icon img" height="40" width="40">
+                        </div>
+                        <div class="col-md-10">
+                            <p>Muhammad Adib Firmansyah
+                                <span class="custom-txt">Frontend Developer</span>
+                            </p>
+                        </div>
+                    </div>
+                    <p class="custom-txt mt-2">Terlalu capee... untuk did denganarrr</p>
+                </div>
+            </div>
+            <div class="col-md-4 col-12 my-2">
+                <div class="custom-card p-4">
+                    <div class="row">
+                        <div class="col-md-2">
+                            <img src="{{ asset('icons/icon-img.svg') }}" alt="icon img" height="40" width="40">
+                        </div>
+                        <div class="col-md-10">
+                            <p>Muhammad Adib Firmansyah
+                                <span class="custom-txt">Frontend Developer</span>
+                            </p>
+                        </div>
+                    </div>
+                    <p class="custom-txt mt-2">Terlalu capee... untuk did denganarrr</p>
+                </div>
+            </div>
+            <div class="col-md-4 col-12 my-2">
+                <div class="custom-card p-4">
+                    <div class="row">
+                        <div class="col-md-2">
+                            <img src="{{ asset('icons/icon-img.svg') }}" alt="icon img" height="40" width="40">
+                        </div>
+                        <div class="col-md-10">
+                            <p>Muhammad Adib Firmansyah
+                                <span class="custom-txt">Frontend Developer</span>
+                            </p>
+                        </div>
+                    </div>
+                    <p class="custom-txt mt-2">Terlalu capee... untuk did denganarrr</p>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4 col-12 my-2">
+                <div class="custom-card p-4">
+                    <div class="row">
+                        <div class="col-md-2">
+                            <img src="{{ asset('icons/icon-img.svg') }}" alt="icon img" height="40" width="40">
+                        </div>
+                        <div class="col-md-10">
+                            <p>Muhammad Adib Firmansyah
+                                <span class="custom-txt">Frontend Developer</span>
+                            </p>
+                        </div>
+                    </div>
+                    <p class="custom-txt mt-2">Terlalu capee... untuk did denganarrr</p>
+                </div>
+            </div>
+            <div class="col-md-4 col-12 my-2">
+                <div class="custom-card p-4">
+                    <div class="row">
+                        <div class="col-md-2">
+                            <img src="{{ asset('icons/icon-img.svg') }}" alt="icon img" height="40" width="40">
+                        </div>
+                        <div class="col-md-10">
+                            <p>Muhammad Adib Firmansyah
+                                <span class="custom-txt">Frontend Developer</span>
+                            </p>
+                        </div>
+                    </div>
+                    <p class="custom-txt mt-2">Terlalu capee... untuk did denganarrr</p>
+                </div>
+            </div>
+            <div class="col-md-4 col-12 my-2">
+                <div class="custom-card p-4">
+                    <div class="row">
+                        <div class="col-md-2">
+                            <img src="{{ asset('icons/icon-img.svg') }}" alt="icon img" height="40" width="40">
+                        </div>
+                        <div class="col-md-10">
+                            <p>Muhammad Adib Firmansyah
+                                <span class="custom-txt">Frontend Developer</span>
+                            </p>
+                        </div>
+                    </div>
+                    <p class="custom-txt mt-2">Terlalu capee... untuk did denganarrr</p>
+                </div>
+            </div>
+        </div>
+        <img src="{{ asset('img/hero-section-2.png') }}" alt="hero section 2" class="img-fluid my-5">
+        @include('partials.footer')
     </div>
-    <script src="{{ url('assets/admin-template/libs/jquery/dist/jquery.min.js')}}"></script>
-    <script src="{{ url('assets/admin-template/libs/bootstrap/dist/js/bootstrap.bundle.min.js')}}"></script>
-    <script src="{{ url('assets/admin-template/js/sidebarmenu.js')}}"></script>
-    <script src="{{ url('assets/admin-template/js/app.min.js')}}"></script>
-    <script src="{{ url('assets/admin-template/libs/apexcharts/dist/apexcharts.min.js')}}"></script>
-    <script src="{{ url('assets/admin-template/libs/simplebar/dist/simplebar.js')}}"></script>
-    <script src="{{ url('assets/js/sweetalert2.all.min.js') }}"></script>
-    <script src="{{ url('assets/js/main.js') }}"></script>
-    <script src="{{ url('assets/js/file-upload.js') }}"></script>
-    <script src="{{ url('assets/js/jquery-cookie.min.js')}}"></script>
-    <script src="{{ url('assets/js/api.js')}}"></script>
-    <script src="{{ url('assets/js/dataTables.min.js')}}"></script>
-    <script src="{{ url('assets/js/dataTables.bootstrap5.min.js')}}"></script>
-    <script src="{{ url('assets/js/moment.min.js')}}"></script>
-
-    @stack('script')
-    <script>
-        $(document).on('click', '.btn-logout', function(e) {
-            e.preventDefault();
-
-            Swal.fire({
-            title: 'Logout?',
-            text: `Anda ingin melakukan logout!`,
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Ya, logout!'
-            }).then((result) => {
-            if (result.isConfirmed) {
-
-                callApi("POST", "{{ route('api.logout') }}", {}, function (req) {
-                    pesan = req.message;
-                    if (req.error == true) {
-                        Swal.fire(
-                            'Gagal melakukan logout!',
-                            pesan,
-                            'error'
-                        )
-                    } else {
-                        cookie.remove('travesia_token')
-                        window.location.href = "{{ route('login') }}"
-                    }
-                })
-
-            }
-            })
-        });
-    </script>
-</body>
-</html>
+@endsection
