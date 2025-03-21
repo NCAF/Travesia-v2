@@ -15,18 +15,32 @@ use App\Http\Controllers\Api\AuthController;
 |
 */
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
+Route::get('/', function () {
+    return view('app.dashboard');
+})->name('dashboard');
+
+Route::middleware('auth')->group(function () {
+    // route for user
+    Route::get('/user/dashboard', function () {
+            return view('app.user.dashboard');
+    })->name('user.dashboard');
+    
+    Route::get('/user/destination-list', function () {
+        return view('app.user.destination-list');
+    })->name('user.destination-list');
+
+    Route::get('/user/detail-destination', function () {
+        return view('app.user.detail-destination');
+    })->name('user.detail-destination');
 });
-Route::get('/user/dashboard', function () {
-    return view('app.user.dashboard');
-});
-Route::get('/user/destination-list', function () {
-    return view('app.user.destination-list');
-});
-Route::get('/user/detail-destination', function () {
-    return view('app.user.detail-destination');
-});
+
+
+// Route::middleware('set_role:driver')->group(function () {
+//     Route::get('/driver/dashboard', function () {
+//         return view('app.driver.dashboard');
+//     })->name('driver.dashboard');
+// });
+
 Route::get('/driver/register-driver', function () {
     return view('auth.register-driver');
 });
@@ -44,7 +58,7 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
 
 
-Route::get('/', function () {
+Route::get('/home', function () {
     $user = FuncController::get_profile_without_abort();
     return view('home')->with('user', $user);
 })->name('home');
