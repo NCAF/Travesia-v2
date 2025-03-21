@@ -16,13 +16,14 @@ use Illuminate\Support\Facades\Validator;
 class DestinasiController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Display a listing of the resource for authenticated user.
      */
     public function index(Request $request)
     {
         $destinasi = Destinasi::select('*', DB::raw("CASE WHEN NOW() >= DATE_SUB(hari_berangkat, INTERVAL 1 DAY) THEN 1 ELSE 0 END as traveling, NOW() as today, DATE_SUB(hari_berangkat, INTERVAL 1 DAY) as berangkat"));
         $destinasi->where('user_id', auth()->id());
 
+        // Apply search filters
         $search = isset($request->search['value']) ? $request->search['value'] : '';
         if (!empty($search)) {
             $destinasi->where(function ($query) use ($search) {
@@ -33,6 +34,7 @@ class DestinasiController extends Controller
             });
         }
 
+        // Handle pagination
         $total_data = $destinasi->count();
         $length = intval(isset($request->length) ? $request->length : 0);
         $start = intval(isset($request->start) ? $request->start : 0);
@@ -50,6 +52,9 @@ class DestinasiController extends Controller
         ]);
     }
 
+    /**
+     * Get recent destinations (limited to 5).
+     */
     public function recent(Request $request)
     {
         $destinasi = Destinasi::select('*')
@@ -60,17 +65,15 @@ class DestinasiController extends Controller
         return $this->successResponse('Berhasil mengambil data.', $destinasi);
     }
 
+    /**
+     * Get all destinations with availability information.
+     */
     public function all(Request $request)
     {
-        $destinasi = Destinasi::select(['*',
-            DB::raw('
-                (jumlah_kursi - COALESCE((SELECT SUM(orders.jumlah_kursi) FROM orders WHERE orders.destinasi_id = destinasi.id AND orders.status != "canceled"), 0)) AS kursi_tersisa,
-                (jumlah_bagasi - COALESCE((SELECT SUM(orders.jumlah_bagasi) FROM orders WHERE orders.destinasi_id = destinasi.id AND orders.status != "canceled"), 0)) AS bagasi_tersisa
-            ')
-        ]);
-
+        $destinasi = $this->getDestinasiWithAvailability();
         $this->applyFilters($destinasi, $request);
         
+        // Handle pagination
         $total = $destinasi->count();
         $length = intval(isset($request->length) ? $request->length : 10);
         $skip = intval(isset($request->page) ? ($request->page*$length) : 0);
@@ -88,24 +91,28 @@ class DestinasiController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Store a newly created destination.
      */
     public function store(Request $request)
     {
+        // Validate input
         $validator = $this->validateDestinasi($request);
         if ($validator->fails()) {
             return $this->errorResponse(Str::ucfirst($validator->errors()->first()));
         }
 
+        // Validate departure date
         if (!$this->validateDepartureDate($request->hari_berangkat)) {
             return $this->errorResponse('Hari Keberangkatan setidaknya 1 hari setelah hari ini.');
         }
 
+        // Process image
         $imagePath = $this->processImage($request->input('foto'));
         if (!$imagePath) {
             return $this->errorResponse('Gagal menyimpan gambar.');
         }
 
+        // Create destination
         Destinasi::create([
             'user_id' => auth()->id(),
             'kode_destinasi' => 'DTNS-'.auth()->id().'-'.time(),
@@ -127,7 +134,7 @@ class DestinasiController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * Display the specified destination by code.
      */
     public function show(string $kode)
     {
@@ -143,10 +150,11 @@ class DestinasiController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * Update the specified destination.
      */
     public function update(Request $request, string $id)
     {
+        // Validate input
         $validator = Validator::make($request->all(), [
             'destinasi_awal' => 'required',
             'destinasi_akhir' => 'required',
@@ -164,15 +172,18 @@ class DestinasiController extends Controller
             return $this->errorResponse(Str::ucfirst($validator->errors()->first()));
         }
 
+        // Check if destinasi exists
         $destinasi = Destinasi::find($id);
         if (!$destinasi) {
             return $this->errorResponse('Destinasi tidak ditemukan.');
         }
 
+        // Validate departure date
         if (!$this->validateDepartureDate($request->hari_berangkat)) {
             return $this->errorResponse('Hari Keberangkatan setidaknya 1 hari setelah hari ini.');
         }
 
+        // Process image if provided
         $foto = $destinasi->foto;
         $base64Data = $request->input('foto');
 
@@ -181,6 +192,7 @@ class DestinasiController extends Controller
             File::delete(public_path($destinasi->sampul));
         }
 
+        // Update destination
         $destinasi->update([
             'user_id' => auth()->id(),
             'destinasi_awal' => $request->destinasi_awal,
@@ -200,7 +212,7 @@ class DestinasiController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Remove the specified destination.
      */
     public function destroy(string $id)
     {
@@ -215,18 +227,28 @@ class DestinasiController extends Controller
         return $this->successResponse('Destinasi berhasil dihapus.');
     }
 
+    /**
+     * Update destination status to traveling.
+     */
     public function traveling(string $id)
     {
         return $this->updateStatus($id, 'traveling');
     }
 
+    /**
+     * Update destination status to arrived.
+     */
     public function arrived(string $id)
     {
         return $this->updateStatus($id, 'arrived');
     }
 
+    /**
+     * Create a new order for the destination.
+     */
     public function order(Request $request)
     {
+        // Validate input
         $validator = Validator::make($request->all(), [
             'id' => 'required',
             'kursi' => 'required|numeric|min:1',
@@ -237,6 +259,7 @@ class DestinasiController extends Controller
             return $this->errorResponse(Str::ucfirst($validator->errors()->first()));
         }
 
+        // Check destination and availability
         $destinasi = $this->getDestinasiWithAvailability()
                          ->where('id', $request->id)
                          ->first();
@@ -253,6 +276,7 @@ class DestinasiController extends Controller
             return $this->errorResponse('Jumlah kursi atau bagasi yang tersisa tidak mencukupi.');
         }
 
+        // Create order
         $user = Auth::user();
         $order_id = rand();
         $subtotal = ($request->kursi * $destinasi->harga_kursi) + 
@@ -270,6 +294,7 @@ class DestinasiController extends Controller
             'order_id' => $order_id
         ]);
 
+        // Process payment
         $snapToken = $this->processMidtransPayment($order_id, $subtotal, $user);
         
         $order->token = $snapToken;
@@ -278,7 +303,10 @@ class DestinasiController extends Controller
         return $this->successResponse('Checkout berhasil.');
     }
 
-    function generateRandomString($length = 10) {
+    /**
+     * Generate a random string for various purposes.
+     */
+    private function generateRandomString($length = 10) {
         $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
         $randomString = '';
         for ($i = 0; $i < $length; $i++) {
@@ -287,6 +315,9 @@ class DestinasiController extends Controller
         return $randomString;
     }
 
+    /**
+     * Validate destination input.
+     */
     private function validateDestinasi(Request $request) {
         return Validator::make($request->all(), [
             'destinasi_awal' => 'required',
@@ -303,12 +334,18 @@ class DestinasiController extends Controller
         ]);
     }
 
+    /**
+     * Validate that the departure date is at least 1 day in the future.
+     */
     private function validateDepartureDate($departureDate) {
         $hariBerangkat = Carbon::parse($departureDate);
         $besokTanggal = Carbon::now()->addDay();
         return $hariBerangkat > $besokTanggal;
     }
 
+    /**
+     * Process and save image from base64 data.
+     */
     private function processImage($base64Data) {
         $file_type = explode(';base64,', $base64Data);
         $file_type = explode('data:', $file_type[0]);
@@ -330,6 +367,9 @@ class DestinasiController extends Controller
         return '/uploads/destinasi/' . $filename;
     }
 
+    /**
+     * Update destination status.
+     */
     private function updateStatus($id, $status) {
         $destinasi = Destinasi::find($id);
         if (!$destinasi) {
@@ -340,6 +380,9 @@ class DestinasiController extends Controller
         return $this->successResponse('Status destinasi berhasil diubah.');
     }
 
+    /**
+     * Process payment through Midtrans.
+     */
     private function processMidtransPayment($order_id, $amount, $user) {
         \Midtrans\Config::$serverKey = config('midtrans.serverKey');
         \Midtrans\Config::$isProduction = config('midtrans.isProduction');
@@ -365,6 +408,9 @@ class DestinasiController extends Controller
         return \Midtrans\Snap::getSnapToken($params);
     }
 
+    /**
+     * Return a formatted success response.
+     */
     private function successResponse($message, $data = null, $additional = []) {
         $response = [
             'error' => false,
@@ -375,6 +421,9 @@ class DestinasiController extends Controller
         return response()->json(array_merge($response, $additional), 200);
     }
 
+    /**
+     * Return a formatted error response.
+     */
     private function errorResponse($message, $code = 200) {
         return response()->json([
             'error' => true,
@@ -383,6 +432,9 @@ class DestinasiController extends Controller
         ], $code);
     }
 
+    /**
+     * Get destinations with availability information.
+     */
     private function getDestinasiWithAvailability() {
         return Destinasi::select(['*',
             DB::raw('
@@ -392,6 +444,9 @@ class DestinasiController extends Controller
         ]);
     }
 
+    /**
+     * Apply filters to the query.
+     */
     private function applyFilters($query, $request) {
         $dari = !empty($request->get('dari')) ? $request->get('dari') : '';
         $tujuan = !empty($request->get('tujuan')) ? $request->get('tujuan') : '';
