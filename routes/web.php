@@ -35,11 +35,9 @@ Route::middleware('auth')->group(function () {
 });
 
 
-// Route::middleware('set_role:driver')->group(function () {
-//     Route::get('/driver/dashboard', function () {
-//         return view('app.driver.dashboard');
-//     })->name('driver.dashboard');
-// });
+Route::get('/driver/dashboard', function () {
+        return view('app.driver.dashboard');
+})->name('driver.dashboard');
 
 Route::get('/driver/register-driver', function () {
     return view('auth.register-driver');
