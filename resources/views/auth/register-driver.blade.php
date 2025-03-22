@@ -15,6 +15,7 @@
             height: 250px;
             cursor: pointer;
             position: relative;
+            background-color: #F2F5F7;
         }
 
         .drag-drop img {

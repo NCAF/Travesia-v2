@@ -45,6 +45,12 @@ Route::get('/driver/register-driver', function () {
 Route::get('/driver/destination-list', function () {
     return view('app.driver.destination-list');
 });
+Route::get('/driver/add-destination', function () {
+    return view('app.driver.add-destination');
+});
+Route::get('/driver/detail-destination', function () {
+    return view('app.driver.detail-destination');
+});
 
 // Authentication Routes
 Route::get('/register', [AuthController::class, 'register'])->name('register');
