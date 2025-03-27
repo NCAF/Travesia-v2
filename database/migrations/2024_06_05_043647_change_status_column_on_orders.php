@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
@@ -11,9 +12,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('orders', function (Blueprint $table) {
-            $table->enum('status', ['order', 'paid', 'finished', 'canceled'])->default('order')->change();
-        });
+        DB::statement("ALTER TABLE orders MODIFY status ENUM('order', 'paid', 'finished', 'canceled') DEFAULT 'order'");
     }
 
     /**
@@ -21,8 +20,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('orders', function (Blueprint $table) {
-            $table->enum('status', ['order', 'finished'])->default('order')->change();
-        });
+        DB::statement("ALTER TABLE orders MODIFY status ENUM('order', 'finished') DEFAULT 'order'");
     }
 };
