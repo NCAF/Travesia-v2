@@ -9,15 +9,11 @@ class ChangeStatusColumnAndAddTriggerInDestinasiTable extends Migration
 {
     public function up()
     {
-        Schema::table('destinasi', function (Blueprint $table) {
-            $table->enum('status', ['orderable', 'traveling', 'arrived'])->default('orderable')->change();
-        });
+        DB::statement("ALTER TABLE destinasi MODIFY status ENUM('orderable', 'traveling', 'arrived') DEFAULT 'orderable'");
     }
 
     public function down()
     {
-        Schema::table('destinasi', function (Blueprint $table) {
-            $table->string('status')->default('orderable')->change();
-        });
+        DB::statement("ALTER TABLE destinasi MODIFY status VARCHAR(255) DEFAULT 'orderable'");
     }
 }
