@@ -35,22 +35,26 @@ Route::middleware('auth')->group(function () {
 });
 
 
-Route::get('/driver/dashboard', function () {
-        return view('app.driver.dashboard');
-})->name('driver.dashboard');
 
-Route::get('/driver/register-driver', function () {
-    return view('auth.register-driver');
+
+Route::middleware('auth.driver')->prefix('driver')->group(function () {
+
+    Route::get('/driver/destination-list', function () {
+        return view('app.driver.destination-list');
+    })->name('driver.destination-list');
+
+    Route::get('/driver/add-destination', function () {
+        return view('app.driver.add-destination');
+    })->name('driver.add-destination');
+
+    Route::get('/driver/detail-destination', function () {
+        return view('app.driver.detail-destination');
+    })->name('driver.detail-destination');
 });
-Route::get('/driver/destination-list', function () {
-    return view('app.driver.destination-list');
-});
-Route::get('/driver/add-destination', function () {
-    return view('app.driver.add-destination');
-});
-Route::get('/driver/detail-destination', function () {
-    return view('app.driver.detail-destination');
-});
+
+// Keep the driver registration routes outside the auth middleware
+Route::get('/driver/register-driver', [AuthController::class, 'registerDriver'])->name('driver.register-driver');
+Route::post('/driver/register-driver', [AuthController::class, 'registerDriverPost'])->name('driver.register-driver.post');
 
 // Authentication Routes
 Route::get('/register', [AuthController::class, 'register'])->name('register');
@@ -62,20 +66,20 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
 
 
-Route::get('/home', function () {
-    $user = FuncController::get_profile_without_abort();
-    return view('home')->with('user', $user);
-})->name('home');
+// Route::get('/home', function () {
+//     $user = FuncController::get_profile_without_abort();
+//     return view('home')->with('user', $user);
+// })->name('home');
 
-Route::get('/destinasi', function () {
-    $user = FuncController::get_profile_without_abort();
-    return view('destinasi')->with('user', $user);
-})->name('destinasi');
+// Route::get('/destinasi', function () {
+//     $user = FuncController::get_profile_without_abort();
+//     return view('destinasi')->with('user', $user);
+// })->name('destinasi');
 
-Route::get('/destinasi/{destinasi}', function () {
-    $user = FuncController::get_profile_without_abort();
-    return view('detail-destinasi')->with('user', $user);
-})->name('destinasi.detail');
+// Route::get('/destinasi/{destinasi}', function () {
+//     $user = FuncController::get_profile_without_abort();
+//     return view('detail-destinasi')->with('user', $user);
+// })->name('destinasi.detail');
 
 
 Route::middleware('set_role:user')->group(function () {
