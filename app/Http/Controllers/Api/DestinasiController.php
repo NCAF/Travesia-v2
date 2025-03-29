@@ -34,6 +34,7 @@ class DestinasiController extends Controller
     public function createPost(Request $request){
         $validator = Validator::make($request->all(), [
             'travel_name' => 'required',
+            'start_date' => 'required|date',
             'check_point' => 'required',
             'end_point' => 'required',
             'vehicle_type' => 'required',
@@ -50,9 +51,44 @@ class DestinasiController extends Controller
 
         $image = new ImageController();
 
+        // Untuk driver, gunakan driver_id dari session
+        if (session()->has('is_driver') && session()->get('is_driver')) {
+            $user_id = session()->get('driver_id');
+            
+            if (!$user_id) {
+                \Log::error('Driver ID null dari session', [
+                    'session' => session()->all()
+                ]);
+                
+                return redirect()->route('driver.add-destination')
+                    ->with('error', 'Gagal mendapatkan ID driver. Silahkan login ulang.')
+                    ->withInput();
+            }
+        } else {
+            // Untuk user biasa (jika dibutuhkan)
+            if (!Auth::check()) {
+                return redirect()->route('login')->with('error', 'Anda harus login terlebih dahulu.');
+            }
+            
+            $user_id = Auth::id();
+            
+            if (!$user_id) {
+                \Log::error('User ID null saat membuat destinasi', [
+                    'user' => Auth::user(),
+                    'is_logged_in' => Auth::check()
+                ]);
+                
+                return redirect()->route('driver.add-destination')
+                    ->with('error', 'Gagal mendapatkan ID pengguna. Silahkan login ulang.')
+                    ->withInput();
+            }
+        }
+
         $destinasi = new Destinasi();
-        $destinasi->user_id = Auth::id();
+        $destinasi->user_id = $user_id;
+        $destinasi->kode_destinasi = 'DST-' . strtoupper(Str::random(8));
         $destinasi->travel_name = $request->travel_name;
+        $destinasi->start_date = $request->start_date;
         $destinasi->check_point = $request->check_point;
         $destinasi->end_point = $request->end_point;
         $destinasi->vehicle_type = $request->vehicle_type;
@@ -61,6 +97,7 @@ class DestinasiController extends Controller
         $destinasi->price = $request->price;
         $destinasi->deskripsi = $request->deskripsi;
         $destinasi->foto = $image->uploadImage($request->file('foto'));
+        $destinasi->status = Destinasi::STATUS_ORDERABLE;
         $destinasi->save();
 
         return redirect()->route('driver.destination-list')->with('success', 'Berhasil menambahkan destinasi.');

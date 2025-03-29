@@ -160,12 +160,33 @@
                 </div>
                 @endif
                 
+                <!-- Error Message -->
+                @if(session('error'))
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    {{ session('error') }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                @endif
+                
+                <!-- Validation Errors -->
+                @if ($errors->any())
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <strong>Please fix the following errors:</strong>
+                    <ul>
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                @endif
+                
                 <div class="row mb-4">
                 <div class="col-md-6 mt-3">
                     <h4>Add Destination</h4>
                 </div>
                 <div class="col-md-6 text-end mt-3">
-                    <button class="custom-btn btn fw-bold">Add Destination</button>
+                    <button type="submit" class="custom-btn btn fw-bold">Add Destination</button>
                 </div>
             </div>
             <div class="row">
@@ -178,8 +199,8 @@
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="travel_name" class="form-label">Travel Name</label>
-                                <input type="text" id="travel_name" class="custom-input form-control"
-                                    placeholder="Travel Company" name="travel_name">
+                                <input type="text" id="travel_name" class="custom-input form-control @error('travel_name') is-invalid @enderror"
+                                    placeholder="Travel Company" name="travel_name" value="{{ old('travel_name') }}">
                                 @error('travel_name')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
@@ -188,8 +209,8 @@
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="start_date" class="form-label">Start Date</label>
-                                <input type="date" id="start_date" class="custom-input form-control"
-                                    placeholder="Travel Company Name" name="start_date">
+                                <input type="date" id="start_date" class="custom-input form-control @error('start_date') is-invalid @enderror"
+                                    placeholder="Travel Company Name" name="start_date" value="{{ old('start_date') }}">
                                 @error('start_date')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
@@ -199,7 +220,7 @@
                     <div class="row">
                         <div class="col-md-12">
                             <label for="description" class="form-label">Description</label>
-                            <textarea class="custom-input form-control" name="deskripsi" id="description" cols="30" rows="5"></textarea>
+                            <textarea class="custom-input form-control @error('deskripsi') is-invalid @enderror" name="deskripsi" id="description" cols="30" rows="5">{{ old('deskripsi') }}</textarea>
                             @error('deskripsi')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
@@ -209,8 +230,8 @@
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="check_point" class="form-label">Check Point</label>
-                                <input type="text" id="check_point" class="custom-input form-control"
-                                    placeholder="Travel Company Name" name="check_point">
+                                <input type="text" id="check_point" class="custom-input form-control @error('check_point') is-invalid @enderror"
+                                    placeholder="Travel Company Name" name="check_point" value="{{ old('check_point') }}">
                                 @error('check_point')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
@@ -219,8 +240,8 @@
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="end_point" class="form-label">End Point</label>
-                                <input type="text" id="end_point" class="custom-input form-control"
-                                    placeholder="Travel Company Name" name="end_point">
+                                <input type="text" id="end_point" class="custom-input form-control @error('end_point') is-invalid @enderror"
+                                    placeholder="Travel Company Name" name="end_point" value="{{ old('end_point') }}">
                                 @error('end_point')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
@@ -235,8 +256,8 @@
                         <div class="col-md-12">
                             <div class="mb-3">
                                 <label for="venicle_type" class="form-label">Venicle Type</label>
-                                <input type="text" id="venicle_type" class="custom-input form-control"
-                                    placeholder="Nissa" name="vehicle_type">
+                                <input type="text" id="venicle_type" class="custom-input form-control @error('vehicle_type') is-invalid @enderror"
+                                    placeholder="Nissa" name="vehicle_type" value="{{ old('vehicle_type') }}">
                                 @error('vehicle_type')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
@@ -247,8 +268,8 @@
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="plate_number" class="form-label">Plate Number</label>
-                                <input type="text" id="plate_number" class="custom-input form-control"
-                                    placeholder="G4NTENG" name="plate_number">
+                                <input type="text" id="plate_number" class="custom-input form-control @error('plate_number') is-invalid @enderror"
+                                    placeholder="G4NTENG" name="plate_number" value="{{ old('plate_number') }}">
                                 @error('plate_number')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
@@ -257,8 +278,8 @@
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="seats" class="form-label">Number of Seats</label>
-                                <input type="text" id="seats" class="custom-input form-control" placeholder="80"
-                                    name="number_of_seats">
+                                <input type="text" id="seats" class="custom-input form-control @error('number_of_seats') is-invalid @enderror" placeholder="80"
+                                    name="number_of_seats" value="{{ old('number_of_seats') }}">
                                 @error('number_of_seats')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
@@ -268,17 +289,20 @@
                 </div>
                 <div class="col-md-4">
                     <div class="mb-3">
-                        <label for="image_destination" class="form-label">Upload Image</label>
-                        <div class="drag-drop dropzone">
-                            <input type="file" id="image_destination" class="form-control" name="foto">
+                        <label for="foto" class="form-label">Upload Image</label>
+                        <div class="drag-drop dropzone @error('foto') border-danger @enderror">
+                            <input type="file" id="foto" class="form-control @error('foto') is-invalid @enderror" name="foto" accept="image/*">
                             <img src="{{ asset('icons/icon-cloud.svg') }}" alt="Upload Icon">
                             <p class="custom-txt">Click to Upload or Drag and Drop</p>
+                            @error('foto')
+                                <div class="text-danger mt-2">{{ $message }}</div>
+                            @enderror
                         </div>
                     </div>
                     <div class="mb-3">
                         <label for="price" class="form-label">Price</label>
-                        <input type="text" id="price" class="custom-input form-control" placeholder="IDR"
-                            name="price">
+                        <input type="text" id="price" class="custom-input form-control @error('price') is-invalid @enderror" placeholder="IDR"
+                            name="price" value="{{ old('price') }}">
                             @error('price')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
@@ -289,88 +313,4 @@
     </div>
 </form>
 @endsection
-@push('scripts')
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            let dropzones = document.querySelectorAll(".dropzone");
 
-            dropzones.forEach((dropzone) => {
-                let fileInput = dropzone.querySelector("input[type='file']");
-                let isProcessing = false; // Mencegah trigger dua kali
-
-                // Klik area dropzone untuk membuka file picker
-                dropzone.addEventListener("click", function() {
-                    fileInput.click();
-                });
-
-                // Saat file dipilih
-                fileInput.addEventListener("change", function() {
-                    if (fileInput.files.length > 0 && !isProcessing) {
-                        isProcessing = true;
-                        processFile(fileInput.files[0], dropzone, () => {
-                            isProcessing = false;
-                        });
-                    }
-                });
-
-                // Drag & Drop Handling
-                dropzone.addEventListener("dragover", function(e) {
-                    e.preventDefault();
-                    dropzone.style.borderColor = "#3C8EE1";
-                });
-
-                dropzone.addEventListener("dragleave", function() {
-                    dropzone.style.borderColor = "#ccc";
-                });
-
-                dropzone.addEventListener("drop", function(e) {
-                    e.preventDefault();
-                    let file = e.dataTransfer.files[0];
-                    fileInput.files = e.dataTransfer.files;
-                    if (!isProcessing) {
-                        isProcessing = true;
-                        processFile(file, dropzone, () => {
-                            isProcessing = false;
-                        });
-                    }
-                });
-
-                // Fungsi untuk memproses dan menampilkan gambar
-                function processFile(file, dropzoneElement, callback) {
-                    let reader = new FileReader();
-                    let img = new Image();
-
-                    reader.onload = function(e) {
-                        img.src = e.target.result;
-
-                        img.onload = function() {
-                            let canvas = document.createElement("canvas");
-                            let ctx = canvas.getContext("2d");
-
-                            canvas.width = 300;
-                            canvas.height = 200;
-
-                            let scale = Math.min(canvas.width / img.width, canvas.height / img
-                                .height);
-                            let newWidth = img.width * scale;
-                            let newHeight = img.height * scale;
-
-                            let xOffset = (canvas.width - newWidth) / 2;
-                            let yOffset = (canvas.height - newHeight) / 2;
-
-                            ctx.drawImage(img, xOffset, yOffset, newWidth, newHeight);
-
-                            dropzoneElement.innerHTML = `<img src="${canvas.toDataURL("image/png")}" 
-                        style="width:100%; height:auto; border-radius:10px;">`;
-
-                            fileInput.value = ""; // Reset input file setelah upload
-                            if (callback) callback();
-                        };
-                    };
-
-                    reader.readAsDataURL(file);
-                }
-            });
-        });
-    </script>
-@endpush

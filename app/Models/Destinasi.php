@@ -12,10 +12,24 @@ class Destinasi extends Model
     use HasFactory;
 
     protected $table = 'destinasi';
+    
+    // Enum values for status
+    const STATUS_ORDERABLE = 'orderable';
+    const STATUS_TRAVELING = 'traveling';
+    const STATUS_ARRIVED = 'arrived';
+    
+    // Valid status values
+    public static $statusValues = [
+        self::STATUS_ORDERABLE,
+        self::STATUS_TRAVELING,
+        self::STATUS_ARRIVED
+    ];
+    
     protected $fillable = [
         'user_id',
         'kode_destinasi',
         'travel_name',
+        'start_date',
         'check_point',
         'end_point',
         'vehicle_type',

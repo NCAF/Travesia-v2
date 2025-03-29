@@ -129,7 +129,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
             </div>
             <div class="offcanvas-body">
-                <a href="#" class="mt-5 active"><img src="{{ asset('icons/icon-destination.svg') }}"
+                <a href="{{ route('driver.destination-list') }}" class="mt-5 active"><img src="{{ asset('icons/icon-destination.svg') }}"
                         alt="Icon Destination"> Destination</a>
                 <a href="#"><img src="{{ asset('icons/icon-order.svg') }}" alt="Icon Order"> Order</a>
                 <a href="#"><img src="{{ asset('icons/icon-chat.svg') }}" alt="Icon Chat"> Chat</a>
@@ -139,7 +139,7 @@
         <!-- Sidebar untuk Desktop -->
         <div class="sidebar d-none d-md-block">
             <img src="{{ asset('img/travesia.png') }}" alt="Logo Travesia" width="156" height="33">
-            <a href="#" class="mt-5 active"><img src="{{ asset('icons/icon-destination.svg') }}"
+            <a href="{{ route('driver.destination-list') }}" class="mt-5 active"><img src="{{ asset('icons/icon-destination.svg') }}"
                     alt="Icon Destination"> Destination</a>
             <a href="#"><img src="{{ asset('icons/icon-order.svg') }}" alt="Icon Order"> Order</a>
             <a href="#"><img src="{{ asset('icons/icon-chat.svg') }}" alt="Icon Chat"> Chat</a>
@@ -169,14 +169,14 @@
                             <div class="mb-3">
                                 <label for="travel_name" class="form-label">Travel Name</label>
                                 <input type="text" id="travel_name" class="custom-input form-control"
-                                    placeholder="Travel Company travel_name" name="travel_name" value="Madenpa 80">
+                                    placeholder="Travel Company travel_name" name="travel_name" value="{{ $destinasi->travel_name }}">
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="start_date" class="form-label">Start Date</label>
-                                <input type="datetime-local" id="start_date" class="custom-input form-control"
-                                    name="start_date" value="2025-02-13T12:30">
+                                <input type="text" id="start_date" class="custom-input form-control"
+                                    name="start_date" value="{{ $destinasi->start_date }}">
 
                             </div>
                         </div>
@@ -184,7 +184,7 @@
                     <div class="row">
                         <div class="col-md-12">
                             <label for="description" class="form-label">Description</label>
-                            <textarea class="custom-input form-control" name="description" id="description" cols="30" rows="5">Mantap</textarea>
+                            <textarea class="custom-input form-control" name="description" id="description" cols="30" rows="5">{{ $destinasi->deskripsi }}</textarea>
                         </div>
                     </div>
                     <div class="row">
@@ -192,14 +192,14 @@
                             <div class="mb-3">
                                 <label for="check_point" class="form-label">Check Point</label>
                                 <input type="text" id="check_point" class="custom-input form-control"
-                                    placeholder="Travel Company Name" name="check_point" value="Malang">
+                                    placeholder="Travel Company Name" name="check_point" value="{{ $destinasi->check_point }}">
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="end_point" class="form-label">End Point</label>
                                 <input type="text" id="end_point" class="custom-input form-control"
-                                    placeholder="Travel Company Name" name="end_point" value="Denpasar">
+                                    placeholder="Travel Company Name" name="end_point" value="{{ $destinasi->end_point }}">
                             </div>
                         </div>
                     </div>
@@ -212,7 +212,7 @@
                             <div class="mb-3">
                                 <label for="venicle_type" class="form-label">Venicle Type</label>
                                 <input type="text" id="venicle_type" class="custom-input form-control"
-                                    placeholder="Nissa" name="venicle_type" value="Avanza Putih">
+                                    placeholder="Nissa" name="venicle_type" value="{{ $destinasi->vehicle_type }}">
                             </div>
                         </div>
                     </div>
@@ -221,14 +221,14 @@
                             <div class="mb-3">
                                 <label for="plate_number" class="form-label">Plate Number</label>
                                 <input type="text" id="plate_number" class="custom-input form-control"
-                                    placeholder="G4NTENG" name="plate_number" value="N 124 DK">
+                                    placeholder="G4NTENG" name="plate_number" value="{{ $destinasi->plate_number }}">
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="seats" class="form-label">Number of Seats</label>
                                 <input type="number" id="seats" class="custom-input form-control" placeholder="80"
-                                    name="seats" value="6">
+                                    name="seats" value="{{ $destinasi->number_of_seats }}">
                             </div>
                         </div>
                     </div>
@@ -245,7 +245,7 @@
                     <div class="mb-3">
                         <label for="price" class="form-label">Price</label>
                         <input type="text" id="price" class="custom-input form-control" placeholder="IDR"
-                            name="price" value="500.000">
+                            name="price" value="{{ $destinasi->price }}">
                     </div>
                 </div>
             </div>
