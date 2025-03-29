@@ -122,6 +122,15 @@
         <div class="main-content container">
             <h1>Destination</h1>
             <p class="custom-txt">Manage your travel destinations easily.</p>
+            
+            <!-- Success Message -->
+            @if(session('success'))
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                {{ session('success') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            @endif
+            
             <div class="row mb-4">
                 <div class="col-md-4 col-8 mt-3">
                     <div class="input-group">
@@ -135,42 +144,51 @@
                     <button class="custom-btn btn fw-bold">Search</button>
                 </div>
                 <div class="col-md-6 text-end mt-3">
-                    <button class="custom-btn-outline btn">Add Destination</button>
+                    <a href="{{ route('driver.add-destination') }}" class="custom-btn-outline btn">Add Destination</a>
                 </div>
             </div>
             <div class="row">
-                <div class="col-md-12 col-12 mb-2">
-                    <div class="custom-card p-4">
-                        <div class="row align-items-center">
-                            <div class="col-md-8">
-                                <h4>Madenpa 80</h4>
-                                <div class="row">
-                                    <div class="col-md">
-                                        <p>Malang</p>
-                                        <p class="custom-txt">12.30 WIB</p>
-                                    </div>
-                                    <div class="col-md align-content-center">
-                                        <img src="{{ asset('icons/icon-line-left.svg') }}" alt="line left">
-                                    </div>
-                                    <div class="col-md align-content-center">
-                                        <p class="custom-txt"> 11j 32m </p>
-                                    </div>
-                                    <div class="col-md align-content-center">
-                                        <img src="{{ asset('icons/icon-line-right.svg') }}" alt="line right">
-                                    </div>
-                                    <div class="col-md">
-                                        <p>Denpasar</p>
-                                        <p class="custom-txt">01.30 WIB</p>
+                @if(count($destinasi) > 0)
+                    @foreach($destinasi as $item)
+                    <div class="col-md-12 col-12 mb-2">
+                        <div class="custom-card p-4">
+                            <div class="row align-items-center">
+                                <div class="col-md-8">
+                                    <h4>{{ $item->travel_name }}</h4>
+                                    <div class="row">
+                                        <div class="col-md">
+                                            <p>{{ $item->check_point }}</p>
+                                            <p class="custom-txt">Starting Point</p>
+                                        </div>
+                                        <div class="col-md align-content-center">
+                                            <img src="{{ asset('icons/icon-line-left.svg') }}" alt="line left">
+                                        </div>
+                                        <div class="col-md align-content-center">
+                                            <p class="custom-txt">{{ $item->vehicle_type }} - {{ $item->plate_number }}</p>
+                                        </div>
+                                        <div class="col-md align-content-center">
+                                            <img src="{{ asset('icons/icon-line-right.svg') }}" alt="line right">
+                                        </div>
+                                        <div class="col-md">
+                                            <p>{{ $item->end_point }}</p>
+                                            <p class="custom-txt">Destination</p>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="col-md-4 text-end">
-                                <button class="status-btn">Completed</button>
-                                <h4>IDR 300.000 <span class="custom-txt fs-6">/Kursi</span></h4>
+                                <div class="col-md-4 text-end">
+                                    <button class="status-btn">Available</button>
+                                    <h4>IDR <span class="custom-txt fs-6">{{ number_format($item->price, 0, ',', '.') }}</span></h4>
+                                    <a href="{{ route('driver.detail-destination', ['id' => $item->id]) }}" class="btn custom-btn-outline mt-2">View Details</a>
+                                </div>
                             </div>
                         </div>
                     </div>
+                    @endforeach
+                @else
+                <div class="col-md-12 text-center">
+                    <p>No destinations found. <a href="{{ route('driver.add-destination') }}">Add your first destination</a></p>
                 </div>
+                @endif
             </div>
         </div>
     </div>

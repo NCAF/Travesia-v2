@@ -128,7 +128,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
             </div>
             <div class="offcanvas-body">
-                <a href="#" class="mt-5 active"><img src="{{ asset('icons/icon-destination.svg') }}"
+                <a href="{{ route('driver.destination-list') }}" class="mt-5 active"><img src="{{ asset('icons/icon-destination.svg') }}"
                         alt="Icon Destination"> Destination</a>
                 <a href="#"><img src="{{ asset('icons/icon-order.svg') }}" alt="Icon Order"> Order</a>
                 <a href="#"><img src="{{ asset('icons/icon-chat.svg') }}" alt="Icon Chat"> Chat</a>
@@ -138,17 +138,29 @@
         <!-- Sidebar untuk Desktop -->
         <div class="sidebar d-none d-md-block">
             <img src="{{ asset('img/travesia.png') }}" alt="Logo Travesia" width="156" height="33">
-            <a href="#" class="mt-5 active"><img src="{{ asset('icons/icon-destination.svg') }}"
+            <a href="{{ route('driver.destination-list') }}" class="mt-5 active"><img src="{{ asset('icons/icon-destination.svg') }}"
                     alt="Icon Destination"> Destination</a>
             <a href="#"><img src="{{ asset('icons/icon-order.svg') }}" alt="Icon Order"> Order</a>
             <a href="#"><img src="{{ asset('icons/icon-chat.svg') }}" alt="Icon Chat"> Chat</a>
         </div>
 
         <!-- Main Content -->
-        <div class="main-content container">
-            <h1>Destination</h1>
-            <p class="custom-txt">Manage your travel destinations easily.</p>
-            <div class="row mb-4">
+         <form action="{{ route('driver.add-destination.post') }}" method="POST" enctype="multipart/form-data">
+            @csrf
+            @method('POST')
+            <div class="main-content container">
+                <h1>Destination</h1>
+                <p class="custom-txt">Manage your travel destinations easily.</p>
+                
+                <!-- Success Message -->
+                @if(session('success'))
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    {{ session('success') }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                @endif
+                
+                <div class="row mb-4">
                 <div class="col-md-6 mt-3">
                     <h4>Add Destination</h4>
                 </div>
@@ -167,7 +179,10 @@
                             <div class="mb-3">
                                 <label for="travel_name" class="form-label">Travel Name</label>
                                 <input type="text" id="travel_name" class="custom-input form-control"
-                                    placeholder="Travel Company travel_name" name="travel_name">
+                                    placeholder="Travel Company" name="travel_name">
+                                @error('travel_name')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
                             </div>
                         </div>
                         <div class="col-md-6">
@@ -175,13 +190,19 @@
                                 <label for="start_date" class="form-label">Start Date</label>
                                 <input type="date" id="start_date" class="custom-input form-control"
                                     placeholder="Travel Company Name" name="start_date">
+                                @error('start_date')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
                             </div>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-md-12">
                             <label for="description" class="form-label">Description</label>
-                            <textarea class="custom-input form-control" name="description" id="description" cols="30" rows="5"></textarea>
+                            <textarea class="custom-input form-control" name="deskripsi" id="description" cols="30" rows="5"></textarea>
+                            @error('deskripsi')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
                         </div>
                     </div>
                     <div class="row">
@@ -190,6 +211,9 @@
                                 <label for="check_point" class="form-label">Check Point</label>
                                 <input type="text" id="check_point" class="custom-input form-control"
                                     placeholder="Travel Company Name" name="check_point">
+                                @error('check_point')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
                             </div>
                         </div>
                         <div class="col-md-6">
@@ -197,6 +221,9 @@
                                 <label for="end_point" class="form-label">End Point</label>
                                 <input type="text" id="end_point" class="custom-input form-control"
                                     placeholder="Travel Company Name" name="end_point">
+                                @error('end_point')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
                             </div>
                         </div>
                     </div>
@@ -209,7 +236,10 @@
                             <div class="mb-3">
                                 <label for="venicle_type" class="form-label">Venicle Type</label>
                                 <input type="text" id="venicle_type" class="custom-input form-control"
-                                    placeholder="Nissa" name="venicle_type">
+                                    placeholder="Nissa" name="vehicle_type">
+                                @error('vehicle_type')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
                             </div>
                         </div>
                     </div>
@@ -219,13 +249,19 @@
                                 <label for="plate_number" class="form-label">Plate Number</label>
                                 <input type="text" id="plate_number" class="custom-input form-control"
                                     placeholder="G4NTENG" name="plate_number">
+                                @error('plate_number')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="seats" class="form-label">Number of Seats</label>
                                 <input type="text" id="seats" class="custom-input form-control" placeholder="80"
-                                    name="seats">
+                                    name="number_of_seats">
+                                @error('number_of_seats')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
                             </div>
                         </div>
                     </div>
@@ -234,7 +270,7 @@
                     <div class="mb-3">
                         <label for="image_destination" class="form-label">Upload Image</label>
                         <div class="drag-drop dropzone">
-                            <input type="file" id="image_destination" class="form-control">
+                            <input type="file" id="image_destination" class="form-control" name="foto">
                             <img src="{{ asset('icons/icon-cloud.svg') }}" alt="Upload Icon">
                             <p class="custom-txt">Click to Upload or Drag and Drop</p>
                         </div>
@@ -243,11 +279,15 @@
                         <label for="price" class="form-label">Price</label>
                         <input type="text" id="price" class="custom-input form-control" placeholder="IDR"
                             name="price">
+                            @error('price')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
                     </div>
                 </div>
             </div>
         </div>
     </div>
+</form>
 @endsection
 @push('scripts')
     <script>
