@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\FuncController;
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\DestinasiController;
 
 /*
 |--------------------------------------------------------------------------
@@ -39,17 +40,14 @@ Route::middleware('auth')->group(function () {
 
 Route::middleware('auth.driver')->prefix('driver')->group(function () {
 
-    Route::get('/driver/destination-list', function () {
-        return view('app.driver.destination-list');
-    })->name('driver.destination-list');
+    Route::get('/destination-list', [DestinasiController::class, 'destinationList'])->name('driver.destination-list');
 
-    Route::get('/driver/add-destination', function () {
-        return view('app.driver.add-destination');
-    })->name('driver.add-destination');
+    Route::get('/add-destination', [DestinasiController::class, 'create'])->name('driver.add-destination');
 
-    Route::get('/driver/detail-destination', function () {
-        return view('app.driver.detail-destination');
-    })->name('driver.detail-destination');
+    Route::get('/detail-destination', [DestinasiController::class, 'show'])->name('driver.detail-destination');
+    
+    // Crud Destination
+    Route::post('/add-destination', [DestinasiController::class, 'createPost'])->name('driver.add-destination.post');
 });
 
 // Keep the driver registration routes outside the auth middleware
@@ -64,22 +62,6 @@ Route::get('/login', [AuthController::class, 'login'])->name('login');
 Route::post('/login', [AuthController::class, 'loginPost'])->name('login');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
-
-
-// Route::get('/home', function () {
-//     $user = FuncController::get_profile_without_abort();
-//     return view('home')->with('user', $user);
-// })->name('home');
-
-// Route::get('/destinasi', function () {
-//     $user = FuncController::get_profile_without_abort();
-//     return view('destinasi')->with('user', $user);
-// })->name('destinasi');
-
-// Route::get('/destinasi/{destinasi}', function () {
-//     $user = FuncController::get_profile_without_abort();
-//     return view('detail-destinasi')->with('user', $user);
-// })->name('destinasi.detail');
 
 
 Route::middleware('set_role:user')->group(function () {
