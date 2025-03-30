@@ -132,20 +132,22 @@
             @endif
             
             <div class="row mb-4">
-                <div class="col-md-4 col-8 mt-3">
-                    <div class="input-group">
-                        <span class="input-group-text custom-input">
-                            <img src="{{ asset('icons/icon-search.svg') }}" alt="icon search">
-                        </span>
-                        <input type="text" class="form-control custom-input" placeholder="Location Name">
+                <form action="{{ route('driver.search-destination') }}" method="GET" class="row">
+                    <div class="col-md-4 col-8 mt-3">
+                        <div class="input-group">
+                            <span class="input-group-text custom-input">
+                                <img src="{{ asset('icons/icon-search.svg') }}" alt="icon search">
+                            </span>
+                            <input type="text" class="form-control custom-input" placeholder="Location Name" name="search">
+                        </div>
                     </div>
-                </div>
-                <div class="col-md-2 col-4 mt-3">
-                    <button class="custom-btn btn fw-bold">Search</button>
-                </div>
-                <div class="col-md-6 text-end mt-3">
-                    <a href="{{ route('driver.add-destination') }}" class="custom-btn-outline btn">Add Destination</a>
-                </div>
+                    <div class="col-md-2 col-4 mt-3">
+                        <button type="submit" class="custom-btn btn fw-bold">Search</button>
+                    </div>
+                    <div class="col-md-6 text-end mt-3">
+                        <a href="{{ route('driver.add-destination') }}" class="custom-btn-outline btn">Add Destination</a>
+                    </div>
+                </form>
             </div>
             <div class="row">
                 @if(count($destinasi) > 0)

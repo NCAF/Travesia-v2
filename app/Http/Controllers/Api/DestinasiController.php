@@ -110,6 +110,16 @@ class DestinasiController extends Controller
         return view('app.driver.detail-destination', compact('destinasi'));
     }
 
+    // Search Destinasi
+    public function search(Request $request){
+        $search = $request->input('search');
+        $destinasi = Destinasi::where('travel_name', 'like', '%' . $search . '%')
+                             ->orWhere('check_point', 'like', '%' . $search . '%')
+                             ->orWhere('end_point', 'like', '%' . $search . '%')
+                             ->get();
+        return view('app.driver.destination-list', compact('destinasi'));
+    }
+
     // Delete Destinasi
 
     public function delete(Request $request){
