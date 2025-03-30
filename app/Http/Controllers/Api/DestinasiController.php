@@ -109,4 +109,13 @@ class DestinasiController extends Controller
         $destinasi = Destinasi::findOrFail($id);
         return view('app.driver.detail-destination', compact('destinasi'));
     }
+
+    // Delete Destinasi
+
+    public function delete(Request $request){
+        $id = $request->query('id');
+        $destinasi = Destinasi::findOrFail($id);
+        $destinasi->delete();
+        return redirect()->route('driver.destination-list')->with('success', 'Berhasil menghapus destinasi.');
+    }
 }

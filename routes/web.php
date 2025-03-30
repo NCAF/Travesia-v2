@@ -48,6 +48,8 @@ Route::middleware('auth.driver')->prefix('driver')->group(function () {
     
     // Crud Destination
     Route::post('/add-destination', [DestinasiController::class, 'createPost'])->name('driver.add-destination.post');
+
+    Route::get('/delete-destination', [DestinasiController::class, 'delete'])->name('driver.delete-destination');
 });
 
 // Keep the driver registration routes outside the auth middleware

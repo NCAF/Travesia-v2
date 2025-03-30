@@ -1,6 +1,10 @@
 @extends('layouts.app')
 @section('title', 'Detail Destination Page')
 
+@php
+    use Illuminate\Support\Str;
+@endphp
+
 @push('styles')
     <style>
         .sidebar {
@@ -154,8 +158,8 @@
                     <h4>Detail Destination</h4>
                 </div>
                 <div class="col-md-4 text-end mt-3">
-                    <button class="custom-btn-outline btn fw-bold">Delete</button>
-                    <button class="custom-btn btn fw-bold">Edit Destination</button>
+                    <a href="{{ route('driver.delete-destination', ['id' => $destinasi->id]) }}" class="custom-btn-outline btn fw-bold">Delete</a>
+                    <a href="" class="custom-btn btn fw-bold">Edit Destination</a>
                 </div>
             </div>
             <div class="row">
@@ -238,7 +242,7 @@
                         <label for="image_destination" class="form-label">Upload Image</label>
                         <div class="drag-drop dropzone">
                             <input type="file" id="image_destination" class="form-control">
-                            <img src="{{ asset('img/detail-destination.png') }}" alt="Avanza Putih" height="200"
+                            <img src="{{ asset('images/' . $destinasi->foto) }}" alt="Avanza Putih" height="200"
                                 width="300">
                         </div>
                     </div>
