@@ -49,6 +49,9 @@ Route::middleware('auth.driver')->prefix('driver')->group(function () {
     // Crud Destination
     Route::post('/add-destination', [DestinasiController::class, 'createPost'])->name('driver.add-destination.post');
 
+    Route::get('/update-destination', [DestinasiController::class, 'update'])->name('driver.update-destination');
+    Route::post('/update-destination', [DestinasiController::class, 'updatePost'])->name('driver.update-destination.post');
+
     Route::get('/delete-destination', [DestinasiController::class, 'delete'])->name('driver.delete-destination');
     
     Route::get('/search-destination', [DestinasiController::class, 'search'])->name('driver.search-destination');

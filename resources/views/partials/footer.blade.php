@@ -20,8 +20,8 @@
         </div>
         <div class="col-md-2">
             <p class="fw-bold">Other</p>
-            @if (Auth::check() && Auth::user()->role === 'driver')
-                <a href="{{ route('driver.register-driver') }}" class="custom-registerDriver">Register as a agent</a>
+            @if (!Auth::check())
+                <a href="{{ route('driver.register-driver') }}" class="custom-registerUser">Register as a driver</a>
             @endif
         </div>
     </div>

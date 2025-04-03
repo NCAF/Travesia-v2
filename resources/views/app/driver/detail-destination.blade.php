@@ -159,7 +159,7 @@
                 </div>
                 <div class="col-md-4 text-end mt-3">
                     <a href="{{ route('driver.delete-destination', ['id' => $destinasi->id]) }}" class="custom-btn-outline btn fw-bold">Delete</a>
-                    <a href="" class="custom-btn btn fw-bold">Edit Destination</a>
+                    <a href="{{ route('driver.update-destination', ['id' => $destinasi->id]) }}" class="custom-btn btn fw-bold">Edit Destination</a>
                 </div>
             </div>
             <div class="row">

@@ -120,6 +120,18 @@ class DestinasiController extends Controller
         return view('app.driver.destination-list', compact('destinasi'));
     }
 
+    // Update Destinasi
+    public function update(){
+        return view('app.driver.update-destination');
+    }
+
+    public function updatePost(Request $request){
+        $id = $request->query('id');
+        $destinasi = Destinasi::findOrFail($id);
+        $destinasi->update($request->all());
+        return redirect()->route('driver.destination-list')->with('success', 'Berhasil mengupdate destinasi.');
+    }
+
     // Delete Destinasi
 
     public function delete(Request $request){
