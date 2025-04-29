@@ -23,9 +23,9 @@ Route::get('/', function () {
 Route::middleware('auth')->group(function () {
     // route for user
     Route::get('/user/dashboard', function () {
-            return view('app.user.dashboard');
+        return view('app.user.dashboard');
     })->name('user.dashboard');
-    
+
     Route::get('/user/destination-list', function () {
         return view('app.user.destination-list');
     })->name('user.destination-list');
@@ -35,7 +35,17 @@ Route::middleware('auth')->group(function () {
     })->name('user.detail-destination');
 });
 
+Route::get('/user/passenger-details', function () {
+    return view('app.user.passenger-details');
+});
 
+Route::get('/user/select-payment-method', function () {
+    return view('app.user.select-payment-method');
+});
+
+Route::get('/user/payment', function () {
+    return view('app.user.payment');
+});
 
 
 Route::middleware('auth.driver')->prefix('driver')->group(function () {
@@ -45,7 +55,7 @@ Route::middleware('auth.driver')->prefix('driver')->group(function () {
     Route::get('/add-destination', [DestinasiController::class, 'create'])->name('driver.add-destination');
 
     Route::get('/detail-destination', [DestinasiController::class, 'show'])->name('driver.detail-destination');
-    
+
     // Crud Destination
     Route::post('/add-destination', [DestinasiController::class, 'createPost'])->name('driver.add-destination.post');
 
@@ -53,7 +63,7 @@ Route::middleware('auth.driver')->prefix('driver')->group(function () {
     Route::post('/update-destination', [DestinasiController::class, 'updatePost'])->name('driver.update-destination.post');
 
     Route::get('/delete-destination', [DestinasiController::class, 'delete'])->name('driver.delete-destination');
-    
+
     Route::get('/search-destination', [DestinasiController::class, 'search'])->name('driver.search-destination');
 });
 
