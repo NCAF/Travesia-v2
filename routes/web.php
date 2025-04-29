@@ -47,6 +47,14 @@ Route::get('/user/payment', function () {
     return view('app.user.payment');
 });
 
+Route::get('/user/order-detail', function () {
+    return view('app.user.order-detail');
+});
+
+Route::get('/user/order-lists', function () {
+    return view('app.user.order-lists');
+});
+
 
 Route::middleware('auth.driver')->prefix('driver')->group(function () {
 
