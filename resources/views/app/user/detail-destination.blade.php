@@ -2,14 +2,14 @@
 @section('title', 'Detail Destination Page')
 @section('content')
     <div class="container">
-        <img src="{{ asset('img/detail-destination.png') }}" alt="detail destination" class="img-fluid">
+        <img src="{{ asset('images/' . $destinasi->foto) }}" alt="detail destination" class="img-fluid">
         <div class="row mt-4">
             <div class="col-md-6">
-                <h1>Madenpa 80</h1>
-                <p class="custom-txt">Sunday, 17 Maret 2025</p>
+                <h1>{{ $destinasi->travel_name }}</h1>
+                <p class="custom-txt">{{ $destinasi->start_date }}</p>
             </div>
             <div class="col-md-6 text-end">
-                <h4>IDR 300.000 <span class="custom-txt fs-6">/kursi</span></h4>
+                <h4>IDR {{ $destinasi->price }} <span class="custom-txt fs-6">/{{ $destinasi->number_of_seats }}</span></h4>
                 <button class="custom-btn btn fw-bold">Booking Now</button>
             </div>
         </div>
@@ -19,11 +19,8 @@
                     <img src="{{ asset('icons/icon-description.svg') }}" alt="icon description" class="icon">
                     <h4 class="ms-2">Description</h4>
                     <hr class="flex-grow-1 ms-2">
-
                 </div>
-                <p class="custom-txt mt-3">Lorem ipsum dolor sit amet consectetur. Nisi neque fringilla sollicitudin
-                    maecenas. Vulputate sit id et maecenas nulla pulvinar feugiat. Fermentum commodo ac amet lacus
-                    feugiat risus in. Neque nisl auctor justo mauris.</p>
+                <p class="custom-txt mt-3">{{ $destinasi->deskripsi }}</p>
             </div>
             <div class="col-md-4">
                 <div class="d-flex align-items-center">
@@ -34,13 +31,13 @@
                 <div class="row mt-3">
                     <div class="col-md">
                         <p class="custom-txt">Venicle Type</p>
-                        <p>Avanza Putih</p>
+                        <p>{{ $destinasi->vehicle_type }}</p>
                         <p class="custom-txt">Number of Seats</p>
-                        <p>8 Seats</p>
+                        <p>{{ $destinasi->number_of_seats }}</p>
                     </div>
                     <div class="col-md">
                         <p class="custom-txt">Plate Number</p>
-                        <p>12 NSI4 23</p>
+                        <p>{{ $destinasi->plate_number }}</p>
                     </div>
                 </div>
             </div>
@@ -54,8 +51,8 @@
                 </div>
                 <div class="row">
                     <div class="col-md-2">
-                        <p>Malang</p>
-                        <p class="custom-txt">12.30 WIB</p>
+                        <p>{{ $destinasi->start_point }}</p>
+                        <p class="custom-txt">{{ $destinasi->start_date }}</p>
                     </div>
                     <div class="col-md-2 align-content-center">
                         <img src="{{ asset('icons/icon-line-left.svg') }}" alt="line left">
@@ -67,8 +64,8 @@
                         <img src="{{ asset('icons/icon-line-right.svg') }}" alt="line right">
                     </div>
                     <div class="col-md-2">
-                        <p>Denpasar</p>
-                        <p class="custom-txt">01.30 WIB</p>
+                        <p>{{ $destinasi->end_point }}</p>
+                        <p class="custom-txt">{{ $destinasi->end_date }}</p>
                     </div>
                 </div>
             </div>

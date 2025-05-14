@@ -82,71 +82,48 @@
     <div class="container">
         <h1 class="mt-5">Result</h1>
         <div class="row">
-            <div class="col-md-12 col-12 mb-2">
-                <div class="custom-card p-4">
-                    <div class="row align-items-center">
+            @if(!empty($destinasi) && count($destinasi) > 0)
+                @foreach($destinasi as $item)
+                    <div class="col-md-12 col-12 mb-2">
+                        <div class="custom-card p-4">
+                            <div class="row align-items-center">
                         <div class="col-md-6">
-                            <h4>Madenpa 80</h4>
+                            <h4>{{ $item->travel_name }}</h4>
                             <div class="row">
                                 <div class="col-md">
-                                    <p>Malang</p>
-                                    <p class="custom-txt">12.30 WIB</p>
+                                    <p>{{ $item->check_point }}</p>
+                                    <p class="custom-txt">{{ $item->start_date }}</p>
                                 </div>
                                 <div class="col-md align-content-center">
                                     <img src="{{ asset('icons/icon-line-left.svg') }}" alt="line left">
                                 </div>
                                 <div class="col-md align-content-center">
-                                    <p class="custom-txt"> 11j 32m </p>
+                                    <p class="custom-txt"> {{ $item->vehicle_type }} - {{ $item->plate_number }} </p>
                                 </div>
                                 <div class="col-md align-content-center">
                                     <img src="{{ asset('icons/icon-line-right.svg') }}" alt="line right">
                                 </div>
                                 <div class="col-md">
-                                    <p>Denpasar</p>
-                                    <p class="custom-txt">01.30 WIB</p>
+                                    <p>{{ $item->end_point }}</p>
+                                    <p class="custom-txt">{{ $item->end_date }}</p>
                                 </div>
                             </div>
                         </div>
                         <div class="col-md-6 text-end">
-                            <button class="status-btn">Available</button>
-                            <h4>IDR 300.000 <span class="custom-txt fs-6">/seat</span></h4>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-12 col-12 mb-2">
-                <div class="custom-card p-4">
-                    <div class="row align-items-center">
-                        <div class="col-md-6">
-                            <h4>Madenpa 80</h4>
-                            <div class="row">
-                                <div class="col-md">
-                                    <p>Malang</p>
-                                    <p class="custom-txt">12.30 WIB</p>
-                                </div>
-                                <div class="col-md align-content-center">
-                                    <img src="{{ asset('icons/icon-line-left.svg') }}" alt="line left">
-                                </div>
-                                <div class="col-md align-content-center">
-                                    <p class="custom-txt"> 11j 32m </p>
-                                </div>
-                                <div class="col-md align-content-center">
-                                    <img src="{{ asset('icons/icon-line-right.svg') }}" alt="line right">
-                                </div>
-                                <div class="col-md">
-                                    <p>Denpasar</p>
-                                    <p class="custom-txt">01.30 WIB</p>
-                                </div>
+                            <!-- <button class="status-btn">Available</button> -->
+                            <a href="{{ route('user.detail-destination', $item->id) }}" class="status-btn">Available</a>
+                            <h4>IDR {{ $item->price }} <span class="custom-txt fs-6">/{{ $item->number_of_seats }}</span></h4>
                             </div>
                         </div>
-                        <div class="col-md-6 text-end">
-                            <button class="status-btn">Available</button>
-                            <h4>IDR 300.000 <span class="custom-txt fs-6">/seat</span></h4>
-                        </div>
+                    </div>
+                @endforeach
+            @else
+                <div class="col-md-12 col-12 mb-2">
+                    <div class="custom-card p-4">
+                        <h4>No data found</h4>
                     </div>
                 </div>
+            @endif
             </div>
         </div>
         @include('partials.footer')

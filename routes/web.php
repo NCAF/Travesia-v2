@@ -26,13 +26,11 @@ Route::middleware('auth')->group(function () {
         return view('app.user.dashboard');
     })->name('user.dashboard');
 
-    Route::get('/user/destination-list', function () {
-        return view('app.user.destination-list');
-    })->name('user.destination-list');
+    Route::get('/user/destination-list', [DestinasiController::class, 'userDestinationList'])->name('user.destination-list');
 
-    Route::get('/user/detail-destination', function () {
-        return view('app.user.detail-destination');
-    })->name('user.detail-destination');
+    Route::get('/user/detail-destination/{id}', [DestinasiController::class, 'detailDestination'])->name('user.detail-destination');
+
+    // Route::get('/user/booking-destination', [DestinasiController::class, 'userBookingDestination'])->name('user.booking-destination');
 });
 
 Route::get('/user/passenger-details', function () {

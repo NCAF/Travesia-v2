@@ -120,15 +120,62 @@ class DestinasiController extends Controller
         return view('app.driver.destination-list', compact('destinasi'));
     }
 
-    // Update Destinasi
-    public function update(){
-        return view('app.driver.update-destination');
+    // Update Destinasi (re-added)
+    public function update(Request $request){
+        $id = $request->query('id');
+        $destinasi = \App\Models\Destinasi::findOrFail($id);
+        return view('app.driver.update-destination', compact('destinasi'));
     }
 
     public function updatePost(Request $request){
         $id = $request->query('id');
         $destinasi = Destinasi::findOrFail($id);
-        $destinasi->update($request->all());
+        
+        // Validate the request data
+        $validator = Validator::make($request->all(), [
+            'travel_name' => 'required',
+            'start_date' => 'required|date',
+            'check_point' => 'required',
+            'end_point' => 'required',
+            'vehicle_type' => 'required',
+            'plate_number' => 'required',
+            'number_of_seats' => 'required',
+            'price' => 'required',
+            'deskripsi' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->route('driver.update-destination', ['id' => $id])
+                ->withErrors($validator)
+                ->withInput();
+        }
+
+        // Update the fields
+        $destinasi->travel_name = $request->travel_name;
+        $destinasi->start_date = $request->start_date;
+        $destinasi->check_point = $request->check_point;
+        $destinasi->end_point = $request->end_point;
+        $destinasi->vehicle_type = $request->vehicle_type;
+        $destinasi->plate_number = $request->plate_number;
+        $destinasi->number_of_seats = $request->number_of_seats;
+        $destinasi->price = $request->price;
+        $destinasi->deskripsi = $request->deskripsi;
+        
+        // Handle optional photo update
+        if($request->hasFile('foto')) {
+            $image = new ImageController();
+            // Remove old image if it exists
+            if($destinasi->foto) {
+                $oldImagePath = public_path($destinasi->foto);
+                if(File::exists($oldImagePath)) {
+                    File::delete($oldImagePath);
+                }
+            }
+            $destinasi->foto = $image->uploadImage($request->file('foto'));
+        }
+        
+        $destinasi->save();
+        
         return redirect()->route('driver.destination-list')->with('success', 'Berhasil mengupdate destinasi.');
     }
 
@@ -139,5 +186,16 @@ class DestinasiController extends Controller
         $destinasi = Destinasi::findOrFail($id);
         $destinasi->delete();
         return redirect()->route('driver.destination-list')->with('success', 'Berhasil menghapus destinasi.');
+    }
+
+    // User Destination List
+    public function userDestinationList() {
+        $destinasi = Destinasi::all();
+        return view('app.user.destination-list', compact('destinasi'));
+    }
+
+    public function detailDestination($id) {
+        $destinasi = Destinasi::findOrFail($id);
+        return view('app.user.detail-destination', compact('destinasi'));
     }
 }
