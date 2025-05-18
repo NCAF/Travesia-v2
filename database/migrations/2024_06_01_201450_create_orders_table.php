@@ -16,10 +16,7 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained('users')->onUpdate('cascade')->onDelete('cascade');
             $table->foreignId('destinasi_id')->constrained('destinasi')->onUpdate('cascade')->onDelete('cascade');
             $table->integer('jumlah_kursi');
-            $table->integer('jumlah_bagasi');
-            $table->decimal('subtotal', 10, 2);
-            $table->decimal('harga_kursi', 10, 2);
-            $table->decimal('harga_bagasi', 10, 2);
+            $table->decimal('harga_kursi', 10, 2)->nullable();
             $table->enum('status', ['order', 'finished']);
             $table->timestamps();
         });

@@ -118,36 +118,76 @@ class OrderController extends Controller
         ], 200);
     }
 
+    public function orderLists(string $id)
+    {
+        $order = Order::find($id);
+        return view('app.user.order-list', compact('order'));
+    }
+
     /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
     {
-        //
-    }
+        $validated = $request->validate([
+            'destinasi_id' => 'required|exists:destinasi,id',
+            'jumlah_kursi' => 'required|integer|min:1',
+            'harga_kursi' => 'required|numeric',
+        ]);
 
-    public function finished(string $id)
-    {
-        $order = Order::find($id);
+        $order = Order::create([
+            'user_id' => Auth::id(),
+            'destinasi_id' => $validated['destinasi_id'],
+            'jumlah_kursi' => $validated['jumlah_kursi'],
+            'harga_kursi' => $validated['harga_kursi'],
+            'status' => 'order',
+            'order_id' => Str::uuid(),
+        ]);
 
-        if (!$order) {
-            return response()->json([
-                'error' => true,
-                'message' => 'Pesanan tidak ditemukan.',
-                'data' => null
-            ], 200);
+
+        if ($order) {
+            if ($request->wantsJson()) {
+                return response()->json([
+                    'error' => false,
+                    'message' => 'Booking berhasil!',
+                    'data' => $order
+                ]);
+            }
+            return redirect()->route('user.order-lists')->with('success', 'Booking berhasil!');
+        } else {
+            if ($request->wantsJson()) {
+                return response()->json([
+                    'error' => true,
+                    'message' => 'Booking gagal!',
+                    'data' => null
+                ]);
+            }
+            return back()->with('error', 'Booking gagal!');
         }
-
-        $order->update([
-            'status' => 'finished',
-        ]);
-
-        return response()->json([
-            'error' => false,
-            'message' => 'Pesanan berhasil diselesaikan.',
-            'data' => null
-        ]);
     }
+
+    // public function finished(string $id)
+    // {
+    //     $order = Order::find($id);
+
+    //     if (!$order) {
+    //         return response()->json([
+    //             'error' => true,
+    //             'message' => 'Pesanan tidak ditemukan.',
+    //             'data' => null
+    //         ], 200);
+    //     }
+
+    //     $order->update([
+    //         'status' => 'finished',
+    //     ]);
+
+    //     return response()->json([
+    //         'error' => false,
+    //         'message' => 'Pesanan berhasil diselesaikan.',
+    //         'data' => null
+    //     ]);
+    // }
 
     public function pay(Request $request)
     {
@@ -183,5 +223,24 @@ class OrderController extends Controller
             'message' => 'Order berhasil diupdate.',
             'data' => null
         ]);
+    }
+
+    public function userOrderList()
+    {
+        $userId = auth()->id();
+        \Log::info('User ID for order list:', ['id' => $userId]);
+        $orders = Order::select([
+            'orders.*',
+            'destinasi.travel_name',
+            'destinasi.check_point',
+            'destinasi.end_point',
+            'destinasi.start_date',
+            'destinasi.price'
+        ])->join('destinasi', 'destinasi.id', 'orders.destinasi_id')
+        ->where('orders.user_id', $userId)
+        ->orderBy('orders.created_at', 'desc')
+        ->get();
+        \Log::info('Orders fetched:', $orders->toArray());
+        return view('app.user.order-lists', compact('orders'));
     }
 }

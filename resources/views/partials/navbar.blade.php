@@ -10,6 +10,7 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse justify-content-center" id="navbarSupportedContent">
+                @if (Auth::check())
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item">
                         <a class="nav-link" href="{{ route('user.destination-list') }}">Destination</a>
@@ -18,9 +19,10 @@
                         <a class="nav-link" href="#">Chat</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">My Ticket</a>
+                        <a class="nav-link" href="{{ route('user.order-lists') }}">My Ticket</a>
                     </li>
                 </ul>
+                @endif
                 {{-- ini untuk guest --}}
                 @if (!Auth::check())
                     <a href="{{ route('login') }}" class="custom-btn-outline btn fw-bold mx-2 d-none d-lg-inline">Sign In</a>

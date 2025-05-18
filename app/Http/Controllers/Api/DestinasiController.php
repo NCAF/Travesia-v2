@@ -120,6 +120,15 @@ class DestinasiController extends Controller
         return view('app.driver.destination-list', compact('destinasi'));
     }
 
+    public function searchUser(Request $request){
+        $search = $request->input('search');
+        $destinasi = Destinasi::where('travel_name', 'like', '%' . $search . '%')
+                             ->orWhere('check_point', 'like', '%' . $search . '%')
+                             ->orWhere('end_point', 'like', '%' . $search . '%')
+                             ->get();
+        return view('app.user.destination-list', compact('destinasi'));
+    }
+
     // Update Destinasi (re-added)
     public function update(Request $request){
         $id = $request->query('id');
@@ -197,5 +206,10 @@ class DestinasiController extends Controller
     public function detailDestination($id) {
         $destinasi = Destinasi::findOrFail($id);
         return view('app.user.detail-destination', compact('destinasi'));
+    }
+
+    public function passengerDetails($id) {
+        $destinasi = Destinasi::findOrFail($id);
+        return view('app.user.passenger-details', compact('destinasi'));
     }
 }

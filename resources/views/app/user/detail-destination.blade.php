@@ -9,8 +9,8 @@
                 <p class="custom-txt">{{ $destinasi->start_date }}</p>
             </div>
             <div class="col-md-6 text-end">
-                <h4>IDR {{ $destinasi->price }} <span class="custom-txt fs-6">/{{ $destinasi->number_of_seats }}</span></h4>
-                <button class="custom-btn btn fw-bold">Booking Now</button>
+                <h4>IDR {{ number_format($destinasi->price, 0, ',', '.') }} <span class="custom-txt fs-6">/{{ $destinasi->number_of_seats }}</span></h4>
+                <a href="{{ route('user.passenger-details', $destinasi->id) }}" class="custom-btn btn fw-bold">Booking Now</a>
             </div>
         </div>
         <div class="row mt-4">
@@ -51,7 +51,7 @@
                 </div>
                 <div class="row">
                     <div class="col-md-2">
-                        <p>{{ $destinasi->start_point }}</p>
+                        <p>{{ $destinasi->check_point }}</p>
                         <p class="custom-txt">{{ $destinasi->start_date }}</p>
                     </div>
                     <div class="col-md-2 align-content-center">

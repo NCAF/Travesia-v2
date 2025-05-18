@@ -112,11 +112,11 @@
                         <div class="col-md-6 text-end">
                             <!-- <button class="status-btn">Available</button> -->
                             <a href="{{ route('user.detail-destination', $item->id) }}" class="status-btn">Available</a>
-                            <h4>IDR {{ $item->price }} <span class="custom-txt fs-6">/{{ $item->number_of_seats }}</span></h4>
-                            </div>
+                            <h4>IDR {{ number_format($item->price, 0, ',', '.') }} <span class="custom-txt fs-6">/{{ $item->number_of_seats }}</span></h4>
                         </div>
                     </div>
-                @endforeach
+                </div>
+            @endforeach
             @else
                 <div class="col-md-12 col-12 mb-2">
                     <div class="custom-card p-4">

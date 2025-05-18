@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\FuncController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\DestinasiController;
+use App\Models\Destinasi;
 
 /*
 |--------------------------------------------------------------------------
@@ -30,11 +31,28 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/user/detail-destination/{id}', [DestinasiController::class, 'detailDestination'])->name('user.detail-destination');
 
-    // Route::get('/user/booking-destination', [DestinasiController::class, 'userBookingDestination'])->name('user.booking-destination');
-});
 
-Route::get('/user/passenger-details', function () {
-    return view('app.user.passenger-details');
+    Route::get('/user/search-destination', [DestinasiController::class, 'searchUser'])->name('user.search-destination');
+
+    Route::get('/user/passenger-details/{id}', function ($id) {
+    $destinasi = Destinasi::findOrFail($id);
+    return view('app.user.passenger-details', compact('destinasi'));
+})->name('user.passenger-details');
+
+    Route::post('/orders', [\App\Http\Controllers\Api\OrderController::class, 'store'])->name('orders.store');
+
+    Route::get('/user/order-lists', [\App\Http\Controllers\Api\OrderController::class, 'userOrderList'])->name('user.order-lists');
+
+    Route::get('/user/order-detail', function () {
+        return view('app.user.order-detail');
+    });
+
+    // Route::get('/user/order-lists', function () {
+    //     return view('app.user.order-lists');
+    // });
+    
+    Route::get('/user/order-detail/{id}', [\App\Http\Controllers\Api\OrderController::class, 'orderList'])->name('user.order-detail');
+
 });
 
 Route::get('/user/select-payment-method', function () {
@@ -49,9 +67,9 @@ Route::get('/user/order-detail', function () {
     return view('app.user.order-detail');
 });
 
-Route::get('/user/order-lists', function () {
-    return view('app.user.order-lists');
-});
+// Route::get('/user/order-lists', function () {
+//     return view('app.user.order-lists');
+// });
 
 
 Route::middleware('auth.driver')->prefix('driver')->group(function () {
