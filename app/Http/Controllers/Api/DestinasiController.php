@@ -129,6 +129,15 @@ class DestinasiController extends Controller
         return view('app.user.destination-list', compact('destinasi'));
     }
 
+    public function searchUserNotLogin(Request $request){
+        $search = $request->input('search');
+        $destinasi = Destinasi::where('travel_name', 'like', '%' . $search . '%')
+                             ->orWhere('check_point', 'like', '%' . $search . '%')
+                             ->orWhere('end_point', 'like', '%' . $search . '%')
+                             ->get();
+        return view('app.user.destination-list', compact('destinasi'));
+    }
+
     // Update Destinasi (re-added)
     public function update(Request $request){
         $id = $request->query('id');
@@ -199,6 +208,12 @@ class DestinasiController extends Controller
 
     // User Destination List
     public function userDestinationList() {
+        $destinasi = Destinasi::all();
+        return view('app.user.destination-list', compact('destinasi'));
+    }
+
+    // Destination list for not login
+    public function destinationListNotLogin() {
         $destinasi = Destinasi::all();
         return view('app.user.destination-list', compact('destinasi'));
     }

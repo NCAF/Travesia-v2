@@ -46,14 +46,14 @@ Route::middleware('auth')->group(function () {
     Route::get('/user/order-detail', function () {
         return view('app.user.order-detail');
     });
-
-    // Route::get('/user/order-lists', function () {
-    //     return view('app.user.order-lists');
-    // });
     
     Route::get('/user/order-detail/{id}', [\App\Http\Controllers\Api\OrderController::class, 'orderList'])->name('user.order-detail');
 
 });
+
+Route::get('/user/destination-list-not-login', [DestinasiController::class, 'destinationListNotLogin'])->name('user.destination-list-not-login');
+
+Route::get('/user/search-destination-not-login', [DestinasiController::class, 'searchUserNotLogin'])->name('user.search-destination-not-login');
 
 Route::get('/user/select-payment-method', function () {
     return view('app.user.select-payment-method');
@@ -66,10 +66,6 @@ Route::get('/user/payment', function () {
 Route::get('/user/order-detail', function () {
     return view('app.user.order-detail');
 });
-
-// Route::get('/user/order-lists', function () {
-//     return view('app.user.order-lists');
-// });
 
 
 Route::middleware('auth.driver')->prefix('driver')->group(function () {

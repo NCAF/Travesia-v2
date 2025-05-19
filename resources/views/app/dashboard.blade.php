@@ -46,7 +46,7 @@
         <div class="position-relative">
             <img src="{{ asset('img/hero-section.png') }}" alt="hero section" class="img-fluid w-100 rounded">
             <div class="search-container bg-white shadow-lg">
-                <form action="#" method="GET" class="row g-3 align-items-center">
+                <form action="{{ route('user.search-destination-not-login') }}" method="GET" class="row g-3 align-items-center">
                     <div class="col-md-3 col-12">
                         <label class="form-label">
                             <img src="{{ asset('icons/icon-location.svg') }}" alt="Icon Location"> Origin
