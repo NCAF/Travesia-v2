@@ -83,29 +83,29 @@
                 <div class="col-md-4 order-md-1 order-1">
                     <div class="mb-3">
                         <label for="name" class="form-label">Name</label>
-                        <input type="text" id="name" name="name" class="custom-input form-control" placeholder="your name">
+                        <input type="text" id="name" name="name" class="custom-input form-control @error('name') is-invalid @enderror" placeholder="your name" value="{{ old('name') }}">
                         @error('name')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
                     <div class="mb-3">
                         <label for="email" class="form-label">Email</label>
-                        <input type="email" id="email" name="email" class="custom-input form-control"
-                            placeholder="your_email@example.com">
+                        <input type="email" id="email" name="email" class="custom-input form-control @error('email') is-invalid @enderror"
+                            placeholder="your_email@example.com" value="{{ old('email') }}">
                         @error('email')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
                     <div class="mb-3">
                         <label for="password" class="form-label">Password</label>
-                        <input type="password" id="password" name="password" class="custom-input form-control" placeholder="********">
+                        <input type="password" id="password" name="password" class="custom-input form-control @error('password') is-invalid @enderror" placeholder="********">
                         @error('password')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
                     <div class="mb-3">
                         <label for="confirm-password" class="form-label">Confirm Password</label>
-                        <input type="password" id="password_confirmation" name="password_confirmation" class="custom-input form-control"
+                        <input type="password" id="password_confirmation" name="password_confirmation" class="custom-input form-control @error('password_confirmation') is-invalid @enderror"
                             placeholder="********">
                         @error('password_confirmation')
                             <div class="invalid-feedback">{{ $message }}</div>
@@ -115,7 +115,7 @@
                     <!-- Input File (Licensi) Dipindah ke Sini di Mobile -->
                     <div class="mb-3 d-md-none">
                         <label for="image" class="form-label">Licensi</label>
-                        <div class="drag-drop dropzone">
+                        <div class="drag-drop dropzone @error('image') border-danger @enderror">
                             <input type="file" id="image" name="image" class="form-control">
                             <img src="{{ asset('icons/icon-cloud.svg') }}" alt="Upload Icon">
                             <p class="custom-txt">Click to Upload or Drag and Drop</p>
@@ -133,7 +133,7 @@
                 <div class="col-md-4 order-md-2 order-2 d-none d-md-block">
                     <div class="mb-3">
                         <label for="image-desktop" class="form-label">Licensi</label>
-                        <div class="drag-drop dropzone">
+                        <div class="drag-drop dropzone @error('image') border-danger @enderror">
                             <input type="file" id="image-desktop" name="image" class="form-control">
                             <img src="{{ asset('icons/icon-cloud.svg') }}" alt="Upload Icon">
                             <p class="custom-txt">Click to Upload or Drag and Drop</p>

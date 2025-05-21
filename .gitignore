@@ -27,3 +27,6 @@ Homestead.json
 
 # Ignore dump.php
 dump.php
+
+# cursor ignore
+.cursorignore
