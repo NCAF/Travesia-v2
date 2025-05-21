@@ -84,7 +84,7 @@
         <div class="row">
             @if(!empty($destinasi) && count($destinasi) > 0)
                 @foreach($destinasi as $item)
-                    <div class="col-md-12 col-12 mb-2">
+                    <div class="col-md-12 col-12 mb-2 mt-3">
                         <div class="custom-card p-4">
                             <div class="row align-items-center">
                         <div class="col-md-6">

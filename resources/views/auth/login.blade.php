@@ -24,12 +24,11 @@
                 <p class="fw-normal custom-txt">Sign in to continue your adventure.</p>
             </div>
         </div>
-        
         <div class="row justify-content-center">
-            <div class="col-md-4">
-                @if(session('success'))
+            <div class="col-md-8">
+            @if(session('success'))
                 <div class="row justify-content-center">
-                    <div class="col-md-4">
+                    <div class="col-md-6">
                         <div class="alert alert-success">
                             {{ session('success') }}
                         </div>
@@ -45,6 +44,11 @@
                     </div>
                 </div>
                 @endif
+            </div>
+        </div>
+      
+        <div class="row justify-content-center">
+            <div class="col-md-4">
                 <form method="POST" action="{{ route('login') }}" id="loginForm">
                     @csrf
                     <div class="mb-3">
