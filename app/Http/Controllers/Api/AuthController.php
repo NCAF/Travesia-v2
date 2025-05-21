@@ -132,12 +132,27 @@ class AuthController extends Controller
     }
 
     public function registerDriverPost(Request $request){
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:driver',
-            'password' => 'required|string|min:8|confirmed',
+        $validator = Validator::make($request->all(), [
+            'name' => ['required', 'string', 'max:255', 'regex:/^[a-zA-Z\s\'\-\.]+$/'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:driver', 'regex:/^[^0-9]+@/'],
+            'password' => ['required', 'string', 'min:8', 'max:100', 'same:password_confirmation', 'regex:/^\S*$/'],
+            'password_confirmation' => ['required', 'string', 'min:8', 'max:100', 'regex:/^\S*$/'],
             'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+        ], [
+            'name.regex' => 'The name field must contain only letters and spaces.',
+            'email.email' => 'The email must be a valid email address including @ symbol.',
+            'email.regex' => 'The email address cannot contain numbers before the @ symbol.',
+            'password.same' => 'The password and confirmation password do not match.',
+            'password.max' => 'The password may not be greater than 100 characters.',
+            'password.regex' => 'The password cannot contain spaces.',
+            'password_confirmation.regex' => 'The password confirmation cannot contain spaces.',
         ]);
+
+        if ($validator->fails()) {
+            return redirect()->route('driver.register-driver')
+                ->withErrors($validator)
+                ->withInput();
+        }
 
         $driver = new Driver([
             'role' => 'driver',
