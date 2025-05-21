@@ -24,9 +24,50 @@ class AuthController extends Controller
 
     public function registerPost(Request $request){
         $validator = Validator::make($request->all(), [
-            'nama' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:8|confirmed',
+            'nama' => [
+                'required',
+                'string',
+                'min:3',
+                'max:100',
+                'regex:/[a-zA-Z]/', 
+            ],
+            'email' => [
+                'required',
+                'string',
+                'email',
+                'min:3',
+                'max:200',
+                'unique:users',
+                'regex:/^[a-zA-Z].*@/', // Must start with a letter
+                'regex:/^[a-zA-Z0-9_.]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/', // No special characters except _.
+            ],
+            'password' => [
+                'required',
+                'string',
+                'min:8',
+                'max:100',
+                'confirmed',
+                'regex:/[a-zA-Z]/', // Must contain at least one letter
+                'regex:/^[^\s]+$/', // No spaces allowed
+            ],
+        ], [
+            'nama.required' => 'Nama lengkap harus diisi',
+            'nama.min' => 'Nama minimal 3 karakter',
+            'nama.max' => 'Nama maksimal 100 karakter',
+            'nama.regex' => 'Nama harus mengandung huruf, tidak boleh angka saja',
+            
+            'email.required' => 'Email harus diisi',
+            'email.email' => 'Format email tidak valid',
+            'email.unique' => 'Email sudah digunakan',
+            'email.min' => 'Email minimal 3 karakter',
+            'email.max' => 'Email maksimal 200 karakter',
+            'email.regex' => 'Email harus mengandung huruf dan tidak boleh ada karakter khusus',
+            
+            'password.required' => 'Password harus diisi',
+            'password.min' => 'Password minimal 8 karakter',
+            'password.max' => 'Password maksimal 100 karakter',
+            'password.confirmed' => 'Konfirmasi password tidak cocok',
+            'password.regex' => 'Password harus mengandung huruf dan tidak boleh ada spasi',
         ]);
     
         if ($validator->fails()) {

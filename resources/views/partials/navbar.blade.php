@@ -49,20 +49,20 @@
                     </li>
                 </ul> --}}
 
-                @if (Auth::check())
+                <!-- @if (Auth::check())
                     @if (Auth::user()->role == 'user')
                         <a href="{{ route('user.dashboard') }}" class="btn btn-primary">Dashboard</a>
                     @elseif (Auth::user()->role == 'driver')
                         <a href="{{ route('driver.dashboard') }}" class="btn btn-primary">Dashboard</a>
                     @endif
-                @endif
+                @endif -->
 
                 {{-- ini untuk user/driver --}}
                 <!-- User Profile Desktop -->
                  @if (Auth::check())
                     <div class="d-none d-lg-flex align-items-center dropdown">
                         <div class="text-end me-2">
-                            <span class="fw-bold d-block">{{ Auth::user()->nama }}</span>
+                            <span class="fw-bold d-block">{{ Str::limit(Auth::user()->nama, 8) }}</span>
                             <span class="text-muted small">{{ Auth::user()->role }}</span>
                         </div>
 

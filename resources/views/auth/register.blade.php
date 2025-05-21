@@ -5,6 +5,11 @@
         span {
             color: #3C8EE1;
         }
+        .validation-help {
+            font-size: 12px;
+            color: #6c757d;
+            margin-top: 2px;
+        }
     </style>
 @endpush
 @section('content')
@@ -72,7 +77,6 @@
                         <label for="password" class="form-label">Password</label>
                         <input type="password" id="password" name="password" 
                             class="custom-input form-control @error('password') is-invalid @enderror" placeholder="********">
-                        <small class="form-text text-muted">Minimal 8 karakter, harus mengandung huruf besar, huruf kecil, dan angka</small>
                         @error('password')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
