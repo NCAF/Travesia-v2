@@ -70,6 +70,17 @@
             color: white !important;
         }
 
+        .destination-card {
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+
+        .destination-card:hover .custom-card {
+            transform: translateY(-2px);
+            transition: all 0.3s ease;
+            color: #3C8EE1;
+        }
 
         /* RESPONSIVE */
         @media (max-width: 768px) {
@@ -153,37 +164,36 @@
                 @if(count($destinasi) > 0)
                     @foreach($destinasi as $item)
                     <div class="col-md-12 col-12 mb-2">
-                        <div class="custom-card p-4">
-                            <div class="row align-items-center">
-                                <div class="col-md-8">
-                                    <h4>{{ $item->travel_name }}</h4>
-                                    <div class="row">
-                                        <div class="col-md">
-                                            <p>{{ $item->check_point }}</p>
-                                            <p class="custom-txt">Starting Point</p>
-                                        </div>
-                                        <div class="col-md align-content-center">
-                                            <img src="{{ asset('icons/icon-line-left.svg') }}" alt="line left">
-                                        </div>
-                                        <div class="col-md align-content-center">
-                                            <p class="custom-txt">{{ $item->vehicle_type }} - {{ $item->plate_number }}</p>
-                                        </div>
-                                        <div class="col-md align-content-center">
-                                            <img src="{{ asset('icons/icon-line-right.svg') }}" alt="line right">
-                                        </div>
-                                        <div class="col-md">
-                                            <p>{{ $item->end_point }}</p>
-                                            <p class="custom-txt">Destination</p>
+                        <a href="{{ route('driver.detail-destination', ['id' => $item->id]) }}" class="destination-card">
+                            <div class="custom-card p-4">
+                                <div class="row align-items-center">
+                                    <div class="col-md-8">
+                                        <h4>{{ $item->travel_name }}</h4>
+                                        <div class="row">
+                                            <div class="col-md">
+                                                <p>{{ $item->check_point }}</p>
+                                            </div>
+                                            <div class="col-md align-content-center">
+                                                <img src="{{ asset('icons/icon-line-left.svg') }}" alt="line left">
+                                            </div>
+                                            <div class="col-md align-content-center">
+                                                <p class="custom-txt">{{ $item->vehicle_type }} - {{ $item->plate_number }}</p>
+                                            </div>
+                                            <div class="col-md align-content-center">
+                                                <img src="{{ asset('icons/icon-line-right.svg') }}" alt="line right">
+                                            </div>
+                                            <div class="col-md">
+                                                <p>{{ $item->end_point }}</p>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="col-md-4 text-end">
-                                    <button class="status-btn">Available</button>
-                                    <h4>IDR <span class="custom-txt fs-6">{{ number_format($item->price, 0, ',', '.') }}</span></h4>
-                                    <a href="{{ route('driver.detail-destination', ['id' => $item->id]) }}" class="btn custom-btn-outline mt-2">View Details</a>
+                                    <div class="col-md-4 text-end">
+                                        <button class="status-btn">Available</button>
+                                        <h4>IDR {{ number_format($item->price, 0, ',', '.') }} <span class="custom-txt fs-6">/kursi</span></h4>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
+                        </a>
                     </div>
                     @endforeach
                 @else

@@ -71,13 +71,11 @@ Route::get('/user/order-detail', function () {
 Route::middleware('auth.driver')->prefix('driver')->group(function () {
 
     Route::get('/destination-list', [DestinasiController::class, 'destinationList'])->name('driver.destination-list');
-
-    Route::get('/add-destination', [DestinasiController::class, 'create'])->name('driver.add-destination');
-
     Route::get('/detail-destination', [DestinasiController::class, 'show'])->name('driver.detail-destination');
 
-    // Crud Destination
+    Route::get('/add-destination', [DestinasiController::class, 'create'])->name('driver.add-destination');
     Route::post('/add-destination', [DestinasiController::class, 'createPost'])->name('driver.add-destination.post');
+
 
     Route::get('/update-destination', [DestinasiController::class, 'update'])->name('driver.update-destination');
     Route::post('/update-destination', [DestinasiController::class, 'updatePost'])->name('driver.update-destination.post');
@@ -99,3 +97,7 @@ Route::get('/login', [AuthController::class, 'login'])->name('login');
 Route::post('/login', [AuthController::class, 'loginPost'])->name('login');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
+
+
+
+

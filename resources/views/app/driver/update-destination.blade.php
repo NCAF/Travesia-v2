@@ -152,9 +152,7 @@
         </div>
 
         <!-- Main Content -->
-        <form action="{{ route('driver.update-destination.post', ['id' => $destinasi->id]) }}" method="POST" enctype="multipart/form-data">
-            @csrf
-            @method('POST')
+      
             <div class="main-content container">
                 <h1>Destination</h1>
                 <p class="custom-txt">Manage your travel destinations easily.</p>
@@ -187,16 +185,17 @@
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
                 @endif
-                
+                <form action="{{ route('driver.update-destination.post', ['id' => $destinasi->id]) }}" method="POST" enctype="multipart/form-data">
+                @csrf
+                @method('POST')
                 <div class="row mb-4">
                     <div class="col-md-8 mt-3">
                         <h4>Edit Destination</h4>
                     </div>
                     <div class="col-md-4 text-end mt-3">
-                        <button type="submit" class="custom-btn btn fw-bold">Update Destination</button>
+                        <button type="submit" class="custom-btn btn fw-bold">Edit Destination</button>
                     </div>
-                </div>
-                
+                </div>     
                 <div class="row">
                     <div class="col-md-8">
                         <div class="d-flex">
@@ -225,15 +224,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="col-md-12">
-                                <label for="description" class="form-label">Description</label>
-                                <textarea class="custom-input form-control @error('deskripsi') is-invalid @enderror" name="deskripsi" id="description" cols="30" rows="5">{{ old('deskripsi', $destinasi->deskripsi) }}</textarea>
-                                @error('deskripsi')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-                        </div>
+                       
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="mb-3">
@@ -256,12 +247,21 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="d-flex">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label for="description" class="form-label">Description</label>
+                                <textarea class="custom-input form-control @error('deskripsi') is-invalid @enderror" name="deskripsi" id="description" cols="30" rows="5">{{ old('deskripsi', $destinasi->deskripsi) }}</textarea>
+                                @error('deskripsi')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                        </div>
+                        <div class="d-flex mt-5">
                             <p>Vehicle Information</p>
                             <hr class="flex-grow-1 ms-2">
                         </div>
                         <div class="row">
-                            <div class="col-md-12">
+                            <div class="col-md-4">
                                 <div class="mb-3">
                                     <label for="vehicle_type" class="form-label">Vehicle Type</label>
                                     <input type="text" id="vehicle_type" class="custom-input form-control @error('vehicle_type') is-invalid @enderror"
@@ -271,9 +271,7 @@
                                     @enderror
                                 </div>
                             </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6">
+                            <div class="col-md-4">
                                 <div class="mb-3">
                                     <label for="plate_number" class="form-label">Plate Number</label>
                                     <input type="text" id="plate_number" class="custom-input form-control @error('plate_number') is-invalid @enderror"
@@ -283,7 +281,7 @@
                                     @enderror
                                 </div>
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-4">
                                 <div class="mb-3">
                                     <label for="number_of_seats" class="form-label">Number of Seats</label>
                                     <input type="number" id="number_of_seats" class="custom-input form-control @error('number_of_seats') is-invalid @enderror"
@@ -321,8 +319,9 @@
                         </div>
                     </div>
                 </div>
+                </form>
             </div>
-        </form>
+       
     </div>
 @endsection
 
