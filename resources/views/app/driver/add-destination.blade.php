@@ -147,9 +147,7 @@
         </div>
 
         <!-- Main Content -->
-         <form action="{{ route('driver.add-destination.post') }}" method="POST" enctype="multipart/form-data">
-            @csrf
-            @method('POST')
+
             <div class="main-content container">
                 <h1>Destination</h1>
                 <p class="custom-txt">Manage your travel destinations easily.</p>
@@ -183,13 +181,17 @@
                 </div>
                 @endif
                 
-                <div class="row mb-4">
-                <div class="col-md-6 mt-3">
-                    <h4>Add Destination</h4>
-                </div>
-                <div class="col-md-6 text-end mt-3">
-                    <button type="submit" class="custom-btn btn fw-bold">Add Destination</button>
-                </div>
+                
+            <form action="{{ route('driver.add-destination.post') }}" method="POST" enctype="multipart/form-data">
+            @csrf
+            @method('POST')
+            <div class="row mb-4">
+                    <div class="col-md-6 mt-3">
+                        <h4>Add Destination</h4>
+                    </div>
+                    <div class="col-md-6 text-end mt-3">
+                        <button type="submit" class="custom-btn btn fw-bold">Add Destination</button>
+                    </div>
             </div>
             <div class="row">
                 <div class="col-md-8">
@@ -219,15 +221,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="col-md-12">
-                            <label for="description" class="form-label">Description</label>
-                            <textarea class="custom-input form-control @error('deskripsi') is-invalid @enderror" name="deskripsi" id="description" cols="30" rows="5">{{ old('deskripsi') }}</textarea>
-                            @error('deskripsi')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-                    </div>
+                   
                     <div class="row">
                         <div class="col-md-6">
                             <div class="mb-3">
@@ -250,12 +244,21 @@
                             </div>
                         </div>
                     </div>
-                    <div class="d-flex">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <label for="description" class="form-label">Description</label>
+                            <textarea class="custom-input form-control @error('deskripsi') is-invalid @enderror" name="deskripsi" id="description" cols="30" rows="5">{{ old('deskripsi') }}</textarea>
+                            @error('deskripsi')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                    </div>
+                    <div class="d-flex mt-5">
                         <p>Venicle Information</p>
                         <hr class="flex-grow-1 ms-2">
                     </div>
                     <div class="row">
-                        <div class="col-md-12">
+                        <div class="col-md-4">
                             <div class="mb-3">
                                 <label for="venicle_type" class="form-label">Venicle Type</label>
                                 <input type="text" id="venicle_type" class="custom-input form-control @error('vehicle_type') is-invalid @enderror"
@@ -265,9 +268,7 @@
                                 @enderror
                             </div>
                         </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6">
+                        <div class="col-md-4">
                             <div class="mb-3">
                                 <label for="plate_number" class="form-label">Plate Number</label>
                                 <input type="text" id="plate_number" class="custom-input form-control @error('plate_number') is-invalid @enderror"
@@ -277,7 +278,7 @@
                                 @enderror
                             </div>
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-4">
                             <div class="mb-3">
                                 <label for="seats" class="form-label">Number of Seats</label>
                                 <input type="text" id="seats" class="custom-input form-control @error('number_of_seats') is-invalid @enderror" placeholder="80"
@@ -311,8 +312,112 @@
                     </div>
                 </div>
             </div>
+            </form>
         </div>
     </div>
-</form>
-@endsection
 
+@endsection
+@push('scripts')
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            let dropzones = document.querySelectorAll(".dropzone");
+
+            dropzones.forEach((dropzone) => {
+                const originalInput = dropzone.querySelector("input[type='file']");
+                const defaultContent = `
+                    <input type="file" id="${originalInput.id}" class="${originalInput.className}" name="${originalInput.name}" accept="${originalInput.accept}">
+                    <img src="{{ asset('icons/icon-cloud.svg') }}" alt="Upload Icon">
+                    <p class="custom-txt">Click to Upload or Drag and Drop</p>
+                `;
+
+                function setupDropzone() {
+                    let fileInput = dropzone.querySelector("input[type='file']");
+                    
+                    // Klik area dropzone untuk membuka file picker
+                    dropzone.onclick = function(e) {
+                        if (e.target !== fileInput && e.target.tagName !== 'BUTTON') {
+                            fileInput.click();
+                        }
+                    };
+
+                    // Saat file dipilih
+                    fileInput.onchange = function() {
+                        if (this.files.length > 0) {
+                            processFile(this.files[0]);
+                        }
+                    };
+
+                    // Drag & Drop Handling
+                    dropzone.ondragover = function(e) {
+                        e.preventDefault();
+                        this.style.borderColor = "#3C8EE1";
+                    };
+
+                    dropzone.ondragleave = function() {
+                        this.style.borderColor = "#ccc";
+                    };
+
+                    dropzone.ondrop = function(e) {
+                        e.preventDefault();
+                        this.style.borderColor = "#ccc";
+                        
+                        if (e.dataTransfer.files.length > 0) {
+                            const newFile = e.dataTransfer.files[0];
+                            // Create a new DataTransfer object
+                            const dataTransfer = new DataTransfer();
+                            dataTransfer.items.add(newFile);
+                            // Set the files property of the file input
+                            fileInput.files = dataTransfer.files;
+                            processFile(newFile);
+                        }
+                    };
+                }
+
+                // Fungsi untuk memproses dan menampilkan gambar
+                function processFile(file) {
+                    if (!file.type.startsWith('image/')) {
+                        alert('Please upload an image file');
+                        resetDropzone();
+                        return;
+                    }
+
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const img = new Image();
+                        img.src = e.target.result;
+                        
+                        img.onload = function() {
+                            // Simpan file yang dipilih
+                            const dataTransfer = new DataTransfer();
+                            dataTransfer.items.add(file);
+
+                            dropzone.innerHTML = `
+                                <input type="file" id="${originalInput.id}" class="${originalInput.className}" name="${originalInput.name}" accept="${originalInput.accept}">
+                                <img src="${e.target.result}" style="width:100%; height:200px; object-fit:cover; border-radius:10px;">
+                                <button type="button" class="btn btn-link text-danger mt-2" onclick="resetDropzone(event)">Remove Image</button>
+                            `;
+
+                            // Set file ke input yang baru
+                            const newFileInput = dropzone.querySelector('input[type="file"]');
+                            newFileInput.files = dataTransfer.files;
+                            setupDropzone();
+                        };
+                    };
+                    reader.readAsDataURL(file);
+                }
+
+                // Fungsi untuk reset dropzone
+                window.resetDropzone = function(event) {
+                    if (event) {
+                        event.stopPropagation();
+                    }
+                    dropzone.innerHTML = defaultContent;
+                    setupDropzone();
+                };
+
+                // Setup awal
+                setupDropzone();
+            });
+        });
+    </script>
+@endpush
