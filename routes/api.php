@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\OrderController;
 use App\Http\Controllers\Api\MessageController;
 use App\Http\Controllers\Api\DashboardController;
 use App\Http\Controllers\Api\DestinasiController;
+use App\Http\Controllers\Api\CheckoutController;
 
 /*
 |--------------------------------------------------------------------------
@@ -72,6 +73,10 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::prefix('messages')->group(function () {
         Route::get('/{chat_id}', [MessageController::class, 'index'])->name('api.messages.index');
         Route::post('/{chat_id}', [MessageController::class, 'store'])->name('api.messages.store');
+    });
+
+    Route::prefix('checkout')->group(function () {
+        Route::post('/process', [CheckoutController::class, 'process'])->name('api.checkout.process');
     });
 
 });
