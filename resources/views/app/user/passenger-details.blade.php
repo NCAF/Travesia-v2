@@ -144,6 +144,9 @@
             </div>
         </div>
     </div>
+    <!-- Midtrans Snap Script -->
+    <script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="{{ env('MIDTRANS_CLIENT_KEY') }}"></script>
+    
     <script>
         document.getElementById('orderForm').addEventListener('submit', async function(e) {
             e.preventDefault();
@@ -156,6 +159,13 @@
             const token = document.querySelector('input[name="_token"]').value;
             let messageDiv = document.getElementById('orderMessage');
             messageDiv.innerHTML = '';
+            
+            // Show loading state
+            const submitButton = form.querySelector('button[type="submit"]');
+            const originalText = submitButton.innerHTML;
+            submitButton.innerHTML = 'Processing...';
+            submitButton.disabled = true;
+            
             try {
                 const response = await fetch('/api/orders', {
                     method: 'POST',
@@ -167,15 +177,48 @@
                     body: JSON.stringify(data)
                 });
                 const result = await response.json();
-                if (!result.error) {
-                    messageDiv.innerHTML = '<div class="alert alert-success">' + result.message + '</div>';
-                    // Optional: redirect or update UI
+                
+                if (!result.error && result.snapToken) {
+                    // Store order result for later use
+                    window.orderResult = result;
+                    
+                    // Show Midtrans popup
+                    snap.pay(result.snapToken, {
+                        onSuccess: function(result) {
+                            messageDiv.innerHTML = '<div class="alert alert-success">Payment successful! Thank you for your order.</div>';
+                            console.log('Payment success:', result);
+                            // Redirect to order detail page
+                            setTimeout(() => {
+                                if (window.orderResult && window.orderResult.order_id) {
+                                    window.location.href = '/user/order-detail/' + window.orderResult.order_id;
+                                } else {
+                                    window.location.href = '/user/order-lists';
+                                }
+                            }, 2000);
+                        },
+                        onPending: function(result) {
+                            messageDiv.innerHTML = '<div class="alert alert-warning">Payment is pending. Please complete your payment.</div>';
+                            console.log('Payment pending:', result);
+                        },
+                        onError: function(result) {
+                            messageDiv.innerHTML = '<div class="alert alert-danger">Payment failed. Please try again.</div>';
+                            console.log('Payment error:', result);
+                        },
+                        onClose: function() {
+                            messageDiv.innerHTML = '<div class="alert alert-info">Payment popup was closed.</div>';
+                            console.log('Payment popup closed');
+                        }
+                    });
                 } else {
-                    messageDiv.innerHTML = '<div class="alert alert-danger">' + result.message + '</div>';
+                    messageDiv.innerHTML = '<div class="alert alert-danger">' + (result.message || 'Failed to create payment token') + '</div>';
                 }
             } catch (err) {
-                messageDiv.innerHTML =
-                    '<div class="alert alert-danger">Terjadi kesalahan saat mengirim data.</div>';
+                messageDiv.innerHTML = '<div class="alert alert-danger">Terjadi kesalahan saat mengirim data.</div>';
+                console.error('Error:', err);
+            } finally {
+                // Reset button state
+                submitButton.innerHTML = originalText;
+                submitButton.disabled = false;
             }
         });
     </script>
