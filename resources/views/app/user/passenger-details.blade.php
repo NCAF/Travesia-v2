@@ -2,67 +2,6 @@
 @section('title', 'Passenger Details Page')
 @push('styles')
     <style>
-        .steps-container {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 40px;
-        }
-
-        .step-item {
-            display: flex;
-            align-items: center;
-            position: relative;
-            margin: 0 10px;
-        }
-
-        .step-line {
-            height: 2px;
-            background-color: #a3a3a3;
-            flex: 1;
-            margin: 0 15px;
-            min-width: 100px;
-            /* tambahkan agar garis tetap tampak */
-        }
-
-
-        .step {
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            background-color: #a3a3a3;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-right: 10px;
-            flex-shrink: 0;
-            color: white
-        }
-
-        .step.active {
-            background-color: #3c8ee1;
-            color: white;
-        }
-
-        .step-active-txt {
-            font-size: 14px;
-            color: #3c8ee1;
-            white-space: nowrap;
-        }
-
-
-        .step-label {
-            font-size: 14px;
-            color: #a3a3a3;
-            white-space: nowrap;
-        }
-
-        .step-line {
-            height: 2px;
-            background-color: #a3a3a3;
-            flex-grow: 1;
-            margin: 0 15px;
-        }
-
         .info-card {
             background-color: white;
             border-radius: 8px;
@@ -120,33 +59,7 @@
 @endpush
 @section('content')
     <div class="container my-4">
-        <!-- Steps Indicator -->
-        <div class="steps-container mb-5r">
-            <div class="step-item">
-                <div class="step active">
-                    <span>1</span>
-                </div>
-                <div class="step-active-txt fw-bold">Passenger Details</div>
-                <div class="step-line"></div>
-            </div>
-
-            <div class="step-item">
-                <div class="step">
-                    <span>2</span>
-                </div>
-                <div class="step-label">Select Payment Method</div>
-                <div class="step-line"></div>
-            </div>
-
-            <div class="step-item">
-                <div class="step">
-                    <span>3</span>
-                </div>
-                <div class="step-label">Payment</div>
-            </div>
-        </div>
-
-        <div class="row">
+        <div class="row mt-5">
             <!-- Left Column -->
             <div class="col-md-8">
                 <h5 class="section-title">Booking Details</h5>
@@ -194,17 +107,19 @@
                                 {{ $destinasi->start_date ? \Carbon\Carbon::parse($destinasi->start_date)->format('H.i') . ' WIB' : '-' }}
                             </div>
                         </div>
-                        <img src="{{ asset('icons/icon-line-left.svg') }}" alt="line left" style="width: 22%" class="ms-2">
+                        <img src="{{ asset('icons/icon-line-left.svg') }}" alt="line left" style="width: 22%"
+                            class="ms-2">
                         <div class="text-center">
                             <small>
-                                @if($destinasi->start_date && $destinasi->end_date)
+                                @if ($destinasi->start_date && $destinasi->end_date)
                                     {{ \Carbon\Carbon::parse($destinasi->start_date)->diff(\Carbon\Carbon::parse($destinasi->end_date))->format('%hj %im') }}
                                 @else
                                     -
                                 @endif
                             </small>
                         </div>
-                        <img src="{{ asset('icons/icon-line-right.svg') }}" alt="line right" style="width: 22%" class="me-2">
+                        <img src="{{ asset('icons/icon-line-right.svg') }}" alt="line right" style="width: 22%"
+                            class="me-2">
                         <div>
                             <div class="time-info">
                                 {{ $destinasi->end_date ? \Carbon\Carbon::parse($destinasi->end_date)->format('H.i') . ' WIB' : '-' }}
@@ -218,10 +133,11 @@
                     </div>
                     <form id="orderForm">
                         @csrf
-                        <input type="hidden" name="destinasi_id" value="{{ request('destinasi_id', $destinasi->id ?? '') }}">
+                        <input type="hidden" name="destinasi_id"
+                            value="{{ request('destinasi_id', $destinasi->id ?? '') }}">
                         <input type="hidden" name="jumlah_kursi" value="1">
                         <input type="hidden" name="harga_kursi" value="{{ $destinasi->price ?? 0 }}">
-                        <button type="submit" class="btn custom-btn w-100 fw-bold">Continue</button>
+                        <button type="submit" class="btn custom-btn w-100 fw-bold">Continue Payment</button>
                     </form>
                     <div id="orderMessage" class="mt-2"></div>
                 </div>
@@ -258,7 +174,8 @@
                     messageDiv.innerHTML = '<div class="alert alert-danger">' + result.message + '</div>';
                 }
             } catch (err) {
-                messageDiv.innerHTML = '<div class="alert alert-danger">Terjadi kesalahan saat mengirim data.</div>';
+                messageDiv.innerHTML =
+                    '<div class="alert alert-danger">Terjadi kesalahan saat mengirim data.</div>';
             }
         });
     </script>
