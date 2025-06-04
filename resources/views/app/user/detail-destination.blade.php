@@ -9,8 +9,10 @@
                 <p class="custom-txt">{{ $destinasi->start_date }}</p>
             </div>
             <div class="col-md-6 text-end">
-                <h4>IDR {{ number_format($destinasi->price, 0, ',', '.') }} <span class="custom-txt fs-6">/{{ $destinasi->number_of_seats }}</span></h4>
-                <a href="{{ route('user.passenger-details', $destinasi->id) }}" class="custom-btn btn fw-bold">Booking Now</a>
+                <h4>IDR {{ number_format($destinasi->price, 0, ',', '.') }} <span
+                        class="custom-txt fs-6">/{{ $destinasi->number_of_seats }}</span></h4>
+                <a href="{{ route('user.passenger-details', $destinasi->id) }}" class="custom-btn btn fw-bold">Booking
+                    Now</a>
             </div>
         </div>
         <div class="row mt-4">
@@ -58,7 +60,19 @@
                         <img src="{{ asset('icons/icon-line-left.svg') }}" alt="line left">
                     </div>
                     <div class="col-md-2 align-content-center">
-                        <p class="custom-txt"> 11j 32m </p>
+                        <p class="custom-txt">
+                            @php
+                                $start = \Carbon\Carbon::parse($destinasi->start_date);
+                                $end = \Carbon\Carbon::parse($destinasi->end_date);
+                                $diffInMinutes = $start->diffInMinutes($end);
+                                $hours = floor($diffInMinutes / 60);
+                                $minutes = $diffInMinutes % 60;
+                            @endphp
+
+                        <p class="custom-txt">
+                            {{ $hours > 0 ? $hours . ' jam ' : '' }}{{ $minutes > 0 ? $minutes . ' menit' : '0 menit' }}
+                        </p>
+                        </p>
                     </div>
                     <div class="col-md-2 align-content-center">
                         <img src="{{ asset('icons/icon-line-right.svg') }}" alt="line right">

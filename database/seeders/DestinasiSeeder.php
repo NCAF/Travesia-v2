@@ -16,6 +16,8 @@ class DestinasiSeeder extends Seeder
             'user_id' => 1, // Assuming user ID 1 exists
             'kode_destinasi' => 'DST001',
             'travel_name' => 'Jakarta City Tour',
+            'start_date' => now()->addDays(2),
+            'end_date' => now()->addDays(2)->addHours(6),
             'check_point' => 'Jakarta Central Station',
             'end_point' => 'Jakarta Old Town',
             'vehicle_type' => 'Mini Bus',
@@ -30,9 +32,11 @@ class DestinasiSeeder extends Seeder
         ]);
 
         DB::table('destinasi')->insert([
-            'user_id' => 2, // Assuming user ID 2 exists
+            'user_id' => 2,
             'kode_destinasi' => 'DST002',
             'travel_name' => 'Bandung Highland Tour',
+            'start_date' => now()->addDays(3),
+            'end_date' => now()->addDays(3)->addHours(8),
             'check_point' => 'Bandung Train Station',
             'end_point' => 'Lembang Park',
             'vehicle_type' => 'SUV',
@@ -47,9 +51,11 @@ class DestinasiSeeder extends Seeder
         ]);
 
         DB::table('destinasi')->insert([
-            'user_id' => 3, // Assuming user ID 3 exists
+            'user_id' => 3,
             'kode_destinasi' => 'DST003',
             'travel_name' => 'Yogyakarta Cultural Journey',
+            'start_date' => now()->addDays(4),
+            'end_date' => now()->addDays(4)->addHours(9),
             'check_point' => 'Yogyakarta Airport',
             'end_point' => 'Malioboro Street',
             'vehicle_type' => 'Van',
@@ -63,4 +69,4 @@ class DestinasiSeeder extends Seeder
             'updated_at' => now(),
         ]);
     }
-} 
+}

@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\FuncController;
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\DashboardController;
 use App\Http\Controllers\Api\DestinasiController;
 use App\Models\Destinasi;
 
@@ -23,9 +24,7 @@ Route::get('/', function () {
 
 Route::middleware('auth')->group(function () {
     // route for user
-    Route::get('/user/dashboard', function () {
-        return view('app.user.dashboard');
-    })->name('user.dashboard');
+    Route::get('/user/dashboard', [DestinasiController::class, 'index'])->name('user.dashboard');
 
     Route::get('/user/destination-list', [DestinasiController::class, 'userDestinationList'])->name('user.destination-list');
 
@@ -35,9 +34,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/user/search-destination', [DestinasiController::class, 'searchUser'])->name('user.search-destination');
 
     Route::get('/user/passenger-details/{id}', function ($id) {
-    $destinasi = Destinasi::findOrFail($id);
-    return view('app.user.passenger-details', compact('destinasi'));
-})->name('user.passenger-details');
+        $destinasi = Destinasi::findOrFail($id);
+        return view('app.user.passenger-details', compact('destinasi'));
+    })->name('user.passenger-details');
 
     Route::post('/orders', [\App\Http\Controllers\Api\OrderController::class, 'store'])->name('orders.store');
 
@@ -46,18 +45,14 @@ Route::middleware('auth')->group(function () {
     Route::get('/user/order-detail', function () {
         return view('app.user.order-detail');
     });
-    
-    Route::get('/user/order-detail/{id}', [\App\Http\Controllers\Api\OrderController::class, 'orderList'])->name('user.order-detail');
 
+    Route::get('/user/order-detail/{id}', [\App\Http\Controllers\Api\OrderController::class, 'orderList'])->name('user.order-detail');
 });
 
 Route::get('/user/destination-list-not-login', [DestinasiController::class, 'destinationListNotLogin'])->name('user.destination-list-not-login');
 
 Route::get('/user/search-destination-not-login', [DestinasiController::class, 'searchUserNotLogin'])->name('user.search-destination-not-login');
 
-Route::get('/user/select-payment-method', function () {
-    return view('app.user.select-payment-method');
-});
 
 Route::get('/user/payment', function () {
     return view('app.user.payment');
@@ -69,7 +64,6 @@ Route::get('/user/order-detail', function () {
 
 
 Route::middleware('auth.driver')->prefix('driver')->group(function () {
-
     Route::get('/destination-list', [DestinasiController::class, 'destinationList'])->name('driver.destination-list');
     Route::get('/detail-destination', [DestinasiController::class, 'show'])->name('driver.detail-destination');
 
@@ -97,7 +91,3 @@ Route::get('/login', [AuthController::class, 'login'])->name('login');
 Route::post('/login', [AuthController::class, 'loginPost'])->name('login');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
-
-
-
-

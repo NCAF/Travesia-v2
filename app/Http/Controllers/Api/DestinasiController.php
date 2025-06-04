@@ -19,22 +19,30 @@ class DestinasiController extends Controller
     /**
      * Display a listing of the resource for authenticated user.
      */
+    public function index()
+    {
+        return view('app.user.dashboard');
+    }
 
-     // Destination List
-     public function destinationList(){
+    // Destination List
+    public function destinationList()
+    {
         $destinasi = Destinasi::all();
         return view('app.driver.destination-list', compact('destinasi'));
-     }
+    }
 
-     public function create(){
+    public function create()
+    {
         return view('app.driver.add-destination');
-     }
+    }
 
     //  Create Destinasi
-    public function createPost(Request $request){
+    public function createPost(Request $request)
+    {
         $validator = Validator::make($request->all(), [
             'travel_name' => 'required',
             'start_date' => 'required|date',
+            'end_date' => 'required|date',
             'check_point' => 'required',
             'end_point' => 'required',
             'vehicle_type' => 'required',
@@ -54,12 +62,12 @@ class DestinasiController extends Controller
         // Untuk driver, gunakan driver_id dari session
         if (session()->has('is_driver') && session()->get('is_driver')) {
             $user_id = session()->get('driver_id');
-            
+
             if (!$user_id) {
                 \Log::error('Driver ID null dari session', [
                     'session' => session()->all()
                 ]);
-                
+
                 return redirect()->route('driver.add-destination')
                     ->with('error', 'Gagal mendapatkan ID driver. Silahkan login ulang.')
                     ->withInput();
@@ -69,15 +77,15 @@ class DestinasiController extends Controller
             if (!Auth::check()) {
                 return redirect()->route('login')->with('error', 'Anda harus login terlebih dahulu.');
             }
-            
+
             $user_id = Auth::id();
-            
+
             if (!$user_id) {
                 \Log::error('User ID null saat membuat destinasi', [
                     'user' => Auth::user(),
                     'is_logged_in' => Auth::check()
                 ]);
-                
+
                 return redirect()->route('driver.add-destination')
                     ->with('error', 'Gagal mendapatkan ID pengguna. Silahkan login ulang.')
                     ->withInput();
@@ -89,6 +97,7 @@ class DestinasiController extends Controller
         $destinasi->kode_destinasi = 'DST-' . strtoupper(Str::random(8));
         $destinasi->travel_name = $request->travel_name;
         $destinasi->start_date = $request->start_date;
+        $destinasi->end_date = $request->end_date;
         $destinasi->check_point = $request->check_point;
         $destinasi->end_point = $request->end_point;
         $destinasi->vehicle_type = $request->vehicle_type;
@@ -104,55 +113,62 @@ class DestinasiController extends Controller
     }
 
     // View Destinasi
-    public function show(Request $request){
+    public function show(Request $request)
+    {
         $id = $request->query('id');
         $destinasi = Destinasi::findOrFail($id);
         return view('app.driver.detail-destination', compact('destinasi'));
     }
 
     // Search Destinasi
-    public function search(Request $request){
+    public function search(Request $request)
+    {
         $search = $request->input('search');
         $destinasi = Destinasi::where('travel_name', 'like', '%' . $search . '%')
-                             ->orWhere('check_point', 'like', '%' . $search . '%')
-                             ->orWhere('end_point', 'like', '%' . $search . '%')
-                             ->get();
+            ->orWhere('check_point', 'like', '%' . $search . '%')
+            ->orWhere('end_point', 'like', '%' . $search . '%')
+            ->get();
         return view('app.driver.destination-list', compact('destinasi'));
     }
 
-    public function searchUser(Request $request){
+    public function searchUser(Request $request)
+    {
         $search = $request->input('search');
         $destinasi = Destinasi::where('travel_name', 'like', '%' . $search . '%')
-                             ->orWhere('check_point', 'like', '%' . $search . '%')
-                             ->orWhere('end_point', 'like', '%' . $search . '%')
-                             ->get();
+            ->orWhere('check_point', 'like', '%' . $search . '%')
+            ->orWhere('end_point', 'like', '%' . $search . '%')
+            ->get();
         return view('app.user.destination-list', compact('destinasi'));
     }
 
-    public function searchUserNotLogin(Request $request){
+    public function searchUserNotLogin(Request $request)
+    {
         $search = $request->input('search');
         $destinasi = Destinasi::where('travel_name', 'like', '%' . $search . '%')
-                             ->orWhere('check_point', 'like', '%' . $search . '%')
-                             ->orWhere('end_point', 'like', '%' . $search . '%')
-                             ->get();
+            ->orWhere('check_point', 'like', '%' . $search . '%')
+            ->orWhere('end_point', 'like', '%' . $search . '%')
+            ->get();
         return view('app.user.destination-list', compact('destinasi'));
     }
 
     // Update Destinasi (re-added)
-    public function update(Request $request){
+    public function update(Request $request)
+    {
         $id = $request->query('id');
         $destinasi = \App\Models\Destinasi::findOrFail($id);
         return view('app.driver.update-destination', compact('destinasi'));
     }
 
-    public function updatePost(Request $request){
+    public function updatePost(Request $request)
+    {
         $id = $request->query('id');
         $destinasi = Destinasi::findOrFail($id);
-        
+
         // Validate the request data
         $validator = Validator::make($request->all(), [
             'travel_name' => 'required',
             'start_date' => 'required|date',
+            'end_date' => 'required|date',
             'check_point' => 'required',
             'end_point' => 'required',
             'vehicle_type' => 'required',
@@ -171,6 +187,7 @@ class DestinasiController extends Controller
         // Update the fields
         $destinasi->travel_name = $request->travel_name;
         $destinasi->start_date = $request->start_date;
+        $destinasi->end_date = $request->end_date;
         $destinasi->check_point = $request->check_point;
         $destinasi->end_point = $request->end_point;
         $destinasi->vehicle_type = $request->vehicle_type;
@@ -178,28 +195,29 @@ class DestinasiController extends Controller
         $destinasi->number_of_seats = $request->number_of_seats;
         $destinasi->price = $request->price;
         $destinasi->deskripsi = $request->deskripsi;
-        
+
         // Handle optional photo update
-        if($request->hasFile('foto')) {
+        if ($request->hasFile('foto')) {
             $image = new ImageController();
             // Remove old image if it exists
-            if($destinasi->foto) {
+            if ($destinasi->foto) {
                 $oldImagePath = public_path($destinasi->foto);
-                if(File::exists($oldImagePath)) {
+                if (File::exists($oldImagePath)) {
                     File::delete($oldImagePath);
                 }
             }
             $destinasi->foto = $image->uploadImage($request->file('foto'));
         }
-        
+
         $destinasi->save();
-        
+
         return redirect()->route('driver.destination-list')->with('success', 'Berhasil mengupdate destinasi.');
     }
 
     // Delete Destinasi
 
-    public function delete(Request $request){
+    public function delete(Request $request)
+    {
         $id = $request->query('id');
         $destinasi = Destinasi::findOrFail($id);
         $destinasi->delete();
@@ -207,23 +225,27 @@ class DestinasiController extends Controller
     }
 
     // User Destination List
-    public function userDestinationList() {
+    public function userDestinationList()
+    {
         $destinasi = Destinasi::all();
         return view('app.user.destination-list', compact('destinasi'));
     }
 
     // Destination list for not login
-    public function destinationListNotLogin() {
+    public function destinationListNotLogin()
+    {
         $destinasi = Destinasi::all();
         return view('app.user.destination-list', compact('destinasi'));
     }
 
-    public function detailDestination($id) {
+    public function detailDestination($id)
+    {
         $destinasi = Destinasi::findOrFail($id);
         return view('app.user.detail-destination', compact('destinasi'));
     }
 
-    public function passengerDetails($id) {
+    public function passengerDetails($id)
+    {
         $destinasi = Destinasi::findOrFail($id);
         return view('app.user.passenger-details', compact('destinasi'));
     }

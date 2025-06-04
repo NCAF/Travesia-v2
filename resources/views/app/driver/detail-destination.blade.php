@@ -128,122 +128,134 @@
                 <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
             </div>
             <div class="offcanvas-body">
-                <a href="{{ route('driver.destination-list') }}" class="mt-5 active"><img src="{{ asset('icons/icon-destination.svg') }}"
-                        alt="Icon Destination"> Destination</a>
+                <a href="{{ route('driver.destination-list') }}" class="mt-5 active"><img
+                        src="{{ asset('icons/icon-destination.svg') }}" alt="Icon Destination"> Destination</a>
                 <a href="#"><img src="{{ asset('icons/icon-order.svg') }}" alt="Icon Order"> Order</a>
                 <a href="#"><img src="{{ asset('icons/icon-chat.svg') }}" alt="Icon Chat"> Chat</a>
-                <a href="{{ route('logout') }}"><img src="{{ asset('icons/icon-logout.svg') }}" alt="Icon Logout"> Logout</a>
+                <a href="{{ route('logout') }}"><img src="{{ asset('icons/icon-logout.svg') }}" alt="Icon Logout">
+                    Logout</a>
             </div>
         </div>
 
         <!-- Sidebar untuk Desktop -->
         <div class="sidebar d-none d-md-block">
             <img src="{{ asset('img/travesia.png') }}" alt="Logo Travesia" width="156" height="33">
-            <a href="{{ route('driver.destination-list') }}" class="mt-5 active"><img src="{{ asset('icons/icon-destination.svg') }}"
-                    alt="Icon Destination"> Destination</a>
+            <a href="{{ route('driver.destination-list') }}" class="mt-5 active"><img
+                    src="{{ asset('icons/icon-destination.svg') }}" alt="Icon Destination"> Destination</a>
             <a href="#"><img src="{{ asset('icons/icon-order.svg') }}" alt="Icon Order"> Order</a>
             <a href="#"><img src="{{ asset('icons/icon-chat.svg') }}" alt="Icon Chat"> Chat</a>
             <a href="{{ route('logout') }}"><img src="{{ asset('icons/icon-logout.svg') }}" alt="Icon Logout"> Logout</a>
         </div>
 
         <!-- Main Content -->
-            <div class="main-content container">
-                <h1>Destination</h1>
-                <p class="custom-txt">Manage your travel destinations easily.</p>    
-                <div class="row mb-4">
-                    <div class="col-md-8 mt-3">
-                        <h4>Detail Destination</h4>
-                    </div>  
-                    <div class="col-md-auto text-end mt-3">
-                        <a href="{{ route('driver.delete-destination', ['id' => $destinasi->id]) }}" class="custom-btn-outline btn fw-bold">Delete</a>
+        <div class="main-content container">
+            <h1>Destination</h1>
+            <p class="custom-txt">Manage your travel destinations easily.</p>
+            <div class="row mb-4">
+                <div class="col-md-8 mt-3">
+                    <h4>Detail Destination</h4>
+                </div>
+                <div class="col-md-auto text-end mt-3">
+                    <a href="{{ route('driver.delete-destination', ['id' => $destinasi->id]) }}"
+                        class="custom-btn-outline btn fw-bold">Delete</a>
+                </div>
+                <div class="col-md-auto text-end mt-3">
+                    <a href="{{ route('driver.update-destination', ['id' => $destinasi->id]) }}"
+                        class="custom-btn btn fw-bold">Edit Destination</a>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="d-flex">
+                        <p>General Information</p>
+                        <hr class="flex-grow-1 ms-2">
                     </div>
-                    <div class="col-md-auto text-end mt-3">
-                        <a href="{{ route('driver.update-destination', ['id' => $destinasi->id]) }}" class="custom-btn btn fw-bold">Edit Destination</a>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="mb-3">
+                                <label class="form-label custom-txt">Travel Name</label>
+                                <p>{{ $destinasi->travel_name }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label custom-txt">Start Date</label>
+                                <p>{{ $destinasi->start_date }}</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label custom-txt">End Date</label>
+                                <p>{{ $destinasi->end_date }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label custom-txt">Check Point</label>
+                                <p>{{ $destinasi->check_point }}</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label custom-txt">End Point</label>
+                                <p>{{ $destinasi->end_point }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <label class="form-label custom-txt">Description</label>
+                            <p>{{ $destinasi->deskripsi }}</p>
+                        </div>
+                    </div>
+                    <div class="d-flex mt-5">
+                        <p>Vehicle Information</p>
+                        <hr class="flex-grow-1 ms-2">
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label custom-txt">Vehicle Type</label>
+                                <p>{{ $destinasi->vehicle_type }}</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label custom-txt">Plate Number</label>
+                                <p>{{ $destinasi->plate_number }}</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label custom-txt">Number of Seats</label>
+                                <p>{{ $destinasi->number_of_seats }} Seats</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                
-                <div class="row">
-                    <div class="col-md-8">
-                        <div class="d-flex">
-                            <p>General Information</p>
-                            <hr class="flex-grow-1 ms-2">
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label class="form-label custom-txt">Travel Name</label>
-                                    <p>{{ $destinasi->travel_name }}</p>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label class="form-label custom-txt">Start Date</label>
-                                    <p>{{ $destinasi->start_date }}</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label class="form-label custom-txt">Check Point</label>
-                                    <p>{{ $destinasi->check_point }}</p>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label class="form-label custom-txt">End Point</label>
-                                    <p>{{ $destinasi->end_point }}</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-12">
-                                <label class="form-label custom-txt">Description</label>
-                                <p>{{ $destinasi->deskripsi }}</p>
-                            </div>
-                        </div>
-                        <div class="d-flex mt-5">
-                            <p>Vehicle Information</p>
-                            <hr class="flex-grow-1 ms-2">
-                        </div>
-                        <div class="row">
-                            <div class="col-md-4">
-                                <div class="mb-3">
-                                    <label class="form-label custom-txt">Vehicle Type</label>
-                                    <p>{{ $destinasi->vehicle_type }}</p>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="mb-3">
-                                    <label class="form-label custom-txt">Plate Number</label>
-                                    <p>{{ $destinasi->plate_number }}</p>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="mb-3">
-                                    <label class="form-label custom-txt">Number of Seats</label>
-                                    <p>{{ $destinasi->number_of_seats }} Seats</p>
-                                </div>
-                            </div>
+                <div class="col-md-4">
+                    <div class="mb-3">
+                        <label class="form-label">Upload Image</label>
+                        <div class="drag-drop">
+                            @if ($destinasi->foto)
+                                <img src="{{ asset('images/' . $destinasi->foto) }}" alt="Destination Image" height="200"
+                                    width="300">
+                            @else
+                                <img src="{{ asset('img/detail-destination.png') }}" alt="Detail Destination">
+                            @endif
                         </div>
                     </div>
-                    <div class="col-md-4">
-                        <div class="mb-3">
-                            <label class="form-label">Upload Image</label>
-                            <div class="drag-drop">
-                                @if($destinasi->foto)
-                                    <img src="{{ asset('images/' . $destinasi->foto) }}" alt="Destination Image" height="200" width="300">
-                                @else
-                                    <img src="{{ asset('img/detail-destination.png') }}" alt="Detail Destination">
-                                @endif
-                            </div>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label custom-txt">Price</label>
-                            <p>IDR {{ number_format($destinasi->price, 0, ',', '.') }}</p>
-                        </div>
+                    <div class="mb-3">
+                        <label class="form-label custom-txt">Price</label>
+                        <p>IDR {{ number_format($destinasi->price, 0, ',', '.') }}</p>
                     </div>
                 </div>
             </div>
+        </div>
     </div>
 @endsection
