@@ -82,41 +82,57 @@
     <div class="container">
         <h1 class="mt-5">Result</h1>
         <div class="row">
-            @if(!empty($destinasi) && count($destinasi) > 0)
-                @foreach($destinasi as $item)
+            @if (!empty($destinasi) && count($destinasi) > 0)
+                @foreach ($destinasi as $item)
                     <div class="col-md-12 col-12 mb-2 mt-3">
                         <div class="custom-card p-4">
                             <div class="row align-items-center">
-                        <div class="col-md-6">
-                            <h4>{{ $item->travel_name }}</h4>
-                            <div class="row">
-                                <div class="col-md">
-                                    <p>{{ $item->check_point }}</p>
-                                    <p class="custom-txt">{{ $item->start_date }}</p>
+                                <div class="col-md-6">
+                                    <h4>{{ $item->travel_name }}</h4>
+                                    <div class="row">
+                                        <div class="col-md">
+                                            <p>{{ $item->check_point }}</p>
+                                            <p class="text-muted">
+                                                {{ \Carbon\Carbon::parse($item->start_date)->format('H.i') }}</p>
+                                        </div>
+                                        <div class="col-md align-content-center">
+                                            <img src="{{ asset('icons/icon-line-left.svg') }}" alt="line left">
+                                        </div>
+                                        <div class="col-md align-content-center">
+                                            <p class="custom-txt">
+                                                @php
+                                                    $start = \Carbon\Carbon::parse($item->start_date);
+                                                    $end = \Carbon\Carbon::parse($item->end_date);
+                                                    $diffInMinutes = $start->diffInMinutes($end);
+                                                    $hours = floor($diffInMinutes / 60);
+                                                    $minutes = $diffInMinutes % 60;
+                                                @endphp
+
+                                            <p class="custom-txt">
+                                                {{ $hours > 0 ? $hours . ' jam ' : '' }}{{ $minutes > 0 ? $minutes . ' menit' : '0 menit' }}
+                                            </p>
+                                            </p>
+                                        </div>
+                                        <div class="col-md align-content-center">
+                                            <img src="{{ asset('icons/icon-line-right.svg') }}" alt="line right">
+                                        </div>
+                                        <div class="col-md">
+                                            <p>{{ $item->end_point }}</p>
+                                            <p class="text-muted">
+                                                {{ \Carbon\Carbon::parse($item->end_date)->format('H.i') }}</p>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="col-md align-content-center">
-                                    <img src="{{ asset('icons/icon-line-left.svg') }}" alt="line left">
-                                </div>
-                                <div class="col-md align-content-center">
-                                    <p class="custom-txt"> {{ $item->vehicle_type }} - {{ $item->plate_number }} </p>
-                                </div>
-                                <div class="col-md align-content-center">
-                                    <img src="{{ asset('icons/icon-line-right.svg') }}" alt="line right">
-                                </div>
-                                <div class="col-md">
-                                    <p>{{ $item->end_point }}</p>
-                                    <p class="custom-txt">{{ $item->end_date }}</p>
+                                <div class="col-md-6 text-end">
+                                    <!-- <button class="status-btn">Available</button> -->
+                                    <a href="{{ route('user.detail-destination', $item->id) }}"
+                                        class="status-btn">Available</a>
+                                    <h4>IDR {{ number_format($item->price, 0, ',', '.') }} <span
+                                            class="custom-txt fs-6">/{{ $item->number_of_seats }}</span></h4>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-6 text-end">
-                            <!-- <button class="status-btn">Available</button> -->
-                            <a href="{{ route('user.detail-destination', $item->id) }}" class="status-btn">Available</a>
-                            <h4>IDR {{ number_format($item->price, 0, ',', '.') }} <span class="custom-txt fs-6">/{{ $item->number_of_seats }}</span></h4>
-                        </div>
-                    </div>
-                </div>
-            @endforeach
+                @endforeach
             @else
                 <div class="col-md-12 col-12 mb-2">
                     <div class="custom-card p-4">
@@ -124,9 +140,9 @@
                     </div>
                 </div>
             @endif
-            </div>
         </div>
-        @include('partials.footer')
+    </div>
+    @include('partials.footer')
     </div>
 
 @endsection

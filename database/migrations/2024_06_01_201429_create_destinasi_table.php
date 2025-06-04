@@ -16,6 +16,8 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained('users')->onUpdate('cascade')->onDelete('cascade');
             $table->string('kode_destinasi', 255);
             $table->string('travel_name', 255);
+            $table->dateTime('start_date');
+            $table->dateTime('end_date');
             $table->string('check_point', 255);
             $table->string('end_point', 255);
             $table->string('vehicle_type', 50);

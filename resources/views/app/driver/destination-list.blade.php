@@ -115,7 +115,8 @@
                         alt="Icon Destination"> Destination</a>
                 <a href="#"><img src="{{ asset('icons/icon-order.svg') }}" alt="Icon Order"> Order</a>
                 <a href="#"><img src="{{ asset('icons/icon-chat.svg') }}" alt="Icon Chat"> Chat</a>
-                <a href="{{ route('logout') }}"><img src="{{ asset('icons/icon-logout.svg') }}" alt="Icon Logout"> Logout</a>
+                <a href="{{ route('logout') }}"><img src="{{ asset('icons/icon-logout.svg') }}" alt="Icon Logout">
+                    Logout</a>
             </div>
         </div>
 
@@ -133,15 +134,15 @@
         <div class="main-content container">
             <h1>Destination</h1>
             <p class="custom-txt">Manage your travel destinations easily.</p>
-            
+
             <!-- Success Message -->
-            @if(session('success'))
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                {{ session('success') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
+            @if (session('success'))
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    {{ session('success') }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
             @endif
-            
+
             <div class="row mb-4">
                 <form action="{{ route('driver.search-destination') }}" method="GET" class="row">
                     <div class="col-md-4 col-8 mt-3">
@@ -149,7 +150,8 @@
                             <span class="input-group-text custom-input">
                                 <img src="{{ asset('icons/icon-search.svg') }}" alt="icon search">
                             </span>
-                            <input type="text" class="form-control custom-input" placeholder="Location Name" name="search">
+                            <input type="text" class="form-control custom-input" placeholder="Location Name"
+                                name="search">
                         </div>
                     </div>
                     <div class="col-md-2 col-4 mt-3">
@@ -161,45 +163,62 @@
                 </form>
             </div>
             <div class="row">
-                @if(count($destinasi) > 0)
-                    @foreach($destinasi as $item)
-                    <div class="col-md-12 col-12 mb-2">
-                        <a href="{{ route('driver.detail-destination', ['id' => $item->id]) }}" class="destination-card">
-                            <div class="custom-card p-4">
-                                <div class="row align-items-center">
-                                    <div class="col-md-8">
-                                        <h4>{{ $item->travel_name }}</h4>
-                                        <div class="row">
-                                            <div class="col-md">
-                                                <p>{{ $item->check_point }}</p>
-                                            </div>
-                                            <div class="col-md align-content-center">
-                                                <img src="{{ asset('icons/icon-line-left.svg') }}" alt="line left">
-                                            </div>
-                                            <div class="col-md align-content-center">
-                                                <p class="custom-txt">{{ $item->vehicle_type }} - {{ $item->plate_number }}</p>
-                                            </div>
-                                            <div class="col-md align-content-center">
-                                                <img src="{{ asset('icons/icon-line-right.svg') }}" alt="line right">
-                                            </div>
-                                            <div class="col-md">
-                                                <p>{{ $item->end_point }}</p>
+                @if (count($destinasi) > 0)
+                    @foreach ($destinasi as $item)
+                        <div class="col-md-12 col-12 mb-2">
+                            <a href="{{ route('driver.detail-destination', ['id' => $item->id]) }}"
+                                class="destination-card">
+                                <div class="custom-card p-4">
+                                    <div class="row align-items-center">
+                                        <div class="col-md-8">
+                                            <h4>{{ $item->travel_name }}</h4>
+                                            <div class="row">
+                                                <div class="col-md">
+                                                    <p>{{ $item->check_point }}</p>
+                                                    <p class="text-muted">
+                                                        {{ \Carbon\Carbon::parse($item->start_date)->format('H.i') }}</p>
+                                                </div>
+                                                <div class="col-md align-content-center">
+                                                    <img src="{{ asset('icons/icon-line-left.svg') }}" alt="line left">
+                                                </div>
+                                                <div class="col-md align-content-center">
+                                                    @php
+                                                        $start = \Carbon\Carbon::parse($item->start_date);
+                                                        $end = \Carbon\Carbon::parse($item->end_date);
+                                                        $diffInMinutes = $start->diffInMinutes($end);
+                                                        $hours = floor($diffInMinutes / 60);
+                                                        $minutes = $diffInMinutes % 60;
+                                                    @endphp
+
+                                                    <p class="custom-txt">
+                                                        {{ $hours > 0 ? $hours . ' jam ' : '' }}{{ $minutes > 0 ? $minutes . ' menit' : '0 menit' }}
+                                                    </p>
+                                                </div>
+                                                <div class="col-md align-content-center">
+                                                    <img src="{{ asset('icons/icon-line-right.svg') }}" alt="line right">
+                                                </div>
+                                                <div class="col-md">
+                                                    <p>{{ $item->end_point }}</p>
+                                                    <p class="text-muted">
+                                                        {{ \Carbon\Carbon::parse($item->end_date)->format('H.i') }}</p>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                    <div class="col-md-4 text-end">
-                                        <button class="status-btn">Available</button>
-                                        <h4>IDR {{ number_format($item->price, 0, ',', '.') }} <span class="custom-txt fs-6">/kursi</span></h4>
+                                        <div class="col-md-4 text-end">
+                                            <button class="status-btn">Available</button>
+                                            <h4>IDR {{ number_format($item->price, 0, ',', '.') }} <span
+                                                    class="custom-txt fs-6">/kursi</span></h4>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        </a>
-                    </div>
+                            </a>
+                        </div>
                     @endforeach
                 @else
-                <div class="col-md-12 text-center">
-                    <p>No destinations found. <a href="{{ route('driver.add-destination') }}">Add your first destination</a></p>
-                </div>
+                    <div class="col-md-12 text-center">
+                        <p>No destinations found. <a href="{{ route('driver.add-destination') }}">Add your first
+                                destination</a></p>
+                    </div>
                 @endif
             </div>
         </div>

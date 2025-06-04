@@ -169,8 +169,7 @@
                             <p class="price-info">IDR 300.000</p>
                         </div>
 
-                        <button class="btn custom-btn w-100 fw-bold mb-3">Pay</button>
-                        <button class="btn custom-btn-outline w-100 fw-bold">Cancel</button>
+
 
                 </div>
             </div>

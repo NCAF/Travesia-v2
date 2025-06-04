@@ -20,9 +20,9 @@
         </div>
         <div class="col-md-2">
             <p class="fw-bold">Other</p>
-            @if (!Auth::check())
-                <a href="{{ route('driver.register-driver') }}" class="custom-registerUser">Register as a driver</a>
-            @endif
+
+            <a href="{{ route('driver.register-driver') }}" class="custom-registerUser">Register as a driver</a>
+
         </div>
     </div>
 </footer>

@@ -133,48 +133,49 @@
                 <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
             </div>
             <div class="offcanvas-body">
-                <a href="{{ route('driver.destination-list') }}" class="mt-5 active"><img src="{{ asset('icons/icon-destination.svg') }}"
-                        alt="Icon Destination"> Destination</a>
+                <a href="{{ route('driver.destination-list') }}" class="mt-5 active"><img
+                        src="{{ asset('icons/icon-destination.svg') }}" alt="Icon Destination"> Destination</a>
                 <a href="#"><img src="{{ asset('icons/icon-order.svg') }}" alt="Icon Order"> Order</a>
                 <a href="#"><img src="{{ asset('icons/icon-chat.svg') }}" alt="Icon Chat"> Chat</a>
-                <a href="{{ route('logout') }}"><img src="{{ asset('icons/icon-logout.svg') }}" alt="Icon Logout"> Logout</a>
+                <a href="{{ route('logout') }}"><img src="{{ asset('icons/icon-logout.svg') }}" alt="Icon Logout">
+                    Logout</a>
             </div>
         </div>
 
         <!-- Sidebar untuk Desktop -->
         <div class="sidebar d-none d-md-block">
             <img src="{{ asset('img/travesia.png') }}" alt="Logo Travesia" width="156" height="33">
-            <a href="{{ route('driver.destination-list') }}" class="mt-5 active"><img src="{{ asset('icons/icon-destination.svg') }}"
-                    alt="Icon Destination"> Destination</a>
+            <a href="{{ route('driver.destination-list') }}" class="mt-5 active"><img
+                    src="{{ asset('icons/icon-destination.svg') }}" alt="Icon Destination"> Destination</a>
             <a href="#"><img src="{{ asset('icons/icon-order.svg') }}" alt="Icon Order"> Order</a>
             <a href="#"><img src="{{ asset('icons/icon-chat.svg') }}" alt="Icon Chat"> Chat</a>
             <a href="{{ route('logout') }}"><img src="{{ asset('icons/icon-logout.svg') }}" alt="Icon Logout"> Logout</a>
         </div>
 
         <!-- Main Content -->
-      
-            <div class="main-content container">
-                <h1>Destination</h1>
-                <p class="custom-txt">Manage your travel destinations easily.</p>
-                
-                <!-- Success Message -->
-                @if(session('success'))
+
+        <div class="main-content container">
+            <h1>Destination</h1>
+            <p class="custom-txt">Manage your travel destinations easily.</p>
+
+            <!-- Success Message -->
+            @if (session('success'))
                 <div class="alert alert-success alert-dismissible fade show" role="alert">
                     {{ session('success') }}
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
-                @endif
-                
-                <!-- Error Message -->
-                @if(session('error'))
+            @endif
+
+            <!-- Error Message -->
+            @if (session('error'))
                 <div class="alert alert-danger alert-dismissible fade show" role="alert">
                     {{ session('error') }}
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
-                @endif
-                
-                <!-- Validation Errors -->
-                @if ($errors->any())
+            @endif
+
+            <!-- Validation Errors -->
+            @if ($errors->any())
                 <div class="alert alert-danger alert-dismissible fade show" role="alert">
                     <strong>Please fix the following errors:</strong>
                     <ul>
@@ -184,8 +185,9 @@
                     </ul>
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
-                @endif
-                <form action="{{ route('driver.update-destination.post', ['id' => $destinasi->id]) }}" method="POST" enctype="multipart/form-data">
+            @endif
+            <form action="{{ route('driver.update-destination.post', ['id' => $destinasi->id]) }}" method="POST"
+                enctype="multipart/form-data">
                 @csrf
                 @method('POST')
                 <div class="row mb-4">
@@ -195,7 +197,7 @@
                     <div class="col-md-4 text-end mt-3">
                         <button type="submit" class="custom-btn btn fw-bold">Edit Destination</button>
                     </div>
-                </div>     
+                </div>
                 <div class="row">
                     <div class="col-md-8">
                         <div class="d-flex">
@@ -203,34 +205,55 @@
                             <hr class="flex-grow-1 ms-2">
                         </div>
                         <div class="row">
-                            <div class="col-md-6">
+                            <div class="col-md-12">
                                 <div class="mb-3">
                                     <label for="travel_name" class="form-label">Travel Name</label>
-                                    <input type="text" id="travel_name" class="custom-input form-control @error('travel_name') is-invalid @enderror"
-                                        placeholder="Travel Company" name="travel_name" value="{{ old('travel_name', $destinasi->travel_name) }}">
+                                    <input type="text" id="travel_name"
+                                        class="custom-input form-control @error('travel_name') is-invalid @enderror"
+                                        placeholder="Travel Company" name="travel_name"
+                                        value="{{ old('travel_name', $destinasi->travel_name) }}">
                                     @error('travel_name')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                 </div>
                             </div>
+                        </div>
+                        <div class="row">
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label for="start_date" class="form-label">Start Date</label>
-                                    <input type="date" id="start_date" class="custom-input form-control @error('start_date') is-invalid @enderror"
-                                        name="start_date" value="{{ old('start_date', $destinasi->start_date) }}">
+                                    <input type="datetime-local" id="start_date"
+                                        class="custom-input form-control @error('start_date') is-invalid @enderror"
+                                        name="start_date"
+                                        value="{{ old('start_date', \Carbon\Carbon::parse($destinasi->start_date)->format('Y-m-d\TH:i')) }}">
+
                                     @error('start_date')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                 </div>
                             </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="end_date" class="form-label">End Date</label>
+                                    <input type="datetime-local" id="end_date"
+                                        class="custom-input form-control @error('end_date') is-invalid @enderror"
+                                        name="end_date"
+                                        value="{{ old('end_date', \Carbon\Carbon::parse($destinasi->end_date)->format('Y-m-d\TH:i')) }}">
+                                    @error('end_date')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                            </div>
                         </div>
-                       
+
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label for="check_point" class="form-label">Check Point</label>
-                                    <input type="text" id="check_point" class="custom-input form-control @error('check_point') is-invalid @enderror"
-                                        placeholder="Starting Point" name="check_point" value="{{ old('check_point', $destinasi->check_point) }}">
+                                    <input type="text" id="check_point"
+                                        class="custom-input form-control @error('check_point') is-invalid @enderror"
+                                        placeholder="Starting Point" name="check_point"
+                                        value="{{ old('check_point', $destinasi->check_point) }}">
                                     @error('check_point')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
@@ -239,8 +262,10 @@
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label for="end_point" class="form-label">End Point</label>
-                                    <input type="text" id="end_point" class="custom-input form-control @error('end_point') is-invalid @enderror"
-                                        placeholder="Destination Point" name="end_point" value="{{ old('end_point', $destinasi->end_point) }}">
+                                    <input type="text" id="end_point"
+                                        class="custom-input form-control @error('end_point') is-invalid @enderror"
+                                        placeholder="Destination Point" name="end_point"
+                                        value="{{ old('end_point', $destinasi->end_point) }}">
                                     @error('end_point')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
@@ -250,7 +275,8 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <label for="description" class="form-label">Description</label>
-                                <textarea class="custom-input form-control @error('deskripsi') is-invalid @enderror" name="deskripsi" id="description" cols="30" rows="5">{{ old('deskripsi', $destinasi->deskripsi) }}</textarea>
+                                <textarea class="custom-input form-control @error('deskripsi') is-invalid @enderror" name="deskripsi"
+                                    id="description" cols="30" rows="5">{{ old('deskripsi', $destinasi->deskripsi) }}</textarea>
                                 @error('deskripsi')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
@@ -264,8 +290,10 @@
                             <div class="col-md-4">
                                 <div class="mb-3">
                                     <label for="vehicle_type" class="form-label">Vehicle Type</label>
-                                    <input type="text" id="vehicle_type" class="custom-input form-control @error('vehicle_type') is-invalid @enderror"
-                                        placeholder="Nissan" name="vehicle_type" value="{{ old('vehicle_type', $destinasi->vehicle_type) }}">
+                                    <input type="text" id="vehicle_type"
+                                        class="custom-input form-control @error('vehicle_type') is-invalid @enderror"
+                                        placeholder="Nissan" name="vehicle_type"
+                                        value="{{ old('vehicle_type', $destinasi->vehicle_type) }}">
                                     @error('vehicle_type')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
@@ -274,8 +302,10 @@
                             <div class="col-md-4">
                                 <div class="mb-3">
                                     <label for="plate_number" class="form-label">Plate Number</label>
-                                    <input type="text" id="plate_number" class="custom-input form-control @error('plate_number') is-invalid @enderror"
-                                        placeholder="G4NTENG" name="plate_number" value="{{ old('plate_number', $destinasi->plate_number) }}">
+                                    <input type="text" id="plate_number"
+                                        class="custom-input form-control @error('plate_number') is-invalid @enderror"
+                                        placeholder="G4NTENG" name="plate_number"
+                                        value="{{ old('plate_number', $destinasi->plate_number) }}">
                                     @error('plate_number')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
@@ -284,8 +314,10 @@
                             <div class="col-md-4">
                                 <div class="mb-3">
                                     <label for="number_of_seats" class="form-label">Number of Seats</label>
-                                    <input type="number" id="number_of_seats" class="custom-input form-control @error('number_of_seats') is-invalid @enderror"
-                                        placeholder="80" name="number_of_seats" value="{{ old('number_of_seats', $destinasi->number_of_seats) }}">
+                                    <input type="number" id="number_of_seats"
+                                        class="custom-input form-control @error('number_of_seats') is-invalid @enderror"
+                                        placeholder="80" name="number_of_seats"
+                                        value="{{ old('number_of_seats', $destinasi->number_of_seats) }}">
                                     @error('number_of_seats')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
@@ -298,8 +330,9 @@
                             <label for="foto" class="form-label">Upload Image</label>
                             <div class="drag-drop dropzone">
                                 <input type="file" id="foto" name="foto" class="form-control">
-                                @if($destinasi->foto)
-                                    <img src="{{ asset('images/' . $destinasi->foto) }}" alt="Destination Image" height="200" width="300">
+                                @if ($destinasi->foto)
+                                    <img src="{{ asset('images/' . $destinasi->foto) }}" alt="Destination Image"
+                                        height="200" width="300">
                                 @else
                                     <img src="{{ asset('icons/icon-camera.svg') }}" alt="Upload Image">
                                     <p>Upload your image here</p>
@@ -311,17 +344,18 @@
                         </div>
                         <div class="mb-3">
                             <label for="price" class="form-label">Price</label>
-                            <input type="number" class="custom-input form-control @error('price') is-invalid @enderror" id="price"
-                                placeholder="IDR" name="price" value="{{ old('price', $destinasi->price) }}">
+                            <input type="number" class="custom-input form-control @error('price') is-invalid @enderror"
+                                id="price" placeholder="IDR" name="price"
+                                value="{{ old('price', $destinasi->price) }}">
                             @error('price')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
                     </div>
                 </div>
-                </form>
-            </div>
-       
+            </form>
+        </div>
+
     </div>
 @endsection
 
@@ -383,4 +417,4 @@
             fileInput = createNewFileInput();
         });
     </script>
-@endpush 
+@endpush
