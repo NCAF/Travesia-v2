@@ -18,9 +18,11 @@ use App\Models\Destinasi;
 |
 */
 
-Route::get('/', function () {
-    return view('app.dashboard');
-})->name('dashboard');
+Route::get('/', [DestinasiController::class, 'index'])->name('dashboard');
+
+// Public routes that don't require authentication
+Route::get('/search-destination', [DestinasiController::class, 'search'])->name('search-destination');
+Route::get('/destination-list', [DestinasiController::class, 'destinationListNotLogin'])->name('destination-list');
 
 Route::middleware('auth')->group(function () {
     // route for user
@@ -30,8 +32,7 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/user/detail-destination/{id}', [DestinasiController::class, 'detailDestination'])->name('user.detail-destination');
 
-
-    Route::get('/user/search-destination', [DestinasiController::class, 'searchUser'])->name('user.search-destination');
+    Route::get('/user/search-destination', [DestinasiController::class, 'search'])->name('user.search-destination');
 
     Route::get('/user/passenger-details/{id}', function ($id) {
         $destinasi = Destinasi::findOrFail($id);
@@ -49,9 +50,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/user/order-detail/{id}', [\App\Http\Controllers\Api\OrderController::class, 'orderList'])->name('user.order-detail');
 });
 
-Route::get('/user/destination-list-not-login', [DestinasiController::class, 'destinationListNotLogin'])->name('user.destination-list-not-login');
-
-Route::get('/user/search-destination-not-login', [DestinasiController::class, 'searchUserNotLogin'])->name('user.search-destination-not-login');
 
 
 Route::get('/user/payment', function () {

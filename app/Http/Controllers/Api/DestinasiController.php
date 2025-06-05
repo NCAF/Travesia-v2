@@ -21,7 +21,24 @@ class DestinasiController extends Controller
      */
     public function index()
     {
-        return view('app.user.dashboard');
+        $destinations = Destinasi::select('check_point', 'end_point')
+            ->distinct()
+            ->get()
+            ->map(function ($item) {
+                return [
+                    'check_point' => $item->check_point,
+                    'end_point' => $item->end_point
+                ];
+            });
+
+        $uniqueLocations = collect();
+        foreach ($destinations as $destination) {
+            $uniqueLocations->push($destination['check_point']);
+            $uniqueLocations->push($destination['end_point']);
+        }
+        $uniqueLocations = $uniqueLocations->unique()->values();
+
+        return view('app.user.dashboard', compact('uniqueLocations'));
     }
 
     // Destination List
@@ -123,32 +140,57 @@ class DestinasiController extends Controller
     // Search Destinasi
     public function search(Request $request)
     {
-        $search = $request->input('search');
-        $destinasi = Destinasi::where('travel_name', 'like', '%' . $search . '%')
-            ->orWhere('check_point', 'like', '%' . $search . '%')
-            ->orWhere('end_point', 'like', '%' . $search . '%')
-            ->get();
-        return view('app.driver.destination-list', compact('destinasi'));
+        // Get unique locations for dropdowns
+        $destinations = Destinasi::select('check_point', 'end_point')
+            ->distinct()
+            ->get()
+            ->map(function ($item) {
+                return [
+                    'check_point' => $item->check_point,
+                    'end_point' => $item->end_point
+                ];
+            });
+
+        $uniqueLocations = collect();
+        foreach ($destinations as $destination) {
+            $uniqueLocations->push($destination['check_point']);
+            $uniqueLocations->push($destination['end_point']);
+        }
+        $uniqueLocations = $uniqueLocations->unique()->values();
+
+        // Build search query
+        $query = Destinasi::query();
+
+        if ($request->filled('origin')) {
+            $query->where('check_point', $request->origin);
+        }
+
+        if ($request->filled('destination')) {
+            $query->where('end_point', $request->destination);
+        }
+
+        if ($request->filled('date')) {
+            $query->whereDate('start_date', $request->date);
+        }
+
+        $destinasi = $query->get();
+
+        // Return the appropriate view based on user's authentication status
+        if (Auth::check()) {
+            return view('app.user.destination-list', compact('destinasi', 'uniqueLocations'));
+        } else {
+            return view('app.user.destination-list', compact('destinasi', 'uniqueLocations'));
+        }
     }
 
     public function searchUser(Request $request)
     {
-        $search = $request->input('search');
-        $destinasi = Destinasi::where('travel_name', 'like', '%' . $search . '%')
-            ->orWhere('check_point', 'like', '%' . $search . '%')
-            ->orWhere('end_point', 'like', '%' . $search . '%')
-            ->get();
-        return view('app.user.destination-list', compact('destinasi'));
+        return $this->search($request);
     }
 
     public function searchUserNotLogin(Request $request)
     {
-        $search = $request->input('search');
-        $destinasi = Destinasi::where('travel_name', 'like', '%' . $search . '%')
-            ->orWhere('check_point', 'like', '%' . $search . '%')
-            ->orWhere('end_point', 'like', '%' . $search . '%')
-            ->get();
-        return view('app.user.destination-list', compact('destinasi'));
+        return $this->search($request);
     }
 
     // Update Destinasi (re-added)
@@ -227,15 +269,49 @@ class DestinasiController extends Controller
     // User Destination List
     public function userDestinationList()
     {
+        $destinations = Destinasi::select('check_point', 'end_point')
+            ->distinct()
+            ->get()
+            ->map(function ($item) {
+                return [
+                    'check_point' => $item->check_point,
+                    'end_point' => $item->end_point
+                ];
+            });
+
+        $uniqueLocations = collect();
+        foreach ($destinations as $destination) {
+            $uniqueLocations->push($destination['check_point']);
+            $uniqueLocations->push($destination['end_point']);
+        }
+        $uniqueLocations = $uniqueLocations->unique()->values();
+
         $destinasi = Destinasi::all();
-        return view('app.user.destination-list', compact('destinasi'));
+        return view('app.user.destination-list', compact('destinasi', 'uniqueLocations'));
     }
 
     // Destination list for not login
     public function destinationListNotLogin()
     {
+        $destinations = Destinasi::select('check_point', 'end_point')
+            ->distinct()
+            ->get()
+            ->map(function ($item) {
+                return [
+                    'check_point' => $item->check_point,
+                    'end_point' => $item->end_point
+                ];
+            });
+
+        $uniqueLocations = collect();
+        foreach ($destinations as $destination) {
+            $uniqueLocations->push($destination['check_point']);
+            $uniqueLocations->push($destination['end_point']);
+        }
+        $uniqueLocations = $uniqueLocations->unique()->values();
+
         $destinasi = Destinasi::all();
-        return view('app.user.destination-list', compact('destinasi'));
+        return view('app.user.destination-list', compact('destinasi', 'uniqueLocations'));
     }
 
     public function detailDestination($id)
