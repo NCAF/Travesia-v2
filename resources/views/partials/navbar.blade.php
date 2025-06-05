@@ -18,11 +18,7 @@
             <div class="collapse navbar-collapse justify-content-center" id="navbarSupportedContent">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item">
-                        @if (Auth::check())
-                            <a class="nav-link" href="{{ route('user.destination-list') }}">Destination</a>
-                        @else
-                            <a class="nav-link" href="{{ route('user.destination-list-not-login') }}">Destination</a>
-                        @endif
+                        <a class="nav-link" href="{{ route('destination-list') }}">Destination</a>
                     </li>
                     @if (Auth::check())
                     <li class="nav-item">

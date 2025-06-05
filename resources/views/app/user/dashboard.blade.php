@@ -34,10 +34,81 @@
             }
         }
 
-
         .custom-card {
             background-color: #F2F5F7;
             border-radius: 24px;
+        }
+
+        /* Select2 styling */
+        .select2-container {
+            width: 100% !important;
+        }
+
+        .select2-container .select2-selection--single {
+            height: 45px !important;
+            border: none !important;
+            border-radius: 8px !important;
+            background-color: #F8F9FA !important;
+            padding: 8px 12px !important;
+            display: flex !important;
+            align-items: center !important;
+        }
+
+        .select2-container--default .select2-selection--single .select2-selection__rendered {
+            color: #6C757D !important;
+            line-height: 28px !important;
+            padding-left: 12px !important;
+        }
+
+        .select2-container--default .select2-selection--single .select2-selection__placeholder {
+            color: #6C757D !important;
+        }
+
+        /* Hide default Select2 arrow */
+        .select2-container--default .select2-selection--single .select2-selection__arrow {
+            display: none !important;
+        }
+
+        /* Dropdown styling */
+        .select2-dropdown {
+            border: none !important;
+            border-radius: 8px !important;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important;
+            margin-top: 4px !important;
+            background-color: #F8F9FA !important;
+        }
+
+        .select2-search--dropdown {
+            padding: 8px !important;
+        }
+
+        .select2-container--default .select2-search--dropdown .select2-search__field {
+            border: 1px solid #E5E7EB !important;
+            border-radius: 6px !important;
+            padding: 8px !important;
+        }
+
+        .select2-results__option {
+            padding: 8px 12px !important;
+        }
+
+        .select2-container--default .select2-results__option--highlighted[aria-selected] {
+            background-color: #435EBE !important;
+        }
+
+        /* Form label styling */
+        .form-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+            color: #212529;
+            font-weight: 500;
+        }
+
+        .form-label img {
+            width: 20px;
+            height: 20px;
         }
     </style>
 @endpush
@@ -46,19 +117,28 @@
         <div class="position-relative">
             <img src="{{ asset('img/hero-section.png') }}" alt="hero section" class="img-fluid w-100 rounded">
             <div class="search-container bg-white shadow-lg">
-                <form action="{{ route('user.search-destination') }}" method="GET" class="row g-3 align-items-center">
+                <form action="{{ route('search-destination') }}" method="GET" class="row g-3 align-items-center">
                     <div class="col-md-3 col-12">
                         <label class="form-label">
                             <img src="{{ asset('icons/icon-location.svg') }}" alt="Icon Location"> Origin
                         </label>
-                        <input type="text" class="form-control custom-input" name="origin" placeholder="Select city">
+                        <select class="form-select select2" name="origin" required>
+                            <option></option>
+                            @foreach($uniqueLocations as $location)
+                                <option value="{{ $location }}">{{ $location }}</option>
+                            @endforeach
+                        </select>
                     </div>
                     <div class="col-md-3 col-12">
                         <label class="form-label">
                             <img src="{{ asset('icons/icon-destination.svg') }}" alt="Icon Destination"> Destination
                         </label>
-                        <input type="text" class="form-control custom-input" name="destination"
-                            placeholder="Select destination">
+                        <select class="form-select select2" name="destination" required>
+                            <option></option>
+                            @foreach($uniqueLocations as $location)
+                                <option value="{{ $location }}">{{ $location }}</option>
+                            @endforeach
+                        </select>
                     </div>
                     <div class="col-md-3 col-12">
                         <label class="form-label">
@@ -242,3 +322,35 @@
         @include('partials.footer')
     </div>
 @endsection
+
+@push('scripts')
+<script>
+    $(document).ready(function() {
+        // Initialize Origin select2
+        $('select[name="origin"]').select2({
+            theme: 'bootstrap-5',
+            width: '100%',
+            allowClear: true,
+            placeholder: 'Select city',
+            minimumResultsForSearch: 5,
+            templateSelection: function(data) {
+                if (!data.id) return data.text;
+                return $('<span> ' + data.text + '</span>');
+            }
+        });
+
+        // Initialize Destination select2
+        $('select[name="destination"]').select2({
+            theme: 'bootstrap-5',
+            width: '100%',
+            allowClear: true,
+            placeholder: 'Select destination',
+            minimumResultsForSearch: 5,
+            templateSelection: function(data) {
+                if (!data.id) return data.text;
+                return $('<span> ' + data.text + '</span>');
+            }
+        });
+    });
+</script>
+@endpush
