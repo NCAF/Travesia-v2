@@ -5,8 +5,8 @@
 Dari screenshot `.env` Anda, terdapat **konflik konfigurasi** antara jenis API key dan environment setting:
 
 ```env
-MIDTRANS_SERVER_KEY=SB-Mid-server-qdPA8SErOp-UuZGutOQ6ixHm  # <- SANDBOX KEY
-MIDTRANS_CLIENT_KEY=SB-Mid-client-m-VpN5NopixszPDK           # <- SANDBOX KEY
+MIDTRANS_SERVER_KEY=SB-Mid-server-xxxxxxxxxx  # <- SANDBOX KEY
+MIDTRANS_CLIENT_KEY=SB-Mid-client-xxxxxxxxxx         # <- SANDBOX KEY
 MIDTRANS_IS_PRODUCTION=true                                   # <- PRODUCTION SETTING ❌
 ```
 
