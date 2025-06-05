@@ -82,11 +82,11 @@
                     <div class="row mb-3">
                         <div class="col-md-6">
                             <label class="form-label small text-muted">Name</label>
-                            <p class="mb-0">Muhammad Adib Firmansyah</p>
+                            <p class="mb-0">{{ auth()->user()->nama ?? 'Muhammad Adib Firmansyah' }}</p>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label small text-muted">Email</label>
-                            <p class="mb-0">adib@gmail.com</p>
+                            <p class="mb-0">{{ auth()->user()->email ?? 'adib@gmail.com' }}</p>
                         </div>
                     </div>
                 </div>
@@ -96,8 +96,8 @@
                     <div class="passenger-item">
                         <div class="passenger-number">01</div>
                         <div>
-                            <p class="mb-0">Muhammad Adib Firmansyah</p>
-                            <small class="text-muted">adib@gmail.com</small>
+                            <p class="mb-0">{{ auth()->user()->nama ?? 'Muhammad Adib Firmansyah' }}</p>
+                            <small class="text-muted">{{ auth()->user()->email ?? 'adib@gmail.com' }}</small>
                         </div>
                     </div>
                 </div>
@@ -137,28 +137,38 @@
             <div class="col-md-4">
                 <h5 class="section-title">Order Details</h5>
                 <div class="info-card">
-                    <h4>Madenpa 80</h3>
+                    <h4>{{ $order->travel_name ?? 'Travel Service' }}</h4>
                         <div class="row mt-3 mb-2">
                             <div class="col-6">
-                                <p>Malang</p>
+                                <p>{{ $order->check_point ?? 'Origin' }}</p>
                             </div>
                             <div class="col-6 text-end">
-                                <p>Denpasar</p>
+                                <p>{{ $order->end_point ?? 'Destination' }}</p>
                             </div>
                         </div>
                         <div class="route-info">
                             <div>
-                                <div class="time-info">12.30 WIB</div>
+                                <div class="time-info">
+                                    {{ $order->start_date ? \Carbon\Carbon::parse($order->start_date)->format('H.i') . ' WIB' : '-' }}
+                                </div>
                             </div>
                             <img src="{{ asset('icons/icon-line-left.svg') }}" alt="line left" style="width: 22%"
                                 class="ms-2">
                             <div class="text-center">
-                                <small>1j 32m</small>
+                                <small>
+                                    @if ($order->start_date && $order->end_date)
+                                        {{ \Carbon\Carbon::parse($order->start_date)->diff(\Carbon\Carbon::parse($order->end_date))->format('%hj %im') }}
+                                    @else
+                                        -
+                                    @endif
+                                </small>
                             </div>
                             <img src="{{ asset('icons/icon-line-right.svg') }}" alt="line right" style="width: 22%"
                                 class="me-2">
                             <div>
-                                <div class="time-info">01.30 WIB</div>
+                                <div class="time-info">
+                                    {{ $order->end_date ? \Carbon\Carbon::parse($order->end_date)->format('H.i') . ' WIB' : '-' }}
+                                </div>
                             </div>
                         </div>
 
@@ -166,10 +176,16 @@
 
                         <div class="d-flex justify-content-between align-items-center mb-3">
                             <p class="custom-txt">Total</p>
-                            <p class="price-info">IDR 300.000</p>
+                            <p class="price-info">IDR {{ number_format(($order->harga_kursi ?? 0) * ($order->jumlah_kursi ?? 1), 0, ',', '.') }}</p>
                         </div>
 
-
+                        <div class="text-center">
+                            <div class="alert alert-success">
+                                <h6>Payment Completed!</h6>
+                                <p class="mb-0">Order ID: {{ $order->order_id ?? 'N/A' }}</p>
+                                <small>Status: {{ ucfirst($order->status ?? 'completed') }}</small>
+                            </div>
+                        </div>
 
                 </div>
             </div>

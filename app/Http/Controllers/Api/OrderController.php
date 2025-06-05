@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Models\Order;
+use App\Traits\MidtransConfigTrait;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -11,6 +12,7 @@ use Illuminate\Support\Facades\Validator;
 
 class OrderController extends Controller
 {
+    use MidtransConfigTrait;
     public function seller(Request $request)
     {
         $order = Order::select(['*',
@@ -120,8 +122,24 @@ class OrderController extends Controller
 
     public function orderLists(string $id)
     {
-        $order = Order::find($id);
-        return view('app.user.order-list', compact('order'));
+        $order = Order::select([
+            'orders.*',
+            'destinasi.travel_name',
+            'destinasi.check_point', 
+            'destinasi.end_point',
+            'destinasi.start_date',
+            'destinasi.end_date',
+            'destinasi.price'
+        ])->join('destinasi', 'destinasi.id', 'orders.destinasi_id')
+        ->where('orders.id', $id)
+        ->where('orders.user_id', auth()->id())
+        ->first();
+        
+        if (!$order) {
+            return redirect()->route('user.order-lists')->with('error', 'Order not found');
+        }
+        
+        return view('app.user.order-detail', compact('order'));
     }
 
     /**
@@ -144,14 +162,81 @@ class OrderController extends Controller
             'order_id' => Str::uuid(),
         ]);
 
-
         if ($order) {
             if ($request->wantsJson()) {
-                return response()->json([
-                    'error' => false,
-                    'message' => 'Booking berhasil!',
-                    'data' => $order
-                ]);
+                try {
+                    // Configure Midtrans using trait
+                    $this->configureMidtrans();
+
+                    // Calculate total amount - ensure it's integer and at least 1000 (Midtrans minimum)
+                    $hargaKursi = (int) $validated['harga_kursi'];
+                    $jumlahKursi = (int) $validated['jumlah_kursi'];
+                    $totalAmount = $hargaKursi * $jumlahKursi;
+                    
+                    // Midtrans minimum amount is 1000
+                    if ($totalAmount < 1000) {
+                        return response()->json([
+                            'error' => true,
+                            'message' => 'Minimum payment amount is IDR 1.000',
+                            'data' => null
+                        ]);
+                    }
+
+                    // Generate unique order ID (max 50 characters for Midtrans)
+                    $orderIdForMidtrans = 'ORDER-' . $order->id . '-' . time();
+
+                    // Get user data with fallbacks
+                    $user = Auth::user();
+                    $customerName = !empty($user->nama) ? $user->nama : 'Customer';
+                    $customerEmail = !empty($user->email) ? $user->email : 'customer@travesia.com';
+
+                    // Prepare Midtrans parameters
+                    $params = array(
+                        'transaction_details' => array(
+                            'order_id' => $orderIdForMidtrans,
+                            'gross_amount' => $totalAmount,
+                        ),
+                        'customer_details' => array(
+                            'first_name' => $customerName,
+                            'email' => $customerEmail,
+                        ),
+                        'item_details' => array(
+                            array(
+                                'id' => 'SEAT-' . $order->destinasi_id,
+                                'price' => $hargaKursi,
+                                'quantity' => $jumlahKursi,
+                                'name' => 'Travel Ticket',
+                            )
+                        )
+                    );
+
+                    // Log params for debugging (remove in production)
+                    \Log::info('Midtrans Params:', $params);
+
+                    // Generate Snap Token
+                    $snapToken = \Midtrans\Snap::getSnapToken($params);
+
+                    return response()->json([
+                        'error' => false,
+                        'message' => 'Order created successfully',
+                        'snapToken' => $snapToken,
+                        'order_id' => $order->id
+                    ]);
+                } catch (\Midtrans\Exception $e) {
+                    \Log::error('Midtrans Error: ' . $e->getMessage());
+                    return response()->json([
+                        'error' => true,
+                        'message' => 'Midtrans Error: ' . $e->getMessage(),
+                        'data' => null
+                    ]);
+                } catch (\Exception $e) {
+                    \Log::error('General Error: ' . $e->getMessage());
+                    return response()->json([
+                        'error' => true,
+                        'message' => 'Failed to create payment token: ' . $e->getMessage(),
+                        'data' => null
+                    ]);
+                }
             }
             return redirect()->route('user.order-lists')->with('success', 'Booking berhasil!');
         } else {
@@ -166,64 +251,7 @@ class OrderController extends Controller
         }
     }
 
-    // public function finished(string $id)
-    // {
-    //     $order = Order::find($id);
 
-    //     if (!$order) {
-    //         return response()->json([
-    //             'error' => true,
-    //             'message' => 'Pesanan tidak ditemukan.',
-    //             'data' => null
-    //         ], 200);
-    //     }
-
-    //     $order->update([
-    //         'status' => 'finished',
-    //     ]);
-
-    //     return response()->json([
-    //         'error' => false,
-    //         'message' => 'Pesanan berhasil diselesaikan.',
-    //         'data' => null
-    //     ]);
-    // }
-
-    public function pay(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'id' => 'required',
-            'status' => 'required|in:paid,canceled'
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'error' => true,
-                'message' => Str::ucfirst($validator->errors()->first()),
-                'data' => null
-            ]);
-        }
-
-        $order = Order::where('order_id', $request->id)->first();
-
-        if (!$order) {
-            return response()->json([
-                'error' => true,
-                'message' => 'Order tidak ditemukan.',
-                'data' => null
-            ], 200);
-        }
-
-        $order->update([
-            'status' => $request->status,
-        ]);
-
-        return response()->json([
-            'error' => false,
-            'message' => 'Order berhasil diupdate.',
-            'data' => null
-        ]);
-    }
 
     public function userOrderList()
     {
@@ -238,9 +266,10 @@ class OrderController extends Controller
             'destinasi.price'
         ])->join('destinasi', 'destinasi.id', 'orders.destinasi_id')
         ->where('orders.user_id', $userId)
+        ->whereIn('orders.status', ['paid', 'finished']) // Only show paid and finished orders
         ->orderBy('orders.created_at', 'desc')
         ->get();
-        \Log::info('Orders fetched:', $orders->toArray());
+        \Log::info('Orders fetched (paid/finished only):', $orders->toArray());
         return view('app.user.order-lists', compact('orders'));
     }
 }
