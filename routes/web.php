@@ -46,7 +46,7 @@ Route::middleware('auth')->group(function () {
         return view('app.user.order-detail');
     });
 
-    Route::get('/user/order-detail/{id}', [\App\Http\Controllers\Api\OrderController::class, 'orderList'])->name('user.order-detail');
+    Route::get('/user/order-detail/{id}', [\App\Http\Controllers\Api\OrderController::class, 'orderLists'])->name('user.order-detail');
 });
 
 Route::get('/user/destination-list-not-login', [DestinasiController::class, 'destinationListNotLogin'])->name('user.destination-list-not-login');

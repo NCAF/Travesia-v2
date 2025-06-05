@@ -12,11 +12,23 @@ trait MidtransConfigTrait
             throw new \Exception('Midtrans server key is not configured');
         }
 
-        // Configure Midtrans with aggressive SSL bypass for development
+        // Validate key consistency with environment
+        $isProduction = config('midtrans.isProduction', false);
+        $isSandboxKey = str_starts_with($serverKey, 'SB-');
+        
+        if ($isProduction && $isSandboxKey) {
+            throw new \Exception('Configuration error: You are using sandbox keys (SB-) but MIDTRANS_IS_PRODUCTION is set to true. Please set MIDTRANS_IS_PRODUCTION=false for sandbox keys, or use production keys without SB- prefix.');
+        }
+        
+        if (!$isProduction && !$isSandboxKey) {
+            throw new \Exception('Configuration error: You are using production keys but MIDTRANS_IS_PRODUCTION is set to false. Please set MIDTRANS_IS_PRODUCTION=true for production keys, or use sandbox keys with SB- prefix.');
+        }
+
+        // Configure Midtrans with proper settings
         \Midtrans\Config::$serverKey = $serverKey;
-        \Midtrans\Config::$isProduction = config('midtrans.isProduction', false);
-        \Midtrans\Config::$isSanitized = true;
-        \Midtrans\Config::$is3ds = true;
+        \Midtrans\Config::$isProduction = $isProduction;
+        \Midtrans\Config::$isSanitized = config('midtrans.isSanitized', true);
+        \Midtrans\Config::$is3ds = config('midtrans.is3ds', true);
         
         // Set comprehensive CURL options to bypass SSL issues
         \Midtrans\Config::$curlOptions = array(
@@ -33,9 +45,11 @@ trait MidtransConfigTrait
             ],
         );
 
-        // Additional debugging for development
-        if (!config('midtrans.isProduction', false)) {
-            \Log::info('Midtrans configured for sandbox mode with SSL bypass');
-        }
+        // Log configuration for debugging
+        \Log::info('Midtrans Configuration:', [
+            'isProduction' => $isProduction,
+            'serverKey' => substr($serverKey, 0, 20) . '...',
+            'environment' => $isSandboxKey ? 'sandbox' : 'production'
+        ]);
     }
 } 
