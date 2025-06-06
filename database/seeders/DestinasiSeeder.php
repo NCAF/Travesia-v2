@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use App\Models\Destinasi;
 
 class DestinasiSeeder extends Seeder
 {
@@ -12,61 +13,100 @@ class DestinasiSeeder extends Seeder
      */
     public function run(): void
     {
-        DB::table('destinasi')->insert([
-            'user_id' => 1, // Assuming user ID 1 exists
-            'kode_destinasi' => 'DST001',
-            'travel_name' => 'Jakarta City Tour',
-            'start_date' => now()->addDays(2),
-            'end_date' => now()->addDays(2)->addHours(6),
-            'check_point' => 'Jakarta Central Station',
-            'end_point' => 'Jakarta Old Town',
-            'vehicle_type' => 'Mini Bus',
-            'plate_number' => 'B 1234 ABC',
-            'number_of_seats' => 12,
-            'price' => 350000,
-            'foto' => 'jakarta_tour.jpg',
-            'deskripsi' => 'Enjoy a day tour around Jakarta historical sites and modern landmarks.',
-            'status' => 'orderable',
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
+        $cities = [
+            'Surabaya', 'Malang', 'Kediri', 'Blitar', 'Probolinggo',
+            'Pasuruan', 'Madiun', 'Mojokerto', 'Batu'
+        ];
 
-        DB::table('destinasi')->insert([
-            'user_id' => 2,
-            'kode_destinasi' => 'DST002',
-            'travel_name' => 'Bandung Highland Tour',
-            'start_date' => now()->addDays(3),
-            'end_date' => now()->addDays(3)->addHours(8),
-            'check_point' => 'Bandung Train Station',
-            'end_point' => 'Lembang Park',
-            'vehicle_type' => 'SUV',
-            'plate_number' => 'D 5678 XYZ',
-            'number_of_seats' => 6,
-            'price' => 450000,
-            'foto' => 'bandung_tour.jpg',
-            'deskripsi' => 'Experience the beauty of Bandung highlands with cool weather and stunning views.',
-            'status' => 'traveling',
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
+        $destinations = [];
+        $userId = 1;
+        $counter = 1;
+        $statuses = ['orderable', 'traveling', 'arrived'];
+        $statusIndex = 0;
 
-        DB::table('destinasi')->insert([
-            'user_id' => 3,
-            'kode_destinasi' => 'DST003',
-            'travel_name' => 'Yogyakarta Cultural Journey',
-            'start_date' => now()->addDays(4),
-            'end_date' => now()->addDays(4)->addHours(9),
-            'check_point' => 'Yogyakarta Airport',
-            'end_point' => 'Malioboro Street',
-            'vehicle_type' => 'Van',
-            'plate_number' => 'AB 9012 DEF',
-            'number_of_seats' => 8,
-            'price' => 550000,
-            'foto' => 'yogya_tour.jpg',
-            'deskripsi' => 'Discover the rich culture and history of Yogyakarta through its temples and palace.',
-            'status' => 'arrived',
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
+        // Generate combinations of cities with past dates (5 days ago to yesterday)
+        foreach ($cities as $checkPoint) {
+            foreach ($cities as $endPoint) {
+                if ($checkPoint !== $endPoint) {
+                    $startDate = now()->subDays(rand(1, 5)); // Random date between 5 days ago and yesterday
+                    $destinations[] = [
+                        'user_id' => $userId,
+                        'kode_destinasi' => 'DST' . str_pad($counter, 3, '0', STR_PAD_LEFT),
+                        'travel_name' => $checkPoint . ' - ' . $endPoint . ' Travel (Past)',
+                        'start_date' => $startDate,
+                        'end_date' => $startDate->copy()->addHours(rand(3, 12)),
+                        'check_point' => $checkPoint,
+                        'end_point' => $endPoint,
+                        'vehicle_type' => $this->getRandomVehicle(),
+                        'plate_number' => $this->generateRandomPlateNumber(),
+                        'number_of_seats' => rand(4, 50),
+                        'price' => rand(100000, 1000000),
+                        'link_wa_group' => 'https://wa.me/6281234567890',
+                        'foto' => 'destination_' . $counter . '.jpg',
+                        'deskripsi' => 'Perjalanan nyaman dari ' . $checkPoint . ' menuju ' . $endPoint . ' dengan pemandangan yang indah.',
+                        'status' => $statuses[$statusIndex],
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ];
+
+                    $counter++;
+                    $userId = ($userId % 3) + 1;
+                    $statusIndex = ($statusIndex + 1) % 3;
+                }
+            }
+        }
+
+        // Generate combinations of cities with future dates (today to next 30 days)
+        foreach ($cities as $checkPoint) {
+            foreach ($cities as $endPoint) {
+                if ($checkPoint !== $endPoint) {
+                    $startDate = now()->addDays(rand(0, 30)); // Random date between today and next 30 days
+                    $destinations[] = [
+                        'user_id' => $userId,
+                        'kode_destinasi' => 'DST' . str_pad($counter, 3, '0', STR_PAD_LEFT),
+                        'travel_name' => $checkPoint . ' - ' . $endPoint . ' Travel (Future)',
+                        'start_date' => $startDate,
+                        'end_date' => $startDate->copy()->addHours(rand(3, 12)),
+                        'check_point' => $checkPoint,
+                        'end_point' => $endPoint,
+                        'vehicle_type' => $this->getRandomVehicle(),
+                        'plate_number' => $this->generateRandomPlateNumber(),
+                        'number_of_seats' => rand(4, 50),
+                        'price' => rand(100000, 1000000),
+                        'link_wa_group' => 'https://wa.me/6281234567890',
+                        'foto' => 'destination_' . $counter . '.jpg',
+                        'deskripsi' => 'Perjalanan nyaman dari ' . $checkPoint . ' menuju ' . $endPoint . ' dengan pemandangan yang indah.',
+                        'status' => $statuses[$statusIndex],
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ];
+
+                    $counter++;
+                    $userId = ($userId % 3) + 1;
+                    $statusIndex = ($statusIndex + 1) % 3;
+                }
+            }
+        }
+
+        // Insert in chunks for better performance
+        foreach (array_chunk($destinations, 50) as $chunk) {
+            DB::table('destinasi')->insert($chunk);
+        }
+    }
+
+    private function getRandomVehicle()
+    {
+        $vehicles = ['Bus', 'Mini Bus', 'Van', 'SUV', 'MPV', 'Sedan'];
+        return $vehicles[array_rand($vehicles)];
+    }
+
+    private function generateRandomPlateNumber()
+    {
+        $areas = ['L', 'W', 'N', 'B', 'D', 'S'];
+        $area = $areas[array_rand($areas)];
+        $numbers = rand(1000, 9999);
+        $letters = chr(rand(65, 90)) . chr(rand(65, 90)) . chr(rand(65, 90));
+        
+        return $area . ' ' . $numbers . ' ' . $letters;
     }
 }

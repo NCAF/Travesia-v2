@@ -111,6 +111,120 @@
             opacity: 0;
             cursor: pointer;
         }
+
+        /* Select2 styling */
+        .select2-container {
+            width: 100% !important;
+        }
+
+        .select2-container .select2-selection--single {
+            height: 45px !important;
+            border: none !important;
+            border-radius: 8px !important;
+            background-color: #F8F9FA !important;
+            padding: 8px 12px !important;
+            display: flex !important;
+            align-items: center !important;
+        }
+
+        .select2-container--default .select2-selection--single .select2-selection__rendered {
+            color: #6C757D !important;
+            line-height: 28px !important;
+            padding-left: 12px !important;
+        }
+
+        .select2-container--default .select2-selection--single .select2-selection__placeholder {
+            color: #6C757D !important;
+        }
+
+        /* Hide default Select2 arrow */
+        .select2-container--default .select2-selection--single .select2-selection__arrow {
+            display: none !important;
+        }
+
+        /* Dropdown styling */
+        .select2-dropdown {
+            border: none !important;
+            border-radius: 8px !important;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important;
+            margin-top: 4px !important;
+            background-color: #F8F9FA !important;
+        }
+
+        .select2-search--dropdown {
+            padding: 8px !important;
+        }
+
+        .select2-container--default .select2-search--dropdown .select2-search__field {
+            border: 1px solid #E5E7EB !important;
+            border-radius: 6px !important;
+            padding: 8px !important;
+        }
+
+        .select2-results__option {
+            padding: 8px 12px !important;
+        }
+
+        .select2-container--default .select2-results__option--highlighted[aria-selected] {
+            background-color: #3C8EE1 !important;
+            color: white !important;
+        }
+
+        .select2-container--default .select2-results__option[aria-selected=true] {
+            background-color: #3C8EE1 !important;
+            color: white !important;
+        }
+
+        .select2-container--default .select2-selection--single .select2-selection__rendered {
+            color: #3C8EE1 !important;
+            line-height: 28px !important;
+            padding-left: 12px !important;
+        }
+
+        .select2-container--default.select2-container--focus .select2-selection--single {
+            border-color: #3C8EE1 !important;
+        }
+
+        /* Custom Select2 Styles */
+        .select2-container--default .select2-results__option[aria-selected=true] {
+            background-color: #3C8EE1 !important;
+            color: #212529 !important;
+        }
+
+        .select2-container--default .select2-selection--single {
+            height: 45px !important;
+            border: none !important;
+            border-radius: 8px !important;
+            background-color: #F8F9FA !important;
+            padding: 8px 12px !important;
+            display: flex !important;
+            align-items: center !important;
+        }
+
+        .select2-container--default .select2-selection--single .select2-selection__rendered {
+            color: #212529 !important;
+            line-height: 28px !important;
+            padding-left: 0 !important;
+        }
+
+        .select2-results__option--highlighted[aria-selected=true] {
+            background-color: #3C8EE1 !important;
+            color: #212529 !important;
+        }
+
+        .select2-results__option--highlighted[aria-selected] {
+            background-color: #3C8EE1 !important;
+            color: #212529 !important;
+        }
+
+        .select2-container--default .select2-results__option--highlighted[aria-selected] {
+            background-color: #3C8EE1 !important;
+            color: #212529 !important;
+        }
+
+        .select2-container--default .select2-results__option {
+            color: #212529 !important;
+        }
     </style>
 @endpush
 
@@ -130,8 +244,6 @@
             <div class="offcanvas-body">
                 <a href="{{ route('driver.destination-list') }}" class="mt-5 active"><img
                         src="{{ asset('icons/icon-destination.svg') }}" alt="Icon Destination"> Destination</a>
-                <a href="#"><img src="{{ asset('icons/icon-order.svg') }}" alt="Icon Order"> Order</a>
-                <a href="#"><img src="{{ asset('icons/icon-chat.svg') }}" alt="Icon Chat"> Chat</a>
                 <a href="{{ route('logout') }}"><img src="{{ asset('icons/icon-logout.svg') }}" alt="Icon Logout">
                     Logout</a>
             </div>
@@ -142,8 +254,6 @@
             <img src="{{ asset('img/travesia.png') }}" alt="Logo Travesia" width="156" height="33">
             <a href="{{ route('driver.destination-list') }}" class="mt-5 active"><img
                     src="{{ asset('icons/icon-destination.svg') }}" alt="Icon Destination"> Destination</a>
-            <a href="#"><img src="{{ asset('icons/icon-order.svg') }}" alt="Icon Order"> Order</a>
-            <a href="#"><img src="{{ asset('icons/icon-chat.svg') }}" alt="Icon Chat"> Chat</a>
             <a href="{{ route('logout') }}"><img src="{{ asset('icons/icon-logout.svg') }}" alt="Icon Logout"> Logout</a>
         </div>
 
@@ -244,10 +354,12 @@
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label for="check_point" class="form-label">Check Point</label>
-                                    <input type="text" id="check_point"
-                                        class="custom-input form-control @error('check_point') is-invalid @enderror"
-                                        placeholder="Travel Company Name" name="check_point"
-                                        value="{{ old('check_point') }}">
+                                    <select id="check_point" class="form-select select2 @error('check_point') is-invalid @enderror" name="check_point">
+                                        <option></option>
+                                        @foreach($checkPoints as $point)
+                                            <option value="{{ $point }}" {{ old('check_point') == $point ? 'selected' : '' }}>{{ $point }}</option>
+                                        @endforeach
+                                    </select>
                                     @error('check_point')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
@@ -256,10 +368,12 @@
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label for="end_point" class="form-label">End Point</label>
-                                    <input type="text" id="end_point"
-                                        class="custom-input form-control @error('end_point') is-invalid @enderror"
-                                        placeholder="Travel Company Name" name="end_point"
-                                        value="{{ old('end_point') }}">
+                                    <select id="end_point" class="form-select select2 @error('end_point') is-invalid @enderror" name="end_point">
+                                        <option></option>
+                                        @foreach($endPoints as $point)
+                                            <option value="{{ $point }}" {{ old('end_point') == $point ? 'selected' : '' }}>{{ $point }}</option>
+                                        @endforeach
+                                    </select>
                                     @error('end_point')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
@@ -332,10 +446,19 @@
                         </div>
                         <div class="mb-3">
                             <label for="price" class="form-label">Price</label>
-                            <input type="text" id="price"
+                            <input type="number" id="price"
                                 class="custom-input form-control @error('price') is-invalid @enderror" placeholder="IDR"
                                 name="price" value="{{ old('price') }}">
                             @error('price')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                        <div class="mb-3">
+                            <label for="link_wa_group" class="form-label">Link Wa Group</label>
+                            <input type="text" id="link_wa_group"
+                                class="custom-input form-control @error('link_wa_group') is-invalid @enderror" placeholder="Link Wa Group"
+                                name="link_wa_group" value="{{ old('link_wa_group') }}">
+                            @error('link_wa_group')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
@@ -347,8 +470,27 @@
 
 @endsection
 @push('scripts')
+
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
+        $(document).ready(function() {
+            // Initialize Origin (check_point) select2
+            $('#check_point').select2({
+                width: '100%',
+                allowClear: true,
+                placeholder: 'Select check point',
+                minimumResultsForSearch: 0,
+                selectionCssClass: 'select2-selection--custom'
+            });
+
+            // Initialize Destination (end_point) select2
+            $('#end_point').select2({
+                width: '100%',
+                allowClear: true,
+                placeholder: 'Select end point',
+                minimumResultsForSearch: 0,
+                selectionCssClass: 'select2-selection--custom'
+            });
+
             let dropzones = document.querySelectorAll(".dropzone");
 
             dropzones.forEach((dropzone) => {

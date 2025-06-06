@@ -130,8 +130,6 @@
             <div class="offcanvas-body">
                 <a href="{{ route('driver.destination-list') }}" class="mt-5 active"><img
                         src="{{ asset('icons/icon-destination.svg') }}" alt="Icon Destination"> Destination</a>
-                <a href="#"><img src="{{ asset('icons/icon-order.svg') }}" alt="Icon Order"> Order</a>
-                <a href="#"><img src="{{ asset('icons/icon-chat.svg') }}" alt="Icon Chat"> Chat</a>
                 <a href="{{ route('logout') }}"><img src="{{ asset('icons/icon-logout.svg') }}" alt="Icon Logout">
                     Logout</a>
             </div>
@@ -142,8 +140,6 @@
             <img src="{{ asset('img/travesia.png') }}" alt="Logo Travesia" width="156" height="33">
             <a href="{{ route('driver.destination-list') }}" class="mt-5 active"><img
                     src="{{ asset('icons/icon-destination.svg') }}" alt="Icon Destination"> Destination</a>
-            <a href="#"><img src="{{ asset('icons/icon-order.svg') }}" alt="Icon Order"> Order</a>
-            <a href="#"><img src="{{ asset('icons/icon-chat.svg') }}" alt="Icon Chat"> Chat</a>
             <a href="{{ route('logout') }}"><img src="{{ asset('icons/icon-logout.svg') }}" alt="Icon Logout"> Logout</a>
         </div>
 
@@ -253,6 +249,10 @@
                     <div class="mb-3">
                         <label class="form-label custom-txt">Price</label>
                         <p>IDR {{ number_format($destinasi->price, 0, ',', '.') }}</p>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label custom-txt">Price</label>
+                        <p>Link Wa Group {{ $destinasi->link_wa_group}}</p>
                     </div>
                 </div>
             </div>

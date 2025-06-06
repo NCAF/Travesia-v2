@@ -74,7 +74,7 @@ Route::middleware('auth.driver')->prefix('driver')->group(function () {
 
     Route::get('/delete-destination', [DestinasiController::class, 'delete'])->name('driver.delete-destination');
 
-    Route::get('/search-destination', [DestinasiController::class, 'search'])->name('driver.search-destination');
+    Route::get('/search-destination', [DestinasiController::class, 'searchDriver'])->name('driver.search-destination');
 });
 
 // Keep the driver registration routes outside the auth middleware

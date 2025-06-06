@@ -144,7 +144,7 @@
                         <label class="form-label">
                             <img src="{{ asset('icons/icon-date.svg') }}" alt="Icon Date"> Date
                         </label>
-                        <input type="date" class="form-control custom-input" name="date">
+                        <input type="date" class="form-control custom-input" name="date" min="{{ date('Y-m-d') }}" value="{{ request('date') }}">
                     </div>
                     <div class="col-md-3 col-12 mt-5">
                         <button type="submit" class="custom-btn btn w-100 fw-bold">Search</button>
