@@ -104,9 +104,9 @@ class DestinasiController extends Controller
    
         // Untuk driver, gunakan driver_id dari session
         if (session()->has('is_driver') && session()->get('is_driver')) {
-            $user_id = session()->get('driver_id');
+            $driver_id = session()->get('driver_id');
 
-            if (!$user_id) {
+            if (!$driver_id) {
                 \Log::error('Driver ID null dari session', [
                     'session' => session()->all()
                 ]);
@@ -121,10 +121,10 @@ class DestinasiController extends Controller
                 return redirect()->route('login')->with('error', 'Anda harus login terlebih dahulu.');
             }
 
-            $user_id = Auth::id();
+            $driver_id = Auth::id();
 
-            if (!$user_id) {
-                \Log::error('User ID null saat membuat destinasi', [
+            if (!$driver_id) {
+                \Log::error('Driver ID null saat membuat destinasi', [
                     'user' => Auth::user(),
                     'is_logged_in' => Auth::check()
                 ]);
@@ -136,7 +136,7 @@ class DestinasiController extends Controller
         }
 
         $destinasi = new Destinasi();
-        $destinasi->user_id = $user_id;
+        $destinasi->driver_id = $driver_id;
         $destinasi->kode_destinasi = 'DST-' . strtoupper(Str::random(8));
         $destinasi->travel_name = $request->travel_name;
         $destinasi->start_date = $request->start_date;

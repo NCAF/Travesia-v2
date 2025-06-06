@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('destinasi', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained('users')->onUpdate('cascade')->onDelete('cascade');
+            $table->foreignId('driver_id')->constrained('users')->onUpdate('cascade')->onDelete('cascade');
             $table->string('kode_destinasi', 255);
             $table->string('travel_name', 255);
             $table->dateTime('start_date');

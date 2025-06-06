@@ -22,7 +22,7 @@ return new class extends Migration
                 DECLARE welcome_message TEXT;
 
                 -- Mendapatkan nama user pembuat destinasi
-                SELECT nama INTO nama_user FROM users WHERE id = NEW.user_id;
+                SELECT nama INTO nama_user FROM users WHERE id = NEW.driver_id;
 
                 -- Membuat nama channel
                 SET channel_name = CONCAT("Destinasi ", NEW.kode_destinasi);
@@ -36,7 +36,7 @@ return new class extends Migration
 
                 -- Memasukkan pesan sambutan ke dalam tabel messages
                 INSERT INTO messages (chat_id, sender_id, message, created_at, updated_at)
-                VALUES (LAST_INSERT_ID(), NEW.user_id, welcome_message, NOW(), NOW());
+                VALUES (LAST_INSERT_ID(), NEW.driver_id, welcome_message, NOW(), NOW());
             END
         ');
     }

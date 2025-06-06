@@ -26,7 +26,7 @@ class Destinasi extends Model
     ];
     
     protected $fillable = [
-        'user_id',
+        'driver_id',
         'kode_destinasi',
         'travel_name',
         'start_date',
@@ -41,9 +41,9 @@ class Destinasi extends Model
         'status',
     ];
 
-    public function user(): BelongsTo
+    public function driver(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'driver_id');
     }
 
     public function orders(): HasMany
