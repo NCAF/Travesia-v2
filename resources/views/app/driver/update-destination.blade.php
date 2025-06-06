@@ -116,6 +116,83 @@
             opacity: 0;
             cursor: pointer;
         }
+
+        /* Custom Select2 Styles */
+        .select2-container {
+            width: 100% !important;
+        }
+
+        .select2-container .select2-selection--single {
+            height: 45px !important;
+            border: none !important;
+            border-radius: 8px !important;
+            background-color: #F8F9FA !important;
+            padding: 8px 12px !important;
+            display: flex !important;
+            align-items: center !important;
+        }
+
+        .select2-container--default .select2-selection--single .select2-selection__rendered {
+            color: #212529 !important;
+            line-height: 28px !important;
+            padding-left: 0 !important;
+        }
+
+        .select2-container--default .select2-selection--single .select2-selection__placeholder {
+            color: #6C757D !important;
+        }
+
+        /* Hide default Select2 arrow */
+        .select2-container--default .select2-selection--single .select2-selection__arrow {
+            display: none !important;
+        }
+
+        /* Dropdown styling */
+        .select2-dropdown {
+            border: none !important;
+            border-radius: 8px !important;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important;
+            margin-top: 4px !important;
+            background-color: #F8F9FA !important;
+        }
+
+        .select2-search--dropdown {
+            padding: 8px !important;
+        }
+
+        .select2-container--default .select2-search--dropdown .select2-search__field {
+            border: 1px solid #E5E7EB !important;
+            border-radius: 6px !important;
+            padding: 8px !important;
+        }
+
+        .select2-results__option {
+            padding: 8px 12px !important;
+        }
+
+        .select2-container--default .select2-results__option[aria-selected=true] {
+            background-color: #3C8EE1 !important;
+            color: #212529 !important;
+        }
+
+        .select2-results__option--highlighted[aria-selected=true] {
+            background-color: #3C8EE1 !important;
+            color: #212529 !important;
+        }
+
+        .select2-results__option--highlighted[aria-selected] {
+            background-color: #3C8EE1 !important;
+            color: #212529 !important;
+        }
+
+        .select2-container--default .select2-results__option--highlighted[aria-selected] {
+            background-color: #3C8EE1 !important;
+            color: #212529 !important;
+        }
+
+        .select2-container--default .select2-results__option {
+            color: #212529 !important;
+        }
     </style>
 @endpush
 
@@ -135,8 +212,6 @@
             <div class="offcanvas-body">
                 <a href="{{ route('driver.destination-list') }}" class="mt-5 active"><img
                         src="{{ asset('icons/icon-destination.svg') }}" alt="Icon Destination"> Destination</a>
-                <a href="#"><img src="{{ asset('icons/icon-order.svg') }}" alt="Icon Order"> Order</a>
-                <a href="#"><img src="{{ asset('icons/icon-chat.svg') }}" alt="Icon Chat"> Chat</a>
                 <a href="{{ route('logout') }}"><img src="{{ asset('icons/icon-logout.svg') }}" alt="Icon Logout">
                     Logout</a>
             </div>
@@ -147,8 +222,6 @@
             <img src="{{ asset('img/travesia.png') }}" alt="Logo Travesia" width="156" height="33">
             <a href="{{ route('driver.destination-list') }}" class="mt-5 active"><img
                     src="{{ asset('icons/icon-destination.svg') }}" alt="Icon Destination"> Destination</a>
-            <a href="#"><img src="{{ asset('icons/icon-order.svg') }}" alt="Icon Order"> Order</a>
-            <a href="#"><img src="{{ asset('icons/icon-chat.svg') }}" alt="Icon Chat"> Chat</a>
             <a href="{{ route('logout') }}"><img src="{{ asset('icons/icon-logout.svg') }}" alt="Icon Logout"> Logout</a>
         </div>
 
@@ -250,10 +323,12 @@
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label for="check_point" class="form-label">Check Point</label>
-                                    <input type="text" id="check_point"
-                                        class="custom-input form-control @error('check_point') is-invalid @enderror"
-                                        placeholder="Starting Point" name="check_point"
-                                        value="{{ old('check_point', $destinasi->check_point) }}">
+                                    <select id="check_point" class="form-select select2 @error('check_point') is-invalid @enderror" name="check_point">
+                                        <option></option>
+                                        @foreach($checkPoints as $point)
+                                            <option value="{{ $point }}" {{ old('check_point', $destinasi->check_point) == $point ? 'selected' : '' }}>{{ $point }}</option>
+                                        @endforeach
+                                    </select>
                                     @error('check_point')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
@@ -262,10 +337,12 @@
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label for="end_point" class="form-label">End Point</label>
-                                    <input type="text" id="end_point"
-                                        class="custom-input form-control @error('end_point') is-invalid @enderror"
-                                        placeholder="Destination Point" name="end_point"
-                                        value="{{ old('end_point', $destinasi->end_point) }}">
+                                    <select id="end_point" class="form-select select2 @error('end_point') is-invalid @enderror" name="end_point">
+                                        <option></option>
+                                        @foreach($endPoints as $point)
+                                            <option value="{{ $point }}" {{ old('end_point', $destinasi->end_point) == $point ? 'selected' : '' }}>{{ $point }}</option>
+                                        @endforeach
+                                    </select>
                                     @error('end_point')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
@@ -351,6 +428,16 @@
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
+                        <div class="mb-3">
+                            <label for="link_wa_group" class="form-label">Link Wa Group</label>
+                            <input type="text" class="custom-input form-control @error('link_wa_group') is-invalid @enderror"
+                                id="link_wa_group" placeholder="IDR" name="link_wa_group"
+                                value="{{ old('link_wa_group', $destinasi->link_wa_group) }}">
+                            @error('link_wa_group')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
                     </div>
                 </div>
             </form>
@@ -361,60 +448,78 @@
 
 @push('scripts')
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            let dropzone = document.querySelector(".dropzone");
-            let fileInput = dropzone.querySelector("input[type='file']");
-            let previewImage = dropzone.querySelector("img");
+        $(document).ready(function() {
+            // Initialize Origin (check_point) select2
+            $('#check_point').select2({
+                width: '100%',
+                allowClear: true,
+                placeholder: 'Select check point',
+                minimumResultsForSearch: 0
+            });
 
-            function createNewFileInput() {
-                let newFileInput = document.createElement("input");
-                newFileInput.type = "file";
-                newFileInput.name = "foto";
-                newFileInput.className = "form-control";
-                newFileInput.style.display = "none"; // Sembunyikan input baru
-                dropzone.appendChild(newFileInput);
+            // Initialize Destination (end_point) select2
+            $('#end_point').select2({
+                width: '100%',
+                allowClear: true,
+                placeholder: 'Select end point',
+                minimumResultsForSearch: 0
+            });
 
-                newFileInput.addEventListener("change", function() {
-                    if (newFileInput.files.length > 0) {
-                        updateImagePreview(newFileInput.files[0]);
-                    }
+            document.addEventListener("DOMContentLoaded", function() {
+                let dropzone = document.querySelector(".dropzone");
+                let fileInput = dropzone.querySelector("input[type='file']");
+                let previewImage = dropzone.querySelector("img");
+
+                function createNewFileInput() {
+                    let newFileInput = document.createElement("input");
+                    newFileInput.type = "file";
+                    newFileInput.name = "foto";
+                    newFileInput.className = "form-control";
+                    newFileInput.style.display = "none"; // Sembunyikan input baru
+                    dropzone.appendChild(newFileInput);
+
+                    newFileInput.addEventListener("change", function() {
+                        if (newFileInput.files.length > 0) {
+                            updateImagePreview(newFileInput.files[0]);
+                        }
+                    });
+
+                    return newFileInput;
+                }
+
+                function updateImagePreview(file) {
+                    let reader = new FileReader();
+                    reader.onload = function(e) {
+                        previewImage.src = e.target.result;
+                    };
+                    reader.readAsDataURL(file);
+
+                    // Hapus file input lama dan buat yang baru
+                    fileInput.remove();
+                    fileInput = createNewFileInput();
+                }
+
+                // Ketika klik area drag & drop, buka file picker
+                dropzone.addEventListener("click", function() {
+                    fileInput.click();
                 });
 
-                return newFileInput;
-            }
+                // Saat file di-drag masuk ke area dropzone
+                dropzone.addEventListener("dragover", function(e) {
+                    e.preventDefault();
+                });
 
-            function updateImagePreview(file) {
-                let reader = new FileReader();
-                reader.onload = function(e) {
-                    previewImage.src = e.target.result;
-                };
-                reader.readAsDataURL(file);
+                // Saat file dilepas ke dropzone
+                dropzone.addEventListener("drop", function(e) {
+                    e.preventDefault();
+                    let file = e.dataTransfer.files[0]; // Ambil file pertama yang didrag
+                    updateImagePreview(file); // Perbarui gambar
+                });
 
-                // Hapus file input lama dan buat yang baru
+                // Ganti file input pertama kali
                 fileInput.remove();
                 fileInput = createNewFileInput();
-            }
-
-            // Ketika klik area drag & drop, buka file picker
-            dropzone.addEventListener("click", function() {
-                fileInput.click();
             });
-
-            // Saat file di-drag masuk ke area dropzone
-            dropzone.addEventListener("dragover", function(e) {
-                e.preventDefault();
-            });
-
-            // Saat file dilepas ke dropzone
-            dropzone.addEventListener("drop", function(e) {
-                e.preventDefault();
-                let file = e.dataTransfer.files[0]; // Ambil file pertama yang didrag
-                updateImagePreview(file); // Perbarui gambar
-            });
-
-            // Ganti file input pertama kali
-            fileInput.remove();
-            fileInput = createNewFileInput();
         });
     </script>
 @endpush

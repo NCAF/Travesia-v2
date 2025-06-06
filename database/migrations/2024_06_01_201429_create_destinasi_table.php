@@ -24,6 +24,7 @@ return new class extends Migration
             $table->string('plate_number', 20);
             $table->integer('number_of_seats');
             $table->integer('price');
+            $table->string('link_wa_group');
             $table->string('foto')->nullable();
             $table->text('deskripsi')->nullable();
             $table->string('status', 50);

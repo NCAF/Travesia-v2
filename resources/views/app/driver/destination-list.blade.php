@@ -113,8 +113,6 @@
             <div class="offcanvas-body">
                 <a href="#" class="mt-5 active"><img src="{{ asset('icons/icon-destination.svg') }}"
                         alt="Icon Destination"> Destination</a>
-                <a href="#"><img src="{{ asset('icons/icon-order.svg') }}" alt="Icon Order"> Order</a>
-                <a href="#"><img src="{{ asset('icons/icon-chat.svg') }}" alt="Icon Chat"> Chat</a>
                 <a href="{{ route('logout') }}"><img src="{{ asset('icons/icon-logout.svg') }}" alt="Icon Logout">
                     Logout</a>
             </div>
@@ -125,8 +123,6 @@
             <img src="{{ asset('img/travesia.png') }}" alt="Logo Travesia" width="156" height="33">
             <a href="#" class="mt-5 active"><img src="{{ asset('icons/icon-destination.svg') }}"
                     alt="Icon Destination"> Destination</a>
-            <a href="#"><img src="{{ asset('icons/icon-order.svg') }}" alt="Icon Order"> Order</a>
-            <a href="#"><img src="{{ asset('icons/icon-chat.svg') }}" alt="Icon Chat"> Chat</a>
             <a href="{{ route('logout') }}"><img src="{{ asset('icons/icon-logout.svg') }}" alt="Icon Logout"> Logout</a>
         </div>
 

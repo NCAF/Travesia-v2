@@ -48,9 +48,34 @@ class DestinasiController extends Controller
         return view('app.driver.destination-list', compact('destinasi'));
     }
 
+    // Search for Driver's Destination List
+    public function searchDriver(Request $request)
+    {
+        $query = Destinasi::query();
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('travel_name', 'like', "%{$search}%")
+                  ->orWhere('check_point', 'like', "%{$search}%")
+                  ->orWhere('end_point', 'like', "%{$search}%");
+            });
+        }
+
+        $destinasi = $query->get();
+        return view('app.driver.destination-list', compact('destinasi'));
+    }
+
     public function create()
     {
-        return view('app.driver.add-destination');
+        $destinations = Destinasi::select('check_point', 'end_point')
+            ->distinct()
+            ->get();
+
+        $checkPoints = $destinations->pluck('check_point')->unique()->values();
+        $endPoints = $destinations->pluck('end_point')->unique()->values();
+
+        return view('app.driver.add-destination', compact('checkPoints', 'endPoints'));
     }
 
     //  Create Destinasi
@@ -66,6 +91,7 @@ class DestinasiController extends Controller
             'plate_number' => 'required',
             'number_of_seats' => 'required',
             'price' => 'required',
+            'link_wa_group' => 'required',
             'foto' => 'required',
             'deskripsi' => 'required',
         ]);
@@ -75,7 +101,7 @@ class DestinasiController extends Controller
         }
 
         $image = new ImageController();
-
+   
         // Untuk driver, gunakan driver_id dari session
         if (session()->has('is_driver') && session()->get('is_driver')) {
             $user_id = session()->get('driver_id');
@@ -121,6 +147,7 @@ class DestinasiController extends Controller
         $destinasi->plate_number = $request->plate_number;
         $destinasi->number_of_seats = $request->number_of_seats;
         $destinasi->price = $request->price;
+        $destinasi->link_wa_group = $request->link_wa_group;
         $destinasi->deskripsi = $request->deskripsi;
         $destinasi->foto = $image->uploadImage($request->file('foto'));
         $destinasi->status = Destinasi::STATUS_ORDERABLE;
@@ -161,6 +188,9 @@ class DestinasiController extends Controller
         // Build search query
         $query = Destinasi::query();
 
+        // Filter untuk hanya menampilkan destinasi dengan tanggal hari ini dan seterusnya
+        $query->whereDate('start_date', '>=', now()->startOfDay());
+
         if ($request->filled('origin')) {
             $query->where('check_point', $request->origin);
         }
@@ -172,6 +202,9 @@ class DestinasiController extends Controller
         if ($request->filled('date')) {
             $query->whereDate('start_date', $request->date);
         }
+
+        // Urutkan berdasarkan tanggal terdekat
+        $query->orderBy('start_date', 'asc');
 
         $destinasi = $query->get();
 
@@ -198,7 +231,15 @@ class DestinasiController extends Controller
     {
         $id = $request->query('id');
         $destinasi = \App\Models\Destinasi::findOrFail($id);
-        return view('app.driver.update-destination', compact('destinasi'));
+
+        $destinations = Destinasi::select('check_point', 'end_point')
+            ->distinct()
+            ->get();
+
+        $checkPoints = $destinations->pluck('check_point')->unique()->values();
+        $endPoints = $destinations->pluck('end_point')->unique()->values();
+
+        return view('app.driver.update-destination', compact('destinasi', 'checkPoints', 'endPoints'));
     }
 
     public function updatePost(Request $request)
@@ -286,7 +327,11 @@ class DestinasiController extends Controller
         }
         $uniqueLocations = $uniqueLocations->unique()->values();
 
-        $destinasi = Destinasi::all();
+        // Filter untuk hanya menampilkan destinasi dengan tanggal hari ini dan seterusnya
+        $destinasi = Destinasi::whereDate('start_date', '>=', now()->startOfDay())
+            ->orderBy('start_date', 'asc')
+            ->get();
+
         return view('app.user.destination-list', compact('destinasi', 'uniqueLocations'));
     }
 
@@ -310,7 +355,11 @@ class DestinasiController extends Controller
         }
         $uniqueLocations = $uniqueLocations->unique()->values();
 
-        $destinasi = Destinasi::all();
+        // Filter untuk hanya menampilkan destinasi dengan tanggal hari ini dan seterusnya
+        $destinasi = Destinasi::whereDate('start_date', '>=', now()->startOfDay())
+            ->orderBy('start_date', 'asc')
+            ->get();
+
         return view('app.user.destination-list', compact('destinasi', 'uniqueLocations'));
     }
 
