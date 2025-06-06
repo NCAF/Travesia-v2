@@ -19,7 +19,7 @@ class DestinasiSeeder extends Seeder
         ];
 
         $destinations = [];
-        $userId = 1;
+        $driverId = 1;
         $counter = 1;
         $statuses = ['orderable', 'traveling', 'arrived'];
         $statusIndex = 0;
@@ -30,7 +30,7 @@ class DestinasiSeeder extends Seeder
                 if ($checkPoint !== $endPoint) {
                     $startDate = now()->subDays(rand(1, 5)); // Random date between 5 days ago and yesterday
                     $destinations[] = [
-                        'user_id' => $userId,
+                        'driver_id' => $driverId,
                         'kode_destinasi' => 'DST' . str_pad($counter, 3, '0', STR_PAD_LEFT),
                         'travel_name' => $checkPoint . ' - ' . $endPoint . ' Travel (Past)',
                         'start_date' => $startDate,
@@ -50,7 +50,7 @@ class DestinasiSeeder extends Seeder
                     ];
 
                     $counter++;
-                    $userId = ($userId % 3) + 1;
+                    $driverId = ($driverId % 3) + 1;
                     $statusIndex = ($statusIndex + 1) % 3;
                 }
             }
@@ -62,7 +62,7 @@ class DestinasiSeeder extends Seeder
                 if ($checkPoint !== $endPoint) {
                     $startDate = now()->addDays(rand(0, 30)); // Random date between today and next 30 days
                     $destinations[] = [
-                        'user_id' => $userId,
+                        'driver_id' => $driverId,
                         'kode_destinasi' => 'DST' . str_pad($counter, 3, '0', STR_PAD_LEFT),
                         'travel_name' => $checkPoint . ' - ' . $endPoint . ' Travel (Future)',
                         'start_date' => $startDate,
@@ -82,7 +82,7 @@ class DestinasiSeeder extends Seeder
                     ];
 
                     $counter++;
-                    $userId = ($userId % 3) + 1;
+                    $driverId = ($driverId % 3) + 1;
                     $statusIndex = ($statusIndex + 1) % 3;
                 }
             }

@@ -44,7 +44,7 @@ class DestinasiController extends Controller
     // Destination List
     public function destinationList()
     {
-        $destinasi = Destinasi::all();
+        $destinasi = Destinasi::where('driver_id', session()->get('driver_id'))->get();
         return view('app.driver.destination-list', compact('destinasi'));
     }
 
@@ -52,6 +52,9 @@ class DestinasiController extends Controller
     public function searchDriver(Request $request)
     {
         $query = Destinasi::query();
+        
+        // Filter by driver_id first
+        $query->where('driver_id', session()->get('driver_id'));
 
         if ($request->filled('search')) {
             $search = $request->search;
