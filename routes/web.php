@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\DashboardController;
 use App\Http\Controllers\Api\DestinasiController;
 use App\Models\Destinasi;
+use Illuminate\Http\Request;
 
 /*
 |--------------------------------------------------------------------------
@@ -89,3 +90,8 @@ Route::get('/login', [AuthController::class, 'login'])->name('login');
 Route::post('/login', [AuthController::class, 'loginPost'])->name('login');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
+
+Route::post('/webhook/midtrans', function (Request $request) {
+    \Log::info('Midtrans webhook received:', $request->all());
+    return response()->json(['status' => 'received']);
+});

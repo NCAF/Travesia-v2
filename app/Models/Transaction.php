@@ -41,6 +41,7 @@ class Transaction extends Model
         'transaction_time',
         'settlement_time',
         'midtrans_response',
+        'snap_token',
     ];
 
     protected $casts = [

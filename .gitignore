@@ -32,3 +32,10 @@ dump.php
 .cursorignore
 
 .cursor
+
+# ignore guide midtrans
+MIDTRANS_CALLBACK_SETUP.md
+
+# Ignore testing midtrans
+test_midtrans_callback.php
+test_simple_callback.php
