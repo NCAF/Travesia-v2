@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\DashboardController;
 use App\Http\Controllers\Api\DestinasiController;
 use App\Http\Controllers\Api\CheckoutController;
 use App\Http\Controllers\Api\MidtransCallbackController;
+use App\Http\Controllers\Api\SessionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -21,6 +22,12 @@ use App\Http\Controllers\Api\MidtransCallbackController;
 | be assigned to the "api" middleware group. Make something great!
 |
 */
+
+// Session Management Routes (No authentication required for CSRF token)
+Route::get('csrf-token', [SessionController::class, 'getCsrfToken'])->name('api.csrf-token');
+Route::post('keep-alive', [SessionController::class, 'keepAlive'])->name('api.keep-alive');
+Route::get('session-info', [SessionController::class, 'getSessionInfo'])->name('api.session-info');
+Route::post('refresh-session', [SessionController::class, 'refreshSession'])->name('api.refresh-session');
 
 Route::post('login', [AuthController::class, 'login'])->name('api.login');
 Route::post('register', [AuthController::class, 'register'])->name('api.register');

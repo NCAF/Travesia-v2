@@ -429,7 +429,7 @@
                             @enderror
                         </div>
                         <div class="mb-3">
-                            <label for="link_wa_group" class="form-label">Link Wa Group</label>
+                            <label for="link_wa_group" class="form-label">WA Contact</label>
                             <input type="text" class="custom-input form-control @error('link_wa_group') is-invalid @enderror"
                                 id="link_wa_group" placeholder="IDR" name="link_wa_group"
                                 value="{{ old('link_wa_group', $destinasi->link_wa_group) }}">

@@ -3,6 +3,7 @@
 namespace App\Exceptions;
 
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Session\TokenMismatchException;
 use Throwable;
 
 class Handler extends ExceptionHandler
@@ -44,5 +45,37 @@ class Handler extends ExceptionHandler
         $this->reportable(function (Throwable $e) {
             //
         });
+    }
+
+    /**
+     * Render an exception into an HTTP response.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Throwable  $e
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function render($request, Throwable $e)
+    {
+        // Handle CSRF Token Mismatch Exception
+        if ($e instanceof TokenMismatchException) {
+            // If it's an AJAX request
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'error' => true,
+                    'message' => 'Sesi Anda telah berakhir. Silakan refresh halaman dan coba lagi.',
+                    'csrf_token' => csrf_token(),
+                    'type' => 'token_mismatch',
+                    'reload' => true
+                ], 419);
+            }
+
+            // If it's a regular request
+            return redirect()->back()
+                ->withInput($request->except(['_token', 'password', 'password_confirmation']))
+                ->with('error', 'Sesi Anda telah berakhir. Silakan coba lagi.')
+                ->with('show_csrf_warning', true);
+        }
+
+        return parent::render($request, $e);
     }
 }
