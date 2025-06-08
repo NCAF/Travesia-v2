@@ -32,3 +32,14 @@ dump.php
 .cursorignore
 
 .cursor
+
+# ignore guide midtrans
+MIDTRANS_CALLBACK_SETUP.md
+CLOUDFLARE_TUNNEL_SETUP.md
+CSRF_SESSION_SETUP.md
+
+# Ignore testing midtrans
+test_midtrans_callback.php
+test_simple_callback.php
+test_notification_debug.php
+

@@ -103,7 +103,7 @@
                 </div>
 
 
-                <h5 class="section-title">Payment Method</h5>
+                <h5 class="section-title">WA Contact</h5>
                 {{-- <div class="info-card">
                     <div class="row">
                         <div class="col-md-1">
@@ -126,7 +126,9 @@
                             </div>
                         </div>
                         <div class="col-md-6 d-flex align-items-center">
-                            <img src="{{ asset('icons/icon-qris.svg') }}" alt="QRIS">
+                            <a href="{{ $order->link_wa_group ?? 'https://wa.me/6281234567890' }}" target="_blank">
+                                <img src="{{ asset('icons/icon-wa.svg') }}" style="width: 25px; height: 25px;" alt="QRIS">
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -186,7 +188,6 @@
                                 <small>Status: {{ ucfirst($order->status ?? 'completed') }}</small>
                             </div>
                         </div>
-
                 </div>
             </div>
         </div>

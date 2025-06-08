@@ -261,7 +261,7 @@
                         <p>IDR {{ number_format($destinasi->price, 0, ',', '.') }}</p>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label custom-txt">Price</label>
+                        <label class="form-label custom-txt">WA Contact</label>
                         <p>Link Wa Group {{ $destinasi->link_wa_group}}</p>
                     </div>
                 </div>
