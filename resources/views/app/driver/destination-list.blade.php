@@ -113,6 +113,8 @@
             <div class="offcanvas-body">
                 <a href="#" class="mt-5 active"><img src="{{ asset('icons/icon-destination.svg') }}"
                         alt="Icon Destination"> Destination</a>
+                <a href="{{ route('driver.order-list') }}"><img
+                        src="{{ asset('icons/icon-order.svg') }}" alt="Icon Order"> Order</a>
                 <a href="{{ route('logout') }}"><img src="{{ asset('icons/icon-logout.svg') }}" alt="Icon Logout">
                     Logout</a>
             </div>
@@ -121,9 +123,17 @@
         <!-- Sidebar untuk Desktop -->
         <div class="sidebar d-none d-md-block">
             <img src="{{ asset('img/travesia.png') }}" alt="Logo Travesia" width="156" height="33">
-            <a href="#" class="mt-5 active"><img src="{{ asset('icons/icon-destination.svg') }}"
-                    alt="Icon Destination"> Destination</a>
-            <a href="{{ route('logout') }}"><img src="{{ asset('icons/icon-logout.svg') }}" alt="Icon Logout"> Logout</a>
+            <div class="d-flex flex-column h-100">
+                <div>
+                    <a href="{{ route('driver.destination-list') }}" class="mt-5 active"><img
+                        src="{{ asset('icons/icon-destination.svg') }}" alt="Icon Destination"> Destination</a>
+                    <a href="{{ route('driver.order-list') }}"><img
+                        src="{{ asset('icons/icon-order.svg') }}" alt="Icon Order"> Order</a>
+                </div>
+                <div class="mt-auto mb-4">
+                    <a href="{{ route('logout') }}"><img src="{{ asset('icons/icon-logout.svg') }}" alt="Icon Logout"> Logout</a>
+                </div>
+            </div>
         </div>
 
         <!-- Main Content -->

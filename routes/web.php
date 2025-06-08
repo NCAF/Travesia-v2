@@ -20,6 +20,7 @@ use App\Models\Destinasi;
 
 Route::get('/', [DestinasiController::class, 'index'])->name('dashboard');
 
+
 // Public routes that don't require authentication
 Route::get('/search-destination', [DestinasiController::class, 'search'])->name('search-destination');
 Route::get('/destination-list', [DestinasiController::class, 'destinationListNotLogin'])->name('destination-list');
@@ -75,6 +76,9 @@ Route::middleware('auth.driver')->prefix('driver')->group(function () {
     Route::get('/delete-destination', [DestinasiController::class, 'delete'])->name('driver.delete-destination');
 
     Route::get('/search-destination', [DestinasiController::class, 'searchDriver'])->name('driver.search-destination');
+
+    Route::get('/order-list', [DestinasiController::class, 'orderList'])->name('driver.order-list');
+    Route::get('/search-order', [DestinasiController::class, 'searchOrder'])->name('driver.search-order');
 });
 
 // Keep the driver registration routes outside the auth middleware
