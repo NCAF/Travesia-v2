@@ -5,6 +5,17 @@
         .custom-card {
             background-color: #F2F5F7;
             border-radius: 24px;
+            display: block;
+            text-decoration: none;
+            color: inherit;
+            transition: all 0.3s ease;
+        }
+
+        .custom-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            text-decoration: none;
+            color: inherit;
         }
 
         .status-btn {
@@ -44,7 +55,7 @@
             @if(isset($orders) && count($orders) > 0)
                 @foreach($orders as $order)
                 <div class="col-md-12 col-12 mb-2">
-                    <div class="custom-card p-4">
+                    <a href="{{ route('user.order-detail', $order->id) }}" class="custom-card p-4">
                         <div class="row align-items-center">
                             <div class="row">
                                 <div class="col-md-9">
@@ -52,8 +63,8 @@
                                 </div>
                                 <div class="col-md-3 text-end">
                                     <button class="status-btn status-{{ $order->status }} text-end">
-                                        @if($order->status == 'order')
-                                            Waiting for Payment
+                                        @if($order->status == 'finished')
+                                            Finished
                                         @else
                                             {{ ucfirst($order->status) }}
                                         @endif
@@ -64,32 +75,31 @@
                                 <div class="row">
                                     <div class="col-md">
                                         <p>{{ $order->check_point }}</p>
-                                        @php
-                                            $startTime = $order->start_date ? \Carbon\Carbon::parse($order->start_date)->format('H.i') . ' WIB' : '-';
-                                        @endphp
-                                        <p class="custom-txt">{{ $startTime }}</p>
+                                        <p class="text-muted">
+                                                {{ \Carbon\Carbon::parse($order->start_date)->format('H.i') }}</p>
                                     </div>
                                     <div class="col-md align-content-center">
                                         <img src="{{ asset('icons/icon-line-left.svg') }}" alt="line left">
                                     </div>
                                     <div class="col-md align-content-center">
                                         <p class="custom-txt">
-                                            @if($order->start_date && isset($order->end_date))
-                                                {{ \Carbon\Carbon::parse($order->start_date)->diff(\Carbon\Carbon::parse($order->end_date))->format('%hj %im') }}
-                                            @else
-                                                -
-                                            @endif
+                                        @php
+                                                    $start = \Carbon\Carbon::parse($order->start_date);
+                                                    $end = \Carbon\Carbon::parse($order->end_date);
+                                                    $diffInMinutes = $start->diffInMinutes($end);
+                                                    $hours = floor($diffInMinutes / 60);
+                                                    $minutes = $diffInMinutes % 60;
+                                                @endphp
+                                                {{ $hours > 0 ? $hours . ' jam ' : '' }}{{ $minutes > 0 ? $minutes . ' menit' : '0 menit' }}
                                         </p>
                                     </div>
                                     <div class="col-md align-content-center">
                                         <img src="{{ asset('icons/icon-line-right.svg') }}" alt="line right">
                                     </div>
                                     <div class="col-md">
-                                        <p>{{ $order->end_point }}</p>
-                                        @php
-                                            $endTime = isset($order->end_date) ? \Carbon\Carbon::parse($order->end_date)->format('H.i') . ' WIB' : '-';
-                                        @endphp
-                                        <p class="custom-txt">{{ $endTime }}</p>
+                                            <p>{{ $order->end_point }}</p>
+                                            <p class="text-muted">
+                                                {{ \Carbon\Carbon::parse($order->end_date)->format('H.i') }}</p>
                                     </div>
                                 </div>
                             </div>
@@ -97,7 +107,7 @@
                                 <h4 class="me-5">IDR {{ number_format($order->harga_kursi, 0, ',', '.') }}</h4>
                             </div>
                         </div>
-                    </div>
+                    </a>
                 </div>
                 @endforeach
             @else

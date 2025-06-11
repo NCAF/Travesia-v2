@@ -21,9 +21,9 @@
                         <a class="nav-link" href="{{ route('destination-list') }}">Destination</a>
                     </li>
                     @if (Auth::check())
-                    <li class="nav-item">
+                    <!-- <li class="nav-item">
                         <a class="nav-link" href="#">Chat</a>
-                    </li>
+                    </li> -->
                     <li class="nav-item">
                         <a class="nav-link" href="{{ route('user.order-lists') }}">My Ticket</a>
                     </li>

@@ -45,9 +45,9 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/user/order-lists', [\App\Http\Controllers\Api\OrderController::class, 'userOrderList'])->name('user.order-lists');
 
-    Route::get('/user/order-detail', function () {
-        return view('app.user.order-detail');
-    });
+    // Route::get('/user/order-detail', function () {
+    //     return view('app.user.order-detail');
+    // });
 
     Route::get('/user/order-detail/{id}', [\App\Http\Controllers\Api\OrderController::class, 'orderLists'])->name('user.order-detail');
 });
