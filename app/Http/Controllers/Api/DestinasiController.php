@@ -64,7 +64,7 @@ class DestinasiController extends Controller
                   ->orWhere('end_point', 'like', "%{$search}%");
             });
         }
-
+        
         $destinasi = $query->get();
         return view('app.driver.destination-list', compact('destinasi'));
     }
@@ -376,5 +376,29 @@ class DestinasiController extends Controller
     {
         $destinasi = Destinasi::findOrFail($id);
         return view('app.user.passenger-details', compact('destinasi'));
+    }
+
+
+    // Order List
+    public function orderList()
+    {
+        $orders = Order::whereHas('destinasi', function($query) {
+            $query->where('driver_id', session()->get('driver_id'));
+        })->get();
+        return view('app.driver.order-list', compact('orders'));
+    }
+
+    // Search order by customer name for driver
+    public function searchOrder(Request $request)
+    {
+        $search = $request->input('search');
+
+        $orders = Order::whereHas('destinasi', function($query) {
+            $query->where('driver_id', session()->get('driver_id'));
+        })->whereHas('user', function($query) use ($search) {
+            $query->where('nama', 'like', '%' . $search . '%');
+        })->get();
+
+        return view('app.driver.order-list', compact('orders'));
     }
 }
