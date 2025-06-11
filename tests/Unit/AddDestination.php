@@ -50,8 +50,8 @@ class AddDestination extends TestCase
      */
     public function test_add_destination_with_valid_inputs(): void
     {
-        // Membuat file gambar palsu
-        $file = UploadedFile::fake()->image('destination.jpg');
+        // Membuat file palsu (menggunakan create instead of image untuk menghindari dependency GD)
+        $file = UploadedFile::fake()->create('destination.jpg', 100, 'image/jpeg');
 
         // Menyiapkan data input yang valid
         $data = [
