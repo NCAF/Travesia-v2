@@ -129,12 +129,14 @@ class OrderController extends Controller
             'destinasi.end_point',
             'destinasi.start_date',
             'destinasi.end_date',
-            'destinasi.price'
+            'destinasi.price',
+            'destinasi.link_wa_group'
         ])->join('destinasi', 'destinasi.id', 'orders.destinasi_id')
         ->where('orders.id', $id)
         ->where('orders.user_id', auth()->id())
         ->first();
         
+        // dd($order);
         if (!$order) {
             return redirect()->route('user.order-lists')->with('error', 'Order not found');
         }
@@ -158,7 +160,7 @@ class OrderController extends Controller
             'destinasi_id' => $validated['destinasi_id'],
             'jumlah_kursi' => $validated['jumlah_kursi'],
             'harga_kursi' => $validated['harga_kursi'],
-            'status' => 'order',
+            'status' => 'finished',
             'order_id' => Str::uuid(),
         ]);
 
@@ -256,20 +258,20 @@ class OrderController extends Controller
     public function userOrderList()
     {
         $userId = auth()->id();
-        \Log::info('User ID for order list:', ['id' => $userId]);
         $orders = Order::select([
             'orders.*',
-            'destinasi.travel_name',
+            'destinasi.travel_name', 
             'destinasi.check_point',
             'destinasi.end_point',
             'destinasi.start_date',
             'destinasi.price'
-        ])->join('destinasi', 'destinasi.id', 'orders.destinasi_id')
+        ])
+        ->join('destinasi', 'destinasi.id', 'orders.destinasi_id')
         ->where('orders.user_id', $userId)
-        ->whereIn('orders.status', ['paid', 'finished']) // Only show paid and finished orders
         ->orderBy('orders.created_at', 'desc')
         ->get();
-        \Log::info('Orders fetched (paid/finished only):', $orders->toArray());
+
+        // dd($orders);
         return view('app.user.order-lists', compact('orders'));
     }
 }

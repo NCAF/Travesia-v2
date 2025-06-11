@@ -71,7 +71,9 @@
             <div class="col-md-8">
                 <div class="row">
                     <div class="col-md-1">
-                        <img src="{{ asset('icons/arrow-left.svg') }}" alt="arrow left">
+                        <a href="{{ route('user.order-lists') }}">
+                            <img src="{{ asset('icons/arrow-left.svg') }}" alt="arrow left">
+                        </a>
                     </div>
                     <div class="col-md-2">
                         <p>Back</p>
@@ -119,15 +121,9 @@
                 </div> --}}
                 <div class="info-card">
                     <div class="row">
-                        <div class="col-md-1 d-flex align-items-center justify-content-center">
-                            <div class="form-check m-0">
-                                <input class="form-check-input" type="radio" name="flexRadioDefault"
-                                    id="flexRadioDefault1">
-                            </div>
-                        </div>
                         <div class="col-md-6 d-flex align-items-center">
-                            <a href="{{ $order->link_wa_group ?? 'https://wa.me/6281234567890' }}" target="_blank">
-                                <img src="{{ asset('icons/icon-wa.svg') }}" style="width: 25px; height: 25px;" alt="QRIS">
+                            <a href="{{ $order->link_wa_group }}" target="_blank">
+                               {{ $order->link_wa_group}}
                             </a>
                         </div>
                     </div>
