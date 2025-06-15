@@ -40,6 +40,11 @@ class AuthController extends Controller
                 'unique:users',
                 'regex:/^[a-zA-Z].*@/', // Must start with a letter
                 'regex:/^[a-zA-Z0-9_.]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/', // No special characters except _.
+                function ($attribute, $value, $fail) {
+                    if (Driver::where('email', $value)->exists()) {
+                        $fail('Email sudah digunakan oleh driver.');
+                    }
+                },
             ],
             'password' => [
                 'required',
@@ -99,7 +104,22 @@ class AuthController extends Controller
 
         $credentials = $request->only('email', 'password');
         
-        // First try to authenticate as a regular user
+        // PRIORITY 1: Try to authenticate as a driver first
+        $driver = Driver::where('email', $request->email)->first();
+        
+        if ($driver && Hash::check($request->password, $driver->password)) {
+            // Store driver info in session
+            $request->session()->regenerate();
+            $request->session()->put('driver_id', $driver->id);
+            $request->session()->put('driver_name', $driver->name);
+            $request->session()->put('driver_email', $driver->email);
+            $request->session()->put('driver_role', $driver->role);
+            $request->session()->put('is_driver', true);
+            
+            return redirect()->route('driver.destination-list');
+        }
+        
+        // PRIORITY 2: Try to authenticate as a regular user
         if(Auth::attempt($credentials)){
             $request->session()->regenerate();
            
@@ -108,20 +128,6 @@ class AuthController extends Controller
             }else{
                 return redirect()->route('driver.dashboard');
             }
-        }
-        
-        // Try to authenticate as a driver
-        $driver = Driver::where('email', $request->email)->first();
-        
-        if ($driver && Hash::check($request->password, $driver->password)) {
-            // Store driver info in session
-            $request->session()->put('driver_id', $driver->id);
-            $request->session()->put('driver_name', $driver->name);
-            $request->session()->put('driver_email', $driver->email);
-            $request->session()->put('driver_role', $driver->role);
-            $request->session()->put('is_driver', true);
-            
-            return redirect()->route('driver.destination-list');
         }
 
         return redirect()->route('login')->with('error', 'Email atau password salah.');
@@ -134,7 +140,19 @@ class AuthController extends Controller
     public function registerDriverPost(Request $request){
         $validator = Validator::make($request->all(), [
             'name' => ['required', 'string', 'max:255', 'regex:/^[a-zA-Z\s\'\-\.]+$/'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:driver', 'regex:/^[^0-9]+@/'],
+            'email' => [
+                'required', 
+                'string', 
+                'email', 
+                'max:255', 
+                'unique:driver',
+                'regex:/^[^0-9]+@/',
+                function ($attribute, $value, $fail) {
+                    if (User::where('email', $value)->exists()) {
+                        $fail('Email sudah digunakan oleh user.');
+                    }
+                },
+            ],
             'password' => ['required', 'string', 'min:8', 'max:100', 'same:password_confirmation', 'regex:/^\S*$/'],
             'password_confirmation' => ['required', 'string', 'min:8', 'max:100', 'regex:/^\S*$/'],
             'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
@@ -142,6 +160,7 @@ class AuthController extends Controller
             'name.regex' => 'The name field must contain only letters and spaces.',
             'email.email' => 'The email must be a valid email address including @ symbol.',
             'email.regex' => 'The email address cannot contain numbers before the @ symbol.',
+            'email.unique' => 'Email sudah digunakan.',
             'password.same' => 'The password and confirmation password do not match.',
             'password.max' => 'The password may not be greater than 100 characters.',
             'password.regex' => 'The password cannot contain spaces.',
