@@ -58,7 +58,7 @@ class AddDestination extends TestCase
             'travel_name' => 'Test Travel',
             'start_date' => now()->addDays(1)->format('Y-m-d H:i'),
             'end_date' => now()->addDays(2)->format('Y-m-d H:i'),
-            'check_point' => 'Jakarta',
+            'check_point' => 1111111,
             'end_point' => 'Bandung',
             'vehicle_type' => 'Bus',
             'plate_number' => 'B 1234 CD',

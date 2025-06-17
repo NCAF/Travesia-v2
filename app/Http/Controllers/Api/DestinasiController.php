@@ -252,16 +252,71 @@ class DestinasiController extends Controller
 
         // Validate the request data
         $validator = Validator::make($request->all(), [
-            'travel_name' => 'required',
+            'travel_name' => [
+                'required',
+                'min:3',
+                'max:20',
+                'regex:/^(?!^\d+$).*$/' // Not just numbers
+            ],
             'start_date' => 'required|date',
             'end_date' => 'required|date',
-            'check_point' => 'required',
-            'end_point' => 'required',
-            'vehicle_type' => 'required',
-            'plate_number' => 'required',
-            'number_of_seats' => 'required',
-            'price' => 'required',
-            'deskripsi' => 'required',
+            'check_point' => [
+                'required',
+                'min:3', 
+                'max:20',
+                'regex:/^(?!^\d+$).*$/' // Not just numbers
+            ],
+            'end_point' => [
+                'required',
+                'min:3',
+                'max:20', 
+                'regex:/^(?!^\d+$).*$/' // Not just numbers
+            ],
+            'vehicle_type' => [
+                'required',
+                'min:3',
+                'max:20',
+                'regex:/^(?!^\d+$).*$/' // Not just numbers
+            ],
+            'plate_number' => [
+                'required',
+                'min:3',
+                'max:20'
+            ],
+            'number_of_seats' => 'required|numeric',
+            'price' => 'required|numeric',
+            'deskripsi' => 'required|min:3|max:20',
+        ], [
+            'travel_name.required' => 'Nama travel harus diisi',
+            'travel_name.min' => 'Nama travel minimal 3 karakter',
+            'travel_name.max' => 'Nama travel maksimal 20 karakter',
+            'travel_name.regex' => 'Nama travel tidak boleh hanya angka',
+            'start_date.required' => 'Tanggal keberangkatan harus diisi',
+            'start_date.date' => 'Format tanggal keberangkatan tidak valid',
+            'end_date.required' => 'Tanggal kedatangan harus diisi',
+            'end_date.date' => 'Format tanggal kedatangan tidak valid',
+            'check_point.required' => 'Titik keberangkatan harus diisi',
+            'check_point.min' => 'Titik keberangkatan minimal 3 karakter',
+            'check_point.max' => 'Titik keberangkatan maksimal 20 karakter',
+            'check_point.regex' => 'Titik keberangkatan tidak boleh hanya angka',
+            'end_point.required' => 'Titik kedatangan harus diisi',
+            'end_point.min' => 'Titik kedatangan minimal 3 karakter',
+            'end_point.max' => 'Titik kedatangan maksimal 20 karakter',
+            'end_point.regex' => 'Titik kedatangan tidak boleh hanya angka',
+            'vehicle_type.required' => 'Jenis kendaraan harus diisi',
+            'vehicle_type.min' => 'Jenis kendaraan minimal 3 karakter',
+            'vehicle_type.max' => 'Jenis kendaraan maksimal 20 karakter',
+            'vehicle_type.regex' => 'Jenis kendaraan tidak boleh hanya angka',
+            'plate_number.required' => 'Nomor plat harus diisi',
+            'plate_number.min' => 'Nomor plat minimal 3 karakter',
+            'plate_number.max' => 'Nomor plat maksimal 20 karakter',
+            'number_of_seats.required' => 'Jumlah kursi harus diisi',
+            'number_of_seats.numeric' => 'Jumlah kursi harus berupa angka',
+            'price.required' => 'Harga harus diisi',
+            'price.numeric' => 'Harga harus berupa angka',
+            'deskripsi.required' => 'Deskripsi harus diisi',
+            'deskripsi.min' => 'Deskripsi minimal 3 karakter',
+            'deskripsi.max' => 'Deskripsi maksimal 20 karakter'
         ]);
 
         if ($validator->fails()) {
