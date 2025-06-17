@@ -48,20 +48,45 @@ Travesia is a travel management platform built with Laravel, designed to connect
    npm install
    ```
 
-4. **Copy the environment file and set your variables:**
+4. **Setup environment file:**
+   
+   Copy file `.env.example` dan rename menjadi `.env`:
    ```bash
    cp .env.example .env
-   # Edit .env to match your local setup
    ```
+   
+   Kemudian edit file `.env` dan sesuaikan konfigurasi berikut:
+   - **Database Configuration:**
+     ```
+     DB_CONNECTION=mysql
+     DB_HOST=127.0.0.1
+     DB_PORT=3306
+     DB_DATABASE=travesia_db
+     DB_USERNAME=your_username
+     DB_PASSWORD=your_password
+     ```
+   - **App Configuration:**
+     ```
+     APP_NAME=Travesia
+     APP_ENV=local
+     APP_DEBUG=true
+     APP_URL=http://localhost:8000
+     ```
+   - **Mail Configuration** (jika menggunakan fitur email):
+     ```
+     MAIL_MAILER=smtp
+     MAIL_HOST=your_mail_host
+     MAIL_PORT=587
+     MAIL_USERNAME=your_email
+     MAIL_PASSWORD=your_password
+     ```
 
-5. **Generate application key:**
+5. **Generate application key and setup Laravel:**
    ```bash
    php artisan key:generate
-   ```
-
-6. **Run migrations:**
-   ```bash
-   php artisan migrate
+   php artisan migrate:fresh
+   php artisan cache:clear
+   php artisan config:clear
    ```
 
 7. **Build frontend assets:**
