@@ -65,7 +65,8 @@ class OrderController extends Controller
         ->join('users', 'users.id', 'orders.user_id');
 
         $user = Auth::user();
-        $order = $order->where('orders.user_id', $user->id);
+        $order = $order->where('orders.user_id', $user->id)
+                      ->whereNotIn('orders.status', ['canceled']); // Exclude canceled orders
 
         $search = isset($request->search) ? $request->search : '';
         if (!empty($search)) {
@@ -103,7 +104,10 @@ class OrderController extends Controller
             'destinasi.destinasi_akhir',
             'destinasi.hari_berangkat',
         ])->join('destinasi', 'destinasi.id', 'orders.destinasi_id')
-        ->where('orders.user_id', auth()->id())->where('orders.order_id', $id)->first();
+        ->where('orders.user_id', auth()->id())
+        ->where('orders.order_id', $id)
+        ->whereNotIn('orders.status', ['canceled']) // Exclude canceled orders
+        ->first();
 
         if (!$order) {
             return response()->json([
@@ -134,6 +138,7 @@ class OrderController extends Controller
         ])->join('destinasi', 'destinasi.id', 'orders.destinasi_id')
         ->where('orders.id', $id)
         ->where('orders.user_id', auth()->id())
+        ->whereNotIn('orders.status', ['canceled']) // Exclude canceled orders
         ->first();
         
         // dd($order);
@@ -160,7 +165,7 @@ class OrderController extends Controller
             'destinasi_id' => $validated['destinasi_id'],
             'jumlah_kursi' => $validated['jumlah_kursi'],
             'harga_kursi' => $validated['harga_kursi'],
-            'status' => 'finished',
+            'status' => 'order',
             'order_id' => Str::uuid(),
         ]);
 
@@ -177,6 +182,8 @@ class OrderController extends Controller
                     
                     // Midtrans minimum amount is 1000
                     if ($totalAmount < 1000) {
+                        // Delete the order if amount is invalid
+                        $order->delete();
                         return response()->json([
                             'error' => true,
                             'message' => 'Minimum payment amount is IDR 1.000',
@@ -225,6 +232,8 @@ class OrderController extends Controller
                         'order_id' => $order->id
                     ]);
                 } catch (\Midtrans\Exception $e) {
+                    // Delete the order if Midtrans fails
+                    $order->delete();
                     \Log::error('Midtrans Error: ' . $e->getMessage());
                     return response()->json([
                         'error' => true,
@@ -232,6 +241,8 @@ class OrderController extends Controller
                         'data' => null
                     ]);
                 } catch (\Exception $e) {
+                    // Delete the order if general error occurs
+                    $order->delete();
                     \Log::error('General Error: ' . $e->getMessage());
                     return response()->json([
                         'error' => true,
@@ -253,7 +264,61 @@ class OrderController extends Controller
         }
     }
 
+    /**
+     * Cancel order when payment popup is closed
+     */
+    public function cancelOrder(Request $request)
+    {
+        $validated = $request->validate([
+            'order_id' => 'required|integer|exists:orders,id'
+        ]);
 
+        $order = Order::where('id', $validated['order_id'])
+                     ->where('user_id', Auth::id())
+                     ->where('status', 'order')
+                     ->first();
+
+        if ($order) {
+            $order->update(['status' => 'canceled']);
+            return response()->json([
+                'error' => false,
+                'message' => 'Order cancelled successfully'
+            ]);
+        }
+
+        return response()->json([
+            'error' => true,
+            'message' => 'Order not found or cannot be cancelled'
+        ]);
+    }
+
+    /**
+     * Update order status to finished when payment is successful
+     */
+    public function finishOrder(Request $request)
+    {
+        $validated = $request->validate([
+            'order_id' => 'required|integer|exists:orders,id'
+        ]);
+
+        $order = Order::where('id', $validated['order_id'])
+                     ->where('user_id', Auth::id())
+                     ->where('status', 'order')
+                     ->first();
+
+        if ($order) {
+            $order->update(['status' => 'finished']);
+            return response()->json([
+                'error' => false,
+                'message' => 'Order completed successfully'
+            ]);
+        }
+
+        return response()->json([
+            'error' => true,
+            'message' => 'Order not found or already processed'
+        ]);
+    }
 
     public function userOrderList()
     {
@@ -268,6 +333,7 @@ class OrderController extends Controller
         ])
         ->join('destinasi', 'destinasi.id', 'orders.destinasi_id')
         ->where('orders.user_id', $userId)
+        ->whereNotIn('orders.status', ['canceled']) // Exclude canceled orders
         ->orderBy('orders.created_at', 'desc')
         ->get();
 

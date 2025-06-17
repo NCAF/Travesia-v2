@@ -184,9 +184,27 @@
                     
                     // Show Midtrans popup
                     snap.pay(result.snapToken, {
-                        onSuccess: function(result) {
+                        onSuccess: async function(result) {
                             messageDiv.innerHTML = '<div class="alert alert-success">Payment successful! Thank you for your order.</div>';
                             console.log('Payment success:', result);
+                            
+                            // Update order status to finished
+                            try {
+                                await fetch('/api/orders/finish', {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json',
+                                        'Accept': 'application/json',
+                                        'X-CSRF-TOKEN': token
+                                    },
+                                    body: JSON.stringify({
+                                        order_id: window.orderResult.order_id
+                                    })
+                                });
+                            } catch (err) {
+                                console.error('Failed to update order status:', err);
+                            }
+                            
                             // Redirect to order detail page
                             setTimeout(() => {
                                 if (window.orderResult && window.orderResult.order_id) {
@@ -200,13 +218,47 @@
                             messageDiv.innerHTML = '<div class="alert alert-warning">Payment is pending. Please complete your payment.</div>';
                             console.log('Payment pending:', result);
                         },
-                        onError: function(result) {
+                        onError: async function(result) {
                             messageDiv.innerHTML = '<div class="alert alert-danger">Payment failed. Please try again.</div>';
                             console.log('Payment error:', result);
+                            
+                            // Cancel the order when payment fails
+                            try {
+                                await fetch('/api/orders/cancel', {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json',
+                                        'Accept': 'application/json',
+                                        'X-CSRF-TOKEN': token
+                                    },
+                                    body: JSON.stringify({
+                                        order_id: window.orderResult.order_id
+                                    })
+                                });
+                            } catch (err) {
+                                console.error('Failed to cancel order:', err);
+                            }
                         },
-                        onClose: function() {
-                            messageDiv.innerHTML = '<div class="alert alert-info">Payment popup was closed.</div>';
+                        onClose: async function() {
+                            messageDiv.innerHTML = '<div class="alert alert-warning">Pembayaran anda batal.</div>';
                             console.log('Payment popup closed');
+                            
+                            // Cancel the order when popup is closed
+                            try {
+                                await fetch('/api/orders/cancel', {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json',
+                                        'Accept': 'application/json',
+                                        'X-CSRF-TOKEN': token
+                                    },
+                                    body: JSON.stringify({
+                                        order_id: window.orderResult.order_id
+                                    })
+                                });
+                            } catch (err) {
+                                console.error('Failed to cancel order:', err);
+                            }
                         }
                     });
                 } else {
