@@ -42,6 +42,10 @@ Route::middleware('auth')->group(function () {
     })->name('user.passenger-details');
 
     Route::post('/orders', [\App\Http\Controllers\Api\OrderController::class, 'store'])->name('orders.store');
+    
+    // Order management routes
+    Route::post('/orders/finish', [\App\Http\Controllers\Api\OrderController::class, 'finishOrder'])->name('orders.finish');
+    Route::post('/orders/cancel', [\App\Http\Controllers\Api\OrderController::class, 'cancelOrder'])->name('orders.cancel');
 
     Route::get('/user/order-lists', [\App\Http\Controllers\Api\OrderController::class, 'userOrderList'])->name('user.order-lists');
 

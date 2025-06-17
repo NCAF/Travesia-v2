@@ -190,7 +190,8 @@
                             
                             // Update order status to finished
                             try {
-                                await fetch('/api/orders/finish', {
+                                console.log('Updating order status to finished for order_id:', window.orderResult.order_id);
+                                const finishResponse = await fetch('/orders/finish', {
                                     method: 'POST',
                                     headers: {
                                         'Content-Type': 'application/json',
@@ -201,8 +202,27 @@
                                         order_id: window.orderResult.order_id
                                     })
                                 });
+                                
+                                console.log('Finish response status:', finishResponse.status);
+                                console.log('Finish response headers:', finishResponse.headers);
+                                
+                                if (!finishResponse.ok) {
+                                    const errorText = await finishResponse.text();
+                                    console.error('HTTP Error:', finishResponse.status, errorText);
+                                    return;
+                                }
+                                
+                                const finishResult = await finishResponse.json();
+                                console.log('Finish order response:', finishResult);
+                                
+                                if (finishResult.error) {
+                                    console.error('Failed to finish order:', finishResult.message);
+                                } else {
+                                    console.log('Order successfully finished!');
+                                }
                             } catch (err) {
                                 console.error('Failed to update order status:', err);
+                                console.error('Error details:', err.stack);
                             }
                             
                             // Redirect to order detail page
@@ -224,7 +244,7 @@
                             
                             // Cancel the order when payment fails
                             try {
-                                await fetch('/api/orders/cancel', {
+                                await fetch('/orders/cancel', {
                                     method: 'POST',
                                     headers: {
                                         'Content-Type': 'application/json',
@@ -239,26 +259,19 @@
                                 console.error('Failed to cancel order:', err);
                             }
                         },
-                        onClose: async function() {
+                        onClose: function() {
                             messageDiv.innerHTML = '<div class="alert alert-warning">Pembayaran anda batal.</div>';
                             console.log('Payment popup closed');
                             
-                            // Cancel the order when popup is closed
-                            try {
-                                await fetch('/api/orders/cancel', {
-                                    method: 'POST',
-                                    headers: {
-                                        'Content-Type': 'application/json',
-                                        'Accept': 'application/json',
-                                        'X-CSRF-TOKEN': token
-                                    },
-                                    body: JSON.stringify({
-                                        order_id: window.orderResult.order_id
-                                    })
-                                });
-                            } catch (err) {
-                                console.error('Failed to cancel order:', err);
-                            }
+                            // Don't cancel the order, just redirect to order detail
+                            // Order remains with status 'order' so user can complete payment later
+                            setTimeout(() => {
+                                if (window.orderResult && window.orderResult.order_id) {
+                                    window.location.href = '/user/order-detail/' + window.orderResult.order_id;
+                                } else {
+                                    window.location.href = '/user/order-lists';
+                                }
+                            }, 2000);
                         }
                     });
                 } else {

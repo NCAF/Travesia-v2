@@ -178,14 +178,112 @@
                         </div>
 
                         <div class="text-center">
-                            <div class="alert alert-success">
-                                <h6>Payment Completed!</h6>
-                                <p class="mb-0">Order ID: {{ $order->order_id ?? 'N/A' }}</p>
-                                <small>Status: {{ ucfirst($order->status ?? 'completed') }}</small>
-                            </div>
+                            @if($order->status === 'finished')
+                                <div class="alert alert-success">
+                                    <h6>Payment Completed!</h6>
+                                    <p class="mb-0">Order ID: {{ $order->order_id ?? 'N/A' }}</p>
+                                    <small>Status: {{ ucfirst($order->status ?? 'completed') }}</small>
+                                </div>
+                            @elseif($order->status === 'order')
+                                <div class="alert alert-warning">
+                                    <h6>Payment Pending</h6>
+                                    <p class="mb-0">Order ID: {{ $order->order_id ?? 'N/A' }}</p>
+                                    <small>Status: Menunggu Pembayaran</small>
+                                </div>
+                                <button type="button" class="btn custom-btn w-100 fw-bold mt-2" onclick="continuePayment()">
+                                    Lanjutkan Pembayaran
+                                </button>
+                            @else
+                                <div class="alert alert-info">
+                                    <h6>Order Status</h6>
+                                    <p class="mb-0">Order ID: {{ $order->order_id ?? 'N/A' }}</p>
+                                    <small>Status: {{ ucfirst($order->status ?? 'unknown') }}</small>
+                                </div>
+                            @endif
                         </div>
                 </div>
             </div>
         </div>
     </div>
+
+    <!-- Midtrans Snap Script -->
+    <script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="{{ env('MIDTRANS_CLIENT_KEY') }}"></script>
+    
+    <script>
+        function continuePayment() {
+            const orderId = {{ $order->id ?? 'null' }};
+            const token = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || 
+                         document.querySelector('input[name="_token"]')?.value;
+            
+            if (!orderId) {
+                alert('Order ID tidak ditemukan');
+                return;
+            }
+            
+            // Create new snap token for existing order
+            fetch('/api/orders', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': token
+                },
+                body: JSON.stringify({
+                    destinasi_id: {{ $order->destinasi_id ?? 'null' }},
+                    jumlah_kursi: {{ $order->jumlah_kursi ?? 1 }},
+                    harga_kursi: {{ $order->harga_kursi ?? 0 }},
+                    existing_order_id: orderId
+                })
+            })
+            .then(response => response.json())
+            .then(result => {
+                if (!result.error && result.snapToken) {
+                    // Show Midtrans popup
+                    snap.pay(result.snapToken, {
+                        onSuccess: async function(result) {
+                            console.log('Payment success:', result);
+                            
+                            // Update order status to finished
+                            try {
+                                const finishResponse = await fetch('/orders/finish', {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json',
+                                        'Accept': 'application/json',
+                                        'X-CSRF-TOKEN': token
+                                    },
+                                    body: JSON.stringify({
+                                        order_id: orderId
+                                    })
+                                });
+                                
+                                if (finishResponse.ok) {
+                                    location.reload(); // Reload page to show updated status
+                                }
+                            } catch (err) {
+                                console.error('Failed to update order status:', err);
+                                location.reload(); // Reload anyway
+                            }
+                        },
+                        onPending: function(result) {
+                            console.log('Payment pending:', result);
+                        },
+                        onError: function(result) {
+                            console.log('Payment error:', result);
+                        },
+                        onClose: function() {
+                            console.log('Payment popup closed');
+                            // Just stay on the current page
+                        }
+                    });
+                } else {
+                    alert('Failed to create payment token: ' + (result.message || 'Unknown error'));
+                }
+            })
+            .catch(err => {
+                console.error('Error:', err);
+                alert('Terjadi kesalahan saat memproses pembayaran');
+            });
+        }
+    </script>
 @endsection

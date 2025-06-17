@@ -163,7 +163,8 @@
                 </div>
                 <div class="col-md-auto text-end mt-3">
                     <a href="{{ route('driver.delete-destination', ['id' => $destinasi->id]) }}"
-                        class="custom-btn-outline btn fw-bold">Delete</a>
+                        class="custom-btn-outline btn fw-bold"
+                        onclick="return confirmDelete(event)">Delete</a>
                 </div>
                 <div class="col-md-auto text-end mt-3">
                     <a href="{{ route('driver.update-destination', ['id' => $destinasi->id]) }}"
@@ -268,4 +269,17 @@
             </div>
         </div>
     </div>
+
+    <script>
+        function confirmDelete(event) {
+            event.preventDefault(); // Mencegah link langsung dijalankan
+            
+            if (confirm('Apakah Anda yakin ingin menghapus destinasi ini? Data yang dihapus tidak dapat dikembalikan.')) {
+                // Jika user menekan OK, jalankan link
+                window.location.href = event.target.href;
+            }
+            // Jika user menekan Cancel, tidak melakukan apa-apa
+            return false;
+        }
+    </script>
 @endsection

@@ -35,7 +35,7 @@ Route::get('destinasi/all', [DestinasiController::class, 'all'])->name('api.dest
 Route::get('destinasi/recent', [DestinasiController::class, 'recent'])->name('api.destinasi.recent');
 Route::get('destinasi/{kode}', [DestinasiController::class, 'show'])->name('api.destinasi.show');
 
-Route::middleware(['auth:sanctum'])->group(function () {
+Route::middleware(['auth:sanctum,web'])->group(function () {
     Route::post('logout', [AuthController::class, 'logout'])->name('api.logout');
 
     Route::middleware(['role:seller'])->prefix('dashboard')->group(function () {
@@ -70,9 +70,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::middleware(['role:user'])->group(function () {
             Route::get('/user', [OrderController::class, 'user'])->name('api.orders.user');
             Route::post('/', [OrderController::class, 'store'])->name('api.orders.store');
-            Route::post('/cancel', [OrderController::class, 'cancelOrder'])->name('api.orders.cancel');
-            Route::post('/finish', [OrderController::class, 'finishOrder'])->name('api.orders.finish');
         });
+
     });
 
     Route::prefix('chat')->group(function () {

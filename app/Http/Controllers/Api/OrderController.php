@@ -138,7 +138,7 @@ class OrderController extends Controller
         ])->join('destinasi', 'destinasi.id', 'orders.destinasi_id')
         ->where('orders.id', $id)
         ->where('orders.user_id', auth()->id())
-        ->whereNotIn('orders.status', ['canceled']) // Exclude canceled orders
+        ->whereIn('orders.status', ['order', 'finished']) // Only show order and finished status
         ->first();
         
         // dd($order);
@@ -158,16 +158,33 @@ class OrderController extends Controller
             'destinasi_id' => 'required|exists:destinasi,id',
             'jumlah_kursi' => 'required|integer|min:1',
             'harga_kursi' => 'required|numeric',
+            'existing_order_id' => 'nullable|integer|exists:orders,id',
         ]);
 
-        $order = Order::create([
-            'user_id' => Auth::id(),
-            'destinasi_id' => $validated['destinasi_id'],
-            'jumlah_kursi' => $validated['jumlah_kursi'],
-            'harga_kursi' => $validated['harga_kursi'],
-            'status' => 'order',
-            'order_id' => Str::uuid(),
-        ]);
+        // Check if this is continuing an existing order
+        if (isset($validated['existing_order_id'])) {
+            $order = Order::where('id', $validated['existing_order_id'])
+                         ->where('user_id', Auth::id())
+                         ->first();
+                         
+            if (!$order) {
+                return response()->json([
+                    'error' => true,
+                    'message' => 'Order not found',
+                    'data' => null
+                ]);
+            }
+        } else {
+            // Create new order
+            $order = Order::create([
+                'user_id' => Auth::id(),
+                'destinasi_id' => $validated['destinasi_id'],
+                'jumlah_kursi' => $validated['jumlah_kursi'],
+                'harga_kursi' => $validated['harga_kursi'],
+                'status' => 'order',
+                'order_id' => Str::uuid(),
+            ]);
+        }
 
         if ($order) {
             if ($request->wantsJson()) {
@@ -308,15 +325,18 @@ class OrderController extends Controller
 
         if ($order) {
             $order->update(['status' => 'finished']);
+            \Log::info('Order #' . $order->id . ' status updated to finished for user #' . Auth::id());
+            
             return response()->json([
                 'error' => false,
-                'message' => 'Order completed successfully'
+                'message' => 'Order completed successfully',
+                'order_status' => 'finished'
             ]);
         }
 
         return response()->json([
             'error' => true,
-            'message' => 'Order not found or already processed'
+            'message' => 'Order not found or cannot be completed'
         ]);
     }
 
@@ -333,7 +353,7 @@ class OrderController extends Controller
         ])
         ->join('destinasi', 'destinasi.id', 'orders.destinasi_id')
         ->where('orders.user_id', $userId)
-        ->whereNotIn('orders.status', ['canceled']) // Exclude canceled orders
+        ->whereIn('orders.status', ['order', 'finished']) // Show order and finished status
         ->orderBy('orders.created_at', 'desc')
         ->get();
 
