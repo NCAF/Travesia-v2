@@ -140,6 +140,14 @@ class MidtransCallbackController extends Controller
      */
     private function extractOrderId($midtransOrderId)
     {
+        return self::extractOrderIdStatic($midtransOrderId);
+    }
+    
+    /**
+     * Static version of extractOrderId for use in routes
+     */
+    public static function extractOrderIdStatic($midtransOrderId)
+    {
         // Format: TXN-{order_id}-{timestamp} or ORDER-{order_id}-{timestamp}
         if (preg_match('/^(TXN|ORDER)-(\d+)-\d+$/', $midtransOrderId, $matches)) {
             return (int) $matches[2];
@@ -229,7 +237,8 @@ class MidtransCallbackController extends Controller
             return;
         }
 
-        $newStatus = $order->status; // Default to current status
+        $oldStatus = $order->status; // Store old status before update
+        $newStatus = $oldStatus; // Default to current status
 
         // Update order status based on transaction status
         switch ($transactionStatus) {
@@ -252,13 +261,20 @@ class MidtransCallbackController extends Controller
                 break;
         }
 
-        if ($newStatus !== $order->status) {
+        if ($newStatus !== $oldStatus) {
             $order->update(['status' => $newStatus]);
             
             Log::info('Order status updated:', [
                 'order_id' => $orderId,
-                'old_status' => $order->status,
+                'old_status' => $oldStatus,
                 'new_status' => $newStatus,
+                'transaction_status' => $transactionStatus,
+                'fraud_status' => $fraudStatus
+            ]);
+        } else {
+            Log::info('Order status unchanged:', [
+                'order_id' => $orderId,
+                'current_status' => $oldStatus,
                 'transaction_status' => $transactionStatus,
                 'fraud_status' => $fraudStatus
             ]);

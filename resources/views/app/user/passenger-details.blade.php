@@ -192,20 +192,57 @@
                         onSuccess: function(result) {
                             console.log('Payment success:', result);
                             
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'Pembayaran Berhasil!',
-                                text: 'Terima kasih atas pembayaran Anda.',
-                                confirmButtonText: 'Lihat Detail Pesanan',
-                                confirmButtonColor: '#28a745',
-                                allowOutsideClick: false
-                            }).then((swalResult) => {
+                            // Wait a moment for callback to process, then check status
+                            setTimeout(() => {
                                 if (window.orderResult && window.orderResult.order_id) {
-                                    window.location.href = '/user/order-detail/' + window.orderResult.order_id;
+                                    // Check payment status to ensure order is updated
+                                    fetch('/api/orders/' + window.orderResult.order_id + '/check-status', {
+                                        method: 'GET',
+                                        headers: {
+                                            'Accept': 'application/json',
+                                            'X-CSRF-TOKEN': token
+                                        }
+                                    }).then(response => response.json())
+                                    .then(statusData => {
+                                        console.log('Payment status checked:', statusData);
+                                        
+                                        Swal.fire({
+                                            icon: 'success',
+                                            title: 'Pembayaran Berhasil!',
+                                            text: 'Terima kasih atas pembayaran Anda.',
+                                            confirmButtonText: 'Lihat Detail Pesanan',
+                                            confirmButtonColor: '#28a745',
+                                            allowOutsideClick: false
+                                        }).then((swalResult) => {
+                                            window.location.href = '/user/order-detail/' + window.orderResult.order_id;
+                                        });
+                                    }).catch(error => {
+                                        console.error('Error checking status:', error);
+                                        // Still show success and redirect
+                                        Swal.fire({
+                                            icon: 'success',
+                                            title: 'Pembayaran Berhasil!',
+                                            text: 'Terima kasih atas pembayaran Anda.',
+                                            confirmButtonText: 'Lihat Detail Pesanan',
+                                            confirmButtonColor: '#28a745',
+                                            allowOutsideClick: false
+                                        }).then((swalResult) => {
+                                            window.location.href = '/user/order-detail/' + window.orderResult.order_id;
+                                        });
+                                    });
                                 } else {
-                                    window.location.href = '/user/order-lists';
+                                    Swal.fire({
+                                        icon: 'success',
+                                        title: 'Pembayaran Berhasil!',
+                                        text: 'Terima kasih atas pembayaran Anda.',
+                                        confirmButtonText: 'Lihat Daftar Pesanan',
+                                        confirmButtonColor: '#28a745',
+                                        allowOutsideClick: false
+                                    }).then((swalResult) => {
+                                        window.location.href = '/user/order-lists';
+                                    });
                                 }
-                            });
+                            }, 2000); // Wait 2 seconds for callback processing
                         },
                         onPending: function(result) {
                             console.log('Payment pending:', result);

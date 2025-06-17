@@ -188,13 +188,45 @@
                                 <div class="alert alert-warning">
                                     <h6>Menunggu Pembayaran</h6>
                                     <p class="mb-0">Order ID: {{ $order->order_id ?? 'N/A' }}</p>
-                                    <small>Silakan selesaikan pembayaran Anda</small>
+                                    <small>Pembayaran sedang diproses. Halaman akan otomatis refresh.</small>
                                     <div class="mt-3">
-                                        <a href="/bayar/{{ $order->id }}" class="btn btn-warning btn-sm">
-                                            Lanjutkan Pembayaran
-                                        </a>
+                                        <div class="spinner-border spinner-border-sm text-warning" role="status">
+                                            <span class="visually-hidden">Loading...</span>
+                                        </div>
+                                        <small class="ms-2">Menunggu konfirmasi pembayaran...</small>
                                     </div>
                                 </div>
+                                
+                                <script>
+                                    // Auto refresh halaman setiap 5 detik untuk cek status terbaru
+                                    let refreshCount = 0;
+                                    const maxRefresh = 12; // Maksimal 1 menit (12 x 5 detik)
+                                    
+                                    const interval = setInterval(() => {
+                                        refreshCount++;
+                                        if (refreshCount >= maxRefresh) {
+                                            clearInterval(interval);
+                                            return;
+                                        }
+                                        
+                                        // Check status via API
+                                        fetch('/api/orders/{{ $order->id }}/check-status', {
+                                            method: 'GET',
+                                            headers: {
+                                                'Accept': 'application/json',
+                                                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                                            }
+                                        }).then(response => response.json())
+                                        .then(data => {
+                                            if (!data.error && data.data.status !== 'pending') {
+                                                clearInterval(interval);
+                                                location.reload(); // Refresh halaman jika status berubah
+                                            }
+                                        }).catch(error => {
+                                            console.error('Error checking status:', error);
+                                        });
+                                    }, 5000);
+                                </script>
                             @elseif($order->status == 'cancelled' || $order->status == 'failed')
                                 <div class="alert alert-danger">
                                     <h6>Pembayaran Gagal</h6>

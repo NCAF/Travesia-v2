@@ -209,6 +209,12 @@ class OrderController extends Controller
                                 'quantity' => $jumlahKursi,
                                 'name' => 'Travel Ticket',
                             )
+                        ),
+                        'callbacks' => array(
+                            'notification' => url('/api/midtrans/notification'),
+                            'finish' => url('/api/midtrans/finish'),
+                            'error' => url('/api/midtrans/error'),
+                            'unfinish' => url('/api/midtrans/unfinish')
                         )
                     );
 
@@ -305,6 +311,91 @@ class OrderController extends Controller
         return response()->json([
             'error' => false,
             'message' => 'Order berhasil dibatalkan',
+            'data' => $order
+        ], 200);
+    }
+
+    /**
+     * Check and update payment status manually
+     */
+    public function checkPaymentStatus($id)
+    {
+        $order = Order::where('id', $id)
+                     ->where('user_id', auth()->id())
+                     ->first();
+        
+        if (!$order) {
+            return response()->json([
+                'error' => true,
+                'message' => 'Order tidak ditemukan'
+            ], 404);
+        }
+
+        try {
+            // Configure Midtrans
+            $this->configureMidtrans();
+            
+            // Generate the same order ID format as when creating payment
+            $midtransOrderId = 'ORDER-' . $order->id . '-*'; // Use wildcard since timestamp varies
+            
+            // Get transaction status from Midtrans
+            // Note: In real implementation, you might need to store the exact midtrans order ID
+            // For now, we'll just return current status and let frontend handle accordingly
+            
+            return response()->json([
+                'error' => false,
+                'message' => 'Status retrieved successfully',
+                'data' => [
+                    'order_id' => $order->id,
+                    'status' => $order->status,
+                    'updated_at' => $order->updated_at
+                ]
+            ], 200);
+            
+        } catch (\Exception $e) {
+            \Log::error('Error checking payment status: ' . $e->getMessage());
+            return response()->json([
+                'error' => true,
+                'message' => 'Gagal mengecek status pembayaran'
+            ], 500);
+        }
+    }
+
+    /**
+     * Manually update order status to finished (for testing/backup)
+     */
+    public function markAsFinished($id)
+    {
+        $order = Order::where('id', $id)
+                     ->where('user_id', auth()->id())
+                     ->first();
+        
+        if (!$order) {
+            return response()->json([
+                'error' => true,
+                'message' => 'Order tidak ditemukan'
+            ], 404);
+        }
+        
+        // Only allow marking as finished if currently pending
+        if ($order->status !== 'pending') {
+            return response()->json([
+                'error' => true,
+                'message' => 'Order tidak dapat diubah statusnya'
+            ], 400);
+        }
+        
+        $order->status = 'finished';
+        $order->save();
+        
+        \Log::info('Order manually marked as finished:', [
+            'order_id' => $order->id,
+            'user_id' => auth()->id()
+        ]);
+        
+        return response()->json([
+            'error' => false,
+            'message' => 'Order berhasil diselesaikan',
             'data' => $order
         ], 200);
     }

@@ -71,6 +71,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
             Route::get('/user', [OrderController::class, 'user'])->name('api.orders.user');
             Route::post('/', [OrderController::class, 'store'])->name('api.orders.store');
             Route::put('/{id}/cancel', [OrderController::class, 'cancel'])->name('api.orders.cancel');
+            Route::get('/{id}/check-status', [OrderController::class, 'checkPaymentStatus'])->name('api.orders.check-status');
+            Route::put('/{id}/mark-finished', [OrderController::class, 'markAsFinished'])->name('api.orders.mark-finished');
         });
     });
 
@@ -107,6 +109,36 @@ Route::prefix('midtrans')->group(function () {
             'data' => $request->all()
         ]);
     })->name('api.midtrans.test');
+    
+    // Debug endpoint untuk testing callback
+    Route::post('/debug-callback', function (Request $request) {
+        \Log::info('DEBUG: Callback received', $request->all());
+        
+        // Simulate updating an order status
+        if ($request->has('order_id') && $request->has('transaction_status')) {
+            $orderId = \App\Http\Controllers\Api\MidtransCallbackController::extractOrderIdStatic($request->order_id);
+            if ($orderId) {
+                $order = \App\Models\Order::find($orderId);
+                if ($order) {
+                    $oldStatus = $order->status;
+                    $newStatus = $request->transaction_status == 'settlement' ? 'finished' : 'pending';
+                    $order->update(['status' => $newStatus]);
+                    
+                    \Log::info('DEBUG: Order status updated', [
+                        'order_id' => $orderId,
+                        'old_status' => $oldStatus,
+                        'new_status' => $newStatus
+                    ]);
+                }
+            }
+        }
+        
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Debug callback processed',
+            'received_data' => $request->all()
+        ]);
+    })->name('api.midtrans.debug');
     
     // GET route untuk testing di browser
     Route::get('/status', function () {
