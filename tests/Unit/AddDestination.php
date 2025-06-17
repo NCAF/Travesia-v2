@@ -51,14 +51,14 @@ class AddDestination extends TestCase
     public function test_add_destination_with_valid_inputs(): void
     {
         // Membuat file gambar palsu
-        $file = UploadedFile::fake()->image('destination.jpg');
+        $file = UploadedFile::fake()->create('destination.jpg', 100, 'image/jpeg');
 
         // Menyiapkan data input yang valid
         $data = [
             'travel_name' => 'Test Travel',
             'start_date' => now()->addDays(1)->format('Y-m-d H:i'),
             'end_date' => now()->addDays(2)->format('Y-m-d H:i'),
-            'check_point' => 'Jakarta',
+            'check_point' => 1111111,
             'end_point' => 'Bandung',
             'vehicle_type' => 'Bus',
             'plate_number' => 'B 1234 CD',
