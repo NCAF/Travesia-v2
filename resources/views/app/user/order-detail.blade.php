@@ -178,11 +178,41 @@
                         </div>
 
                         <div class="text-center">
-                            <div class="alert alert-success">
-                                <h6>Payment Completed!</h6>
-                                <p class="mb-0">Order ID: {{ $order->order_id ?? 'N/A' }}</p>
-                                <small>Status: {{ ucfirst($order->status ?? 'completed') }}</small>
-                            </div>
+                            @if($order->status == 'finished' || $order->status == 'completed')
+                                <div class="alert alert-success">
+                                    <h6>Status Pesanan</h6>
+                                    <p class="mb-0">Order ID: {{ $order->order_id ?? 'N/A' }}</p>
+                                    <small>Status: Finished</small>
+                                </div>
+                            @elseif($order->status == 'pending' || $order->status == 'pending_payment')
+                                <div class="alert alert-warning">
+                                    <h6>Menunggu Pembayaran</h6>
+                                    <p class="mb-0">Order ID: {{ $order->order_id ?? 'N/A' }}</p>
+                                    <small>Silakan selesaikan pembayaran Anda</small>
+                                    <div class="mt-3">
+                                        <a href="/bayar/{{ $order->id }}" class="btn btn-warning btn-sm">
+                                            Lanjutkan Pembayaran
+                                        </a>
+                                    </div>
+                                </div>
+                            @elseif($order->status == 'cancelled' || $order->status == 'failed')
+                                <div class="alert alert-danger">
+                                    <h6>Pembayaran Gagal</h6>
+                                    <p class="mb-0">Order ID: {{ $order->order_id ?? 'N/A' }}</p>
+                                    <small>{{ session('error') ?? 'Pembayaran tidak berhasil diproses' }}</small>
+                                    <div class="mt-3">
+                                        <a href="{{ route('user.destination-list') }}" class="btn btn-primary btn-sm">
+                                            Buat Pesanan Baru
+                                        </a>
+                                    </div>
+                                </div>
+                            @else
+                                <div class="alert alert-info">
+                                    <h6>Status Pesanan</h6>
+                                    <p class="mb-0">Order ID: {{ $order->order_id ?? 'N/A' }}</p>
+                                    <small>Status: {{ ucfirst($order->status ?? 'unknown') }}</small>
+                                </div>
+                            @endif
                         </div>
                 </div>
             </div>

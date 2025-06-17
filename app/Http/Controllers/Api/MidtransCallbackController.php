@@ -236,19 +236,19 @@ class MidtransCallbackController extends Controller
             case 'capture':
             case 'settlement':
                 if ($fraudStatus === 'accept' || $fraudStatus === null) {
-                    $newStatus = 'paid';
+                    $newStatus = 'finished';
                 }
                 break;
                 
             case 'pending':
-                $newStatus = 'pending_payment';
+                $newStatus = 'pending';
                 break;
                 
             case 'deny':
             case 'cancel':
             case 'expire':
             case 'failure':
-                $newStatus = 'canceled';
+                $newStatus = 'cancelled';
                 break;
         }
 
@@ -307,8 +307,26 @@ class MidtransCallbackController extends Controller
             'transaction_status' => $transactionStatus
         ]);
 
+        // Extract original order ID
+        $originalOrderId = $this->extractOrderId($orderId);
+        
+        // Get detailed error message based on status
+        $errorMessage = $this->getDetailedErrorMessage($transactionStatus, $statusCode);
+        
+        if ($originalOrderId) {
+            // Try to get order details for better context
+            $order = Order::find($originalOrderId);
+            if ($order) {
+                return redirect()->route('user.order-detail', $originalOrderId)
+                               ->with('error', $errorMessage)
+                               ->with('payment_failed', true)
+                               ->with('order_id', $originalOrderId);
+            }
+        }
+
         return redirect()->route('user.order-lists')
-                       ->with('error', 'Payment failed. Please try again.');
+                       ->with('error', $errorMessage)
+                       ->with('payment_failed', true);
     }
 
     /**
@@ -327,10 +345,31 @@ class MidtransCallbackController extends Controller
         
         if ($originalOrderId) {
             return redirect()->route('user.order-detail', $originalOrderId)
-                           ->with('warning', 'Payment was not completed. Please continue your payment.');
+                           ->with('warning', 'Pembayaran belum selesai. Silakan lanjutkan pembayaran Anda.')
+                           ->with('payment_unfinished', true)
+                           ->with('show_retry_button', true)
+                           ->with('order_id', $originalOrderId);
         }
 
         return redirect()->route('user.order-lists')
-                       ->with('warning', 'Payment was not completed.');
+                       ->with('warning', 'Pembayaran belum selesai. Silakan cek daftar pesanan Anda.')
+                       ->with('payment_unfinished', true);
+    }
+
+    /**
+     * Get detailed error message based on transaction status
+     */
+    private function getDetailedErrorMessage($transactionStatus, $statusCode = null)
+    {
+        $messages = [
+            'deny' => 'Pembayaran ditolak oleh bank. Silakan coba metode pembayaran lain atau hubungi bank Anda.',
+            'cancel' => 'Pembayaran dibatalkan. Silakan coba lagi jika ingin melanjutkan pemesanan.',
+            'expire' => 'Waktu pembayaran telah habis. Silakan buat pesanan baru untuk melanjutkan.',
+            'failure' => 'Pembayaran gagal diproses. Silakan coba lagi atau gunakan metode pembayaran lain.',
+        ];
+        
+        $defaultMessage = 'Pembayaran gagal. Silakan coba lagi atau hubungi customer service kami.';
+        
+        return $messages[$transactionStatus] ?? $defaultMessage;
     }
 } 

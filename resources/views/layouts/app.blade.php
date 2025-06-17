@@ -45,8 +45,14 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
     <!-- CSRF & Session Management -->
     <script src="{{ asset('assets/js/csrf-handler.js') }}"></script>
+    
+    <!-- Notification Handler -->
+    @include('partials.notification')
     
     @stack('scripts')
 </body>

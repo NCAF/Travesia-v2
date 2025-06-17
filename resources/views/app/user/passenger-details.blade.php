@@ -147,6 +147,11 @@
     <!-- Midtrans Snap Script -->
     <script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="{{ env('MIDTRANS_CLIENT_KEY') }}"></script>
     
+    <!-- SweetAlert2 (jika belum ada di layout) -->
+    @if(!isset($__env->getSections()['sweetalert']))
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    @endif
+    
     <script>
         document.getElementById('orderForm').addEventListener('submit', async function(e) {
             e.preventDefault();
@@ -185,36 +190,151 @@
                     // Show Midtrans popup
                     snap.pay(result.snapToken, {
                         onSuccess: function(result) {
-                            messageDiv.innerHTML = '<div class="alert alert-success">Payment successful! Thank you for your order.</div>';
                             console.log('Payment success:', result);
-                            // Redirect to order detail page
-                            setTimeout(() => {
+                            
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Pembayaran Berhasil!',
+                                text: 'Terima kasih atas pembayaran Anda.',
+                                confirmButtonText: 'Lihat Detail Pesanan',
+                                confirmButtonColor: '#28a745',
+                                allowOutsideClick: false
+                            }).then((swalResult) => {
                                 if (window.orderResult && window.orderResult.order_id) {
                                     window.location.href = '/user/order-detail/' + window.orderResult.order_id;
                                 } else {
                                     window.location.href = '/user/order-lists';
                                 }
-                            }, 2000);
+                            });
                         },
                         onPending: function(result) {
-                            messageDiv.innerHTML = '<div class="alert alert-warning">Payment is pending. Please complete your payment.</div>';
                             console.log('Payment pending:', result);
+                            
+                            Swal.fire({
+                                icon: 'warning',
+                                title: 'Pembayaran Pending',
+                                text: 'Pembayaran Anda sedang diproses. Silakan selesaikan pembayaran sesuai instruksi.',
+                                confirmButtonText: 'Lihat Instruksi Pembayaran',
+                                confirmButtonColor: '#ffc107',
+                                showCancelButton: true,
+                                cancelButtonText: 'Kembali ke Daftar Pesanan',
+                                cancelButtonColor: '#6c757d'
+                            }).then((swalResult) => {
+                                if (swalResult.isConfirmed && window.orderResult && window.orderResult.order_id) {
+                                    window.location.href = '/user/order-detail/' + window.orderResult.order_id;
+                                } else if (swalResult.dismiss === Swal.DismissReason.cancel) {
+                                    window.location.href = '/user/order-lists';
+                                }
+                            });
                         },
                         onError: function(result) {
-                            messageDiv.innerHTML = '<div class="alert alert-danger">Payment failed. Please try again.</div>';
                             console.log('Payment error:', result);
+                            
+                            // Get detailed error message
+                            let errorMessage = 'Pembayaran gagal diproses.';
+                            if (result.status_message) {
+                                errorMessage = result.status_message;
+                            }
+                            
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Pembayaran Gagal!',
+                                text: errorMessage,
+                                confirmButtonText: 'Coba Lagi',
+                                confirmButtonColor: '#dc3545',
+                                showCancelButton: true,
+                                cancelButtonText: 'Batalkan Pesanan',
+                                cancelButtonColor: '#6c757d',
+                                footer: '<small>Jika masalah berlanjut, hubungi customer service kami.</small>'
+                            }).then((swalResult) => {
+                                if (swalResult.isConfirmed) {
+                                    // Reset form to retry
+                                    submitButton.innerHTML = originalText;
+                                    submitButton.disabled = false;
+                                    messageDiv.innerHTML = '<div class="alert alert-info">Silakan coba lagi untuk melakukan pembayaran.</div>';
+                                } else if (swalResult.dismiss === Swal.DismissReason.cancel) {
+                                    // Cancel order and redirect
+                                    if (window.orderResult && window.orderResult.order_id) {
+                                        // Call API to cancel the order
+                                        fetch('/api/orders/' + window.orderResult.order_id + '/cancel', {
+                                            method: 'PUT',
+                                            headers: {
+                                                'Content-Type': 'application/json',
+                                                'Accept': 'application/json',
+                                                'X-CSRF-TOKEN': token
+                                            }
+                                        }).then(response => response.json())
+                                        .then(data => {
+                                            console.log('Order cancelled:', data);
+                                        }).catch(error => {
+                                            console.error('Error cancelling order:', error);
+                                        });
+                                        window.location.href = '/user/order-lists';
+                                    } else {
+                                        window.location.href = '/';
+                                    }
+                                }
+                            });
                         },
                         onClose: function() {
-                            messageDiv.innerHTML = '<div class="alert alert-info">Payment popup was closed.</div>';
                             console.log('Payment popup closed');
+                            
+                            Swal.fire({
+                                icon: 'info',
+                                title: 'Pembayaran Dibatalkan',
+                                text: 'Anda menutup jendela pembayaran. Apakah Anda ingin melanjutkan pembayaran?',
+                                confirmButtonText: 'Ya, Lanjutkan',
+                                confirmButtonColor: '#3085d6',
+                                showCancelButton: true,
+                                cancelButtonText: 'Tidak, Batalkan',
+                                cancelButtonColor: '#6c757d'
+                            }).then((swalResult) => {
+                                if (swalResult.isConfirmed) {
+                                    // Reset button to allow retry
+                                    submitButton.innerHTML = originalText;
+                                    submitButton.disabled = false;
+                                    messageDiv.innerHTML = '<div class="alert alert-warning">Silakan klik tombol untuk melanjutkan pembayaran.</div>';
+                                } else {
+                                    // Cancel order and redirect
+                                    if (window.orderResult && window.orderResult.order_id) {
+                                        // Call API to cancel the order
+                                        fetch('/api/orders/' + window.orderResult.order_id + '/cancel', {
+                                            method: 'PUT',
+                                            headers: {
+                                                'Content-Type': 'application/json',
+                                                'Accept': 'application/json',
+                                                'X-CSRF-TOKEN': token
+                                            }
+                                        }).then(response => response.json())
+                                        .then(data => {
+                                            console.log('Order cancelled:', data);
+                                        }).catch(error => {
+                                            console.error('Error cancelling order:', error);
+                                        });
+                                    }
+                                    window.location.href = '/user/order-lists';
+                                }
+                            });
                         }
                     });
                 } else {
-                    messageDiv.innerHTML = '<div class="alert alert-danger">' + (result.message || 'Failed to create payment token') + '</div>';
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Gagal Membuat Token Pembayaran',
+                        text: result.message || 'Terjadi kesalahan saat memproses pembayaran.',
+                        confirmButtonText: 'OK',
+                        confirmButtonColor: '#dc3545'
+                    });
                 }
             } catch (err) {
-                messageDiv.innerHTML = '<div class="alert alert-danger">Terjadi kesalahan saat mengirim data.</div>';
                 console.error('Error:', err);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Kesalahan Sistem',
+                    text: 'Terjadi kesalahan saat mengirim data. Silakan coba lagi.',
+                    confirmButtonText: 'OK',
+                    confirmButtonColor: '#dc3545'
+                });
             } finally {
                 // Reset button state
                 submitButton.innerHTML = originalText;

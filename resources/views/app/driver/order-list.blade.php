@@ -111,6 +111,13 @@
             padding: 6px 12px;
             border-radius: 999px;
         }
+        .badge-danger {
+            background-color: #F8D7DA;
+            color: #DC3545;
+            font-weight: normal;
+            padding: 6px 12px;
+            border-radius: 999px;
+        }
 
     </style>
 @endpush
@@ -196,8 +203,10 @@
                             <td>
                                 @if($order->status == 'finished')
                                     <span class="badge-success">Completed</span>
-                                @else
+                                @elseif($order->status == 'pending')
                                     <span class="badge-pending">Pending</span>
+                                @elseif($order->status == 'cancelled')
+                                    <span class="badge-danger">Cancelled</span>
                                 @endif
                             </td>
                         </tr>

@@ -37,7 +37,7 @@
             color: #28A745;
         }
         
-        .status-canceled {
+        .status-cancelled {
             background-color: #F8D7DA;
             color: #DC3545;
         }
@@ -45,6 +45,16 @@
         .status-finished {
             background-color: #D1ECF1;
             color: #17A2B8;
+        }
+        
+        .status-pending_payment {
+            background-color: #FFF3CD;
+            color: #856404;
+        }
+        
+        .status-failed {
+            background-color: #F8D7DA;
+            color: #DC3545;
         }
     </style>
 @endpush
@@ -64,7 +74,15 @@
                                 <div class="col-md-3 text-end">
                                     <button class="status-btn status-{{ $order->status }} text-end">
                                         @if($order->status == 'finished')
-                                            Finished
+                                            Selesai
+                                        @elseif($order->status == 'pending_payment')
+                                            Menunggu Pembayaran
+                                        @elseif($order->status == 'paid')
+                                            Dibayar
+                                        @elseif($order->status == 'cancelled')
+                                            Dibatalkan
+                                        @elseif($order->status == 'failed')
+                                            Gagal
                                         @else
                                             {{ ucfirst($order->status) }}
                                         @endif

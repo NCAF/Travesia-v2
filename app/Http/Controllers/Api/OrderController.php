@@ -160,7 +160,7 @@ class OrderController extends Controller
             'destinasi_id' => $validated['destinasi_id'],
             'jumlah_kursi' => $validated['jumlah_kursi'],
             'harga_kursi' => $validated['harga_kursi'],
-            'status' => 'finished',
+            'status' => 'pending',
             'order_id' => Str::uuid(),
         ]);
 
@@ -273,5 +273,39 @@ class OrderController extends Controller
 
         // dd($orders);
         return view('app.user.order-lists', compact('orders'));
+    }
+
+    /**
+     * Cancel an order
+     */
+    public function cancel($id)
+    {
+        $order = Order::where('id', $id)
+                     ->where('user_id', auth()->id())
+                     ->first();
+        
+        if (!$order) {
+            return response()->json([
+                'error' => true,
+                'message' => 'Order tidak ditemukan'
+            ], 404);
+        }
+        
+        // Only allow cancellation for pending orders
+        if ($order->status !== 'pending') {
+            return response()->json([
+                'error' => true,
+                'message' => 'Order tidak dapat dibatalkan karena status bukan pending'
+            ], 400);
+        }
+        
+        $order->status = 'cancelled';
+        $order->save();
+        
+        return response()->json([
+            'error' => false,
+            'message' => 'Order berhasil dibatalkan',
+            'data' => $order
+        ], 200);
     }
 }

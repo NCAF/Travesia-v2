@@ -60,7 +60,7 @@
                 onError: function(result){
                     data = {
                         id: '{{request()->segment(2)}}',
-                        status: 'canceled'
+                        status: 'cancelled'
                     }
                     let url = "{{ route('api.orders.pay') }}";
 

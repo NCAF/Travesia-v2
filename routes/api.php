@@ -70,6 +70,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::middleware(['role:user'])->group(function () {
             Route::get('/user', [OrderController::class, 'user'])->name('api.orders.user');
             Route::post('/', [OrderController::class, 'store'])->name('api.orders.store');
+            Route::put('/{id}/cancel', [OrderController::class, 'cancel'])->name('api.orders.cancel');
         });
     });
 
